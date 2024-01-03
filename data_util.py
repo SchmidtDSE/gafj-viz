@@ -55,11 +55,13 @@ COUNTED_GROUPS = typing.List[CountedGroup]
 class Result:
 
     def __init__(self, total_count: int, group_count: int, categories: COUNTED_GROUPS,
-        countries: COUNTED_GROUPS, tags: COUNTED_GROUPS, keywords: COUNTED_GROUPS):
+        countries: COUNTED_GROUPS, country_totals: COUNTED_GROUPS, tags: COUNTED_GROUPS,
+        keywords: COUNTED_GROUPS):
         self._total_count = total_count
         self._group_count = group_count
         self._categories = categories
         self._countries = countries
+        self._country_totals = country_totals
         self._tags = tags
         self._keywords = keywords
 
@@ -74,6 +76,9 @@ class Result:
 
     def get_countries(self) -> COUNTED_GROUPS:
         return self._countries
+
+    def get_country_totals(self) -> COUNTED_GROUPS:
+        return self._country_totals
 
     def get_tags(self) -> COUNTED_GROUPS:
         return self._tags
@@ -95,16 +100,22 @@ class LocalDataAccessor(DataAccessor):
 
         total_count = self._get_total_no_query(connection)
 
-        group_count_raw = self._execute_sql(connection, query, 'total.sql')
+        group_count_raw = self._execute_sql(connection, query, 'total.sql', True)
         group_count = int(group_count_raw[0][0])
 
-        def execute_inner(filename: str) -> COUNTED_GROUPS:
-            return self._execute_sql_for_counted_groups(connection, query, filename)
+        def execute_inner(filename: str, include_category: bool) -> COUNTED_GROUPS:
+            return self._execute_sql_for_counted_groups(
+                connection,
+                query,
+                filename,
+                include_category
+            )
 
-        categories = execute_inner('categories.sql')
-        countries = execute_inner('countries.sql')
-        tags = execute_inner('tags.sql')
-        keywords = execute_inner('keywords.sql')
+        categories = execute_inner('categories.sql', True)
+        countries = execute_inner('countries.sql', True)
+        country_totals = execute_inner('countries.sql', False)
+        tags = execute_inner('tags.sql', True)
+        keywords = execute_inner('keywords.sql', True)
 
         connection.close()
 
@@ -113,12 +124,16 @@ class LocalDataAccessor(DataAccessor):
             group_count,
             categories,
             countries,
+            country_totals,
             tags,
             keywords
         )
 
-    def _create_where_clause(self, query: Query) -> str:
-        clauses = ['category = ?']
+    def _create_where_clause(self, query: Query, include_category: bool) -> str:
+        clauses = []
+
+        if include_category:
+            clauses.append('category = ?')
 
         if query.has_country():
             clauses.append('country = ?')
@@ -129,12 +144,20 @@ class LocalDataAccessor(DataAccessor):
         if query.has_keyword():
             clauses.append('(token = ? AND tokenType = \'keyword\')')
 
+        if len(clauses) == 0:
+            clauses.append('1 = 1')
+
         return ' AND '.join(clauses)
 
 
-    def _convert_query_to_params(self, sql_base: str, query: Query) -> typing.List:
+    def _convert_query_to_params(self, sql_base: str, query: Query,
+        include_category: bool) -> typing.List:
+
         def get_clauses() -> typing.List:
-            clauses = [query.get_category()]
+            clauses = []
+
+            if include_category:
+                clauses.append(query.get_category())
 
             if query.has_country():
                 clauses.append(query.get_country())
@@ -150,7 +173,7 @@ class LocalDataAccessor(DataAccessor):
         return get_clauses() * sql_base.count('WHERE_CLAUSE')
 
     def _execute_sql(self, connection: sqlite3.Connection, query: Query,
-        filename: str) -> typing.List[typing.Tuple]:
+        filename: str, include_category: bool) -> typing.List[typing.Tuple]:
         cursor = connection.cursor()
 
         base_path = os.path.dirname(os.path.abspath(__file__))
@@ -160,12 +183,12 @@ class LocalDataAccessor(DataAccessor):
 
         sql = sql_base.replace(
             'WHERE_CLAUSE',
-            'WHERE ' + self._create_where_clause(query)
+            'WHERE ' + self._create_where_clause(query, include_category)
         )
 
         result = cursor.execute(
             sql,
-            self._convert_query_to_params(sql_base, query)
+            self._convert_query_to_params(sql_base, query, include_category)
         )
         result_realized = list(result.fetchall())
 
@@ -174,12 +197,12 @@ class LocalDataAccessor(DataAccessor):
 
 
     def _execute_sql_for_counted_groups(self, connection: sqlite3.Connection, query: Query,
-        filename: str) -> COUNTED_GROUPS:
+        filename: str, include_category: bool) -> COUNTED_GROUPS:
         
         def parse_counted_group(target: typing.Tuple) -> CountedGroup:
             return CountedGroup(target[0], int(target[1]))
 
-        results_raw = self._execute_sql(connection, query, filename)
+        results_raw = self._execute_sql(connection, query, filename, include_category)
         return [parse_counted_group(x) for x in results_raw]
 
     def _get_total_no_query(self, connection: sqlite3.Connection) -> int:

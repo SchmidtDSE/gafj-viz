@@ -8,4 +8,3 @@ GROUP BY
     country
 ORDER BY
     cnt DESC
-LIMIT 10

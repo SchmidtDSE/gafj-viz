@@ -1,3 +1,5 @@
+import typing
+
 import sketching
 
 import data_util
@@ -31,13 +33,15 @@ class VizColumn:
     def set_results(self, results: data_util.Result):
         self._results = results
 
-    def draw(self, current_state: state_util.VizState):
+    def draw(self, current_state: state_util.VizState,
+        prior_placements: typing.Dict[str, float]) -> typing.Dict[str, float]:
         self._sketch.push_transform()
         self._sketch.push_style()
 
         self._sketch.translate(self._x, 0)
 
         y = 0
+        placements: typing.Dict[str, float] = {}
 
         y = self._draw_header(y)
 
@@ -46,7 +50,9 @@ class VizColumn:
             '% of category',
             y,
             self._results.get_tags(),
-            self._results.get_group_count()
+            lambda x: self._results.get_group_count(),
+            prior_placements,
+            placements
         )
         
         y = self._draw_counted_groups(
@@ -54,21 +60,30 @@ class VizColumn:
             '% of category',
             y,
             self._results.get_keywords(),
-            self._results.get_group_count()
+            lambda x: self._results.get_group_count(),
+            prior_placements,
+            placements
         )
         
+        country_totals = self._results.get_country_totals()
+        country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
+
         y = self._draw_counted_groups(
             'Countries',
             '% of country',
             y,
             self._results.get_countries(),
-            self._results.get_group_count()
+            lambda x: country_totals_indexed[x],
+            prior_placements,
+            placements
         )
 
         y = self._draw_axis(y)
 
         self._sketch.pop_style()
         self._sketch.pop_transform()
+
+        return placements
 
     def _draw_axis(self, y: int):
         self._sketch.push_transform()
@@ -132,8 +147,23 @@ class VizColumn:
 
         return 160
 
+    def _interpret_groups(self, groups: data_util.COUNTED_GROUPS, total_getter,
+        count: int) -> typing.Dict:
+        def interpret_group(group: data_util.CountedGroup) -> typing.Dict:
+            name = group.get_name()
+            percent = group.get_count() / (total_getter(group.get_name()) + 0.0) * 100
+            return {
+                'name': name,
+                'percent': percent
+            }
+
+        results = [interpret_group(x) for x in groups]
+        results.sort(key=lambda x: x['percent'], reverse=True)
+        return results[:count]
+
     def _draw_counted_groups(self, label: str, sub_title: str, y: int,
-        groups: data_util.COUNTED_GROUPS, total: int, min_count: int = 10):
+        groups: data_util.COUNTED_GROUPS, total_getter, prior_placements: typing.Dict[str, float],
+        placements: typing.Dict[str, float], count: int = 10):
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -150,8 +180,11 @@ class VizColumn:
         self._sketch.set_text_align('left', 'baseline')
         self._sketch.draw_text(0, y - 5, label)
 
-        for group in groups:
-            percent = group.get_count() / (total + 0.0) * 100
+        groups_interpreted = self._interpret_groups(groups, total_getter, count)
+
+        for group in groups_interpreted:
+            percent = group['percent']
+            name = group['name']
 
             self._sketch.clear_stroke()
 
@@ -167,7 +200,9 @@ class VizColumn:
             self._sketch.set_fill(INACTIVE_COLOR)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
             self._sketch.set_text_align('left', 'baseline')
-            self._sketch.draw_text(0, y + 11, group.get_name())
+            self._sketch.draw_text(0, y + 12, name)
+
+            placements[name] = y + 6
 
             self._sketch.set_rect_mode('corner')
             self._sketch.set_fill(BG_COLOR_LAYER)
@@ -177,6 +212,17 @@ class VizColumn:
             self._sketch.set_fill(INACTIVE_COLOR)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
             self._sketch.draw_text(COLUMN_WIDTH, y + 11, '%.1f%%' % percent)
+
+            if name in prior_placements:
+                self._sketch.clear_fill()
+                self._sketch.set_stroke(INACTIVE_COLOR + '70')
+                self._sketch.set_stroke_weight(1)
+                self._sketch.draw_line(
+                    -3,
+                    prior_placements[name],
+                    -1 * COLUMN_PADDING + 3,
+                    placements[name]
+                )
 
             y += 18
 
@@ -195,8 +241,8 @@ class VizColumn:
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
-        if len(groups) < min_count:
-            num_missing = min_count - len(groups)
+        if len(groups) < count:
+            num_missing = count - len(groups)
             y += 18 * num_missing
 
         return y + 30
@@ -233,8 +279,9 @@ class NewsVisualization:
         if self._changed:
             self._sketch.clear(BG_COLOR)
 
+            placements = {}
             for column in self._columns:
-                column.draw(self._state)
+                placements = column.draw(self._state, placements)
 
             self._changed = False
 

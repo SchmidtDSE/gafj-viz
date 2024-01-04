@@ -2,6 +2,7 @@ import typing
 
 import sketching
 
+import abstract
 import const
 import data_util
 import state_util
@@ -292,7 +293,7 @@ class GridColumn:
             return const.INACTIVE_COLOR
 
 
-class GridViz:
+class GridViz(abstract.VizMovement):
 
     def __init__(self, sketch: sketching.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):

@@ -7,10 +7,14 @@ import state_util
 
 BG_COLOR = '#505050'
 BG_COLOR_LAYER = '#505050A0'
-INACTIVE_COLOR = '#D0D0D0'
+DEEP_BG_COLOR = '#303030C0'
+
 COLUMN_WIDTH = 200
 COLUMN_PADDING = 50
-DEEP_BG_COLOR = '#303030C0'
+
+INACTIVE_COLOR = '#D0D0D0'
+ACTIVE_COLOR = '#A6CEE3'
+HOVER_COLOR = '#B2DF8A'
 
 REWRITES = {
     'people and society': 'people & society',
@@ -28,62 +32,88 @@ class VizColumn:
         self._sketch = sketch
         self._category = category
         self._x = x
+        self._placements: typing.Dict[str, float] = {}
         self._results = results
 
     def set_results(self, results: data_util.Result):
         self._results = results
 
-    def draw(self, current_state: state_util.VizState,
-        prior_placements: typing.Dict[str, float]) -> typing.Dict[str, float]:
+    def check_hover(self, current_state: state_util.VizState, mouse_x: float, mouse_y: float):
+        if mouse_x < self._x or mouse_x > self._x + COLUMN_WIDTH:
+            return
+
+        for prefix_name, y in self._placements.items():
+            if abs(y - mouse_y) < 10:
+                prefix, name = prefix_name.split('_')
+
+                if prefix == 'tags':
+                    current_state.set_tag_hovering(name)
+                elif prefix == 'keywords':
+                    current_state.set_keyword_hovering(name)
+                elif prefix == 'categories':
+                    current_state.set_category_hovering(name)
+                elif prefix == 'countries':
+                    current_state.set_country_hovering(name)
+
+    def get_placements(self) -> typing.Dict[str, float]:
+        return self._placements
+
+    def draw(self, current_state: state_util.VizState, prior_placements: typing.Dict[str, float]):
         self._sketch.push_transform()
         self._sketch.push_style()
 
         self._sketch.translate(self._x, 0)
 
         y = 0
-        placements: typing.Dict[str, float] = {}
 
         y = self._draw_header(y)
 
         y = self._draw_counted_groups(
+            'tags',
             'Top Tags',
             '% of category',
             y,
             self._results.get_tags(),
+            current_state.get_tag_selected(),
+            current_state.get_tag_hovering(),
             lambda x: self._results.get_group_count(),
             prior_placements,
-            placements
+            self._placements
         )
         
         y = self._draw_counted_groups(
+            'keywords',
             'Top Keywords',
             '% of category',
             y,
             self._results.get_keywords(),
+            current_state.get_keyword_selected(),
+            current_state.get_keyword_hovering(),
             lambda x: self._results.get_group_count(),
             prior_placements,
-            placements
+            self._placements
         )
         
         country_totals = self._results.get_country_totals()
         country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
 
         y = self._draw_counted_groups(
+            'countries',
             'Countries',
             '% of country',
             y,
             self._results.get_countries(),
+            current_state.get_country_selected(),
+            current_state.get_country_hovering(),
             lambda x: country_totals_indexed[x],
             prior_placements,
-            placements
+            self._placements
         )
 
         y = self._draw_axis(y)
 
         self._sketch.pop_style()
         self._sketch.pop_transform()
-
-        return placements
 
     def _draw_axis(self, y: int):
         self._sketch.push_transform()
@@ -161,9 +191,11 @@ class VizColumn:
         results.sort(key=lambda x: x['percent'], reverse=True)
         return results[:count]
 
-    def _draw_counted_groups(self, label: str, sub_title: str, y: int,
-        groups: data_util.COUNTED_GROUPS, total_getter, prior_placements: typing.Dict[str, float],
-        placements: typing.Dict[str, float], count: int = 10):
+    def _draw_counted_groups(self, prefix: str, label: str, sub_title: str, y: int,
+        groups: data_util.COUNTED_GROUPS, selected_name: typing.Optional[str],
+        hovering_name: typing.Optional[str], total_getter,
+        prior_placements: typing.Dict[str, float], placements: typing.Dict[str, float],
+        count: int = 10):
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -185,6 +217,13 @@ class VizColumn:
         for group in groups_interpreted:
             percent = group['percent']
             name = group['name']
+            prefix_name = prefix + '_' + name
+
+            color = INACTIVE_COLOR
+            if selected_name == name:
+                color = ACTIVE_COLOR
+            elif hovering_name == name:
+                color = HOVER_COLOR
 
             self._sketch.clear_stroke()
 
@@ -194,34 +233,34 @@ class VizColumn:
                 self._sketch.draw_rect(x, y + 15, 1, 1)
 
             self._sketch.set_rect_mode('corner')
-            self._sketch.set_fill(INACTIVE_COLOR)
+            self._sketch.set_fill(color)
             self._sketch.draw_rect(0, y + 15, percent / 100 * COLUMN_WIDTH, 2)
 
-            self._sketch.set_fill(INACTIVE_COLOR)
+            self._sketch.set_fill(color)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
             self._sketch.set_text_align('left', 'baseline')
             self._sketch.draw_text(0, y + 12, name)
 
-            placements[name] = y + 6
+            placements[prefix_name] = y + 6
 
             self._sketch.set_rect_mode('corner')
             self._sketch.set_fill(BG_COLOR_LAYER)
             self._sketch.draw_rect(COLUMN_WIDTH - 40, y + 3, 40, 10)
 
             self._sketch.set_text_align('right', 'baseline')
-            self._sketch.set_fill(INACTIVE_COLOR)
+            self._sketch.set_fill(color)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
             self._sketch.draw_text(COLUMN_WIDTH, y + 11, '%.1f%%' % percent)
 
-            if name in prior_placements:
+            if prefix_name in prior_placements:
                 self._sketch.clear_fill()
-                self._sketch.set_stroke(INACTIVE_COLOR + '70')
+                self._sketch.set_stroke(color + '70')
                 self._sketch.set_stroke_weight(1)
                 self._sketch.draw_line(
                     -3,
-                    prior_placements[name],
+                    placements[prefix_name],
                     -1 * COLUMN_PADDING + 3,
-                    placements[name]
+                    prior_placements[prefix_name]
                 )
 
             y += 18
@@ -255,7 +294,7 @@ class NewsVisualization:
         self._state = state_util.VizState()
         self._accessor = data_util.LocalDataAccessor()
         self._sketch = sketching.Sketch2D(1225, 900, 'News Visualization')
-        self._sketch.set_fps(15)
+        self._sketch.set_fps(20)
 
         self._columns = [
             self._build_column('people and society', 0),
@@ -268,9 +307,7 @@ class NewsVisualization:
         self._sketch.on_step(lambda x: self._draw())
 
     def show(self):
-        self._draw()
         self._sketch.show()
-        self._sketch.save_image('test.png')
 
     def _draw(self):
         self._sketch.push_transform()
@@ -281,9 +318,23 @@ class NewsVisualization:
 
             placements = {}
             for column in self._columns:
-                placements = column.draw(self._state, placements)
+                column.draw(self._state, placements)
+                placements = column.get_placements()
 
             self._changed = False
+
+        prior_state_str = self._state.serialize()
+
+        self._state.set_country_hovering(None)
+        self._state.set_keyword_hovering(None)
+        self._state.set_tag_hovering(None)
+
+        mouse = self._sketch.get_mouse()
+        mouse_x = mouse.get_pointer_x()
+        mouse_y = mouse.get_pointer_y()
+        for column in self._columns:
+            column.check_hover(self._state, mouse_x, mouse_y)
+        self._changed = prior_state_str != self._state.serialize()
 
         self._sketch.pop_style()
         self._sketch.pop_transform()

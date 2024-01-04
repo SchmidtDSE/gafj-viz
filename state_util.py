@@ -72,3 +72,14 @@ class VizState:
             self._tag_selected,
             self._keyword_selected
         )
+
+    def serialize(self) -> str:
+        pieces = [
+            self._country_selected,
+            self._country_hovering,
+            self._tag_selected,
+            self._tag_hovering,
+            self._keyword_selected,
+            self._keyword_hovering
+        ]
+        return '\t'.join(map(lambda x: str(x), pieces))

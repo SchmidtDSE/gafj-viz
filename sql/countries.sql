@@ -1,10 +1,10 @@
 SELECT
-    country AS country,
-    count(DISTINCT url) AS cnt
+    target_frame.country AS country,
+    count(DISTINCT target_frame.url) AS cnt
 FROM
-    output_frame
+    TARGET_FRAME
 WHERE_CLAUSE
 GROUP BY
-    country
+    target_frame.country
 ORDER BY
     cnt DESC

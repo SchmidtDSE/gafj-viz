@@ -4,6 +4,13 @@ import typing
 
 OPT_STR = typing.Optional[str]
 PATH_DB = 'articles.db'
+CATEGORIES = {
+    'people and society',
+    'economy and industry',
+    'food and materials',
+    'health and body',
+    'environment and resources'
+}
 
 
 class Query:
@@ -23,7 +30,7 @@ class Query:
         return self._pre_category is not None 
 
     def get_pre_category(self) -> OPT_STR:
-        return self._category
+        return self._pre_category
 
     def has_country(self) -> bool:
         return self._country is not None
@@ -194,6 +201,9 @@ class LocalDataAccessor(DataAccessor):
             'WHERE ' + self._create_where_clause(query, include_category)
         )
 
+        target_frame_sql = self._get_target_frame_sql(query)
+        sql = sql.replace('TARGET_FRAME', target_frame_sql)
+
         result = cursor.execute(
             sql,
             self._convert_query_to_params(sql_base, query, include_category)
@@ -202,7 +212,6 @@ class LocalDataAccessor(DataAccessor):
 
         cursor.close()
         return result_realized
-
 
     def _execute_sql_for_counted_groups(self, connection: sqlite3.Connection, query: Query,
         filename: str, include_category: bool) -> COUNTED_GROUPS:
@@ -220,3 +229,38 @@ class LocalDataAccessor(DataAccessor):
         cursor.close()
 
         return total_count
+
+    def _get_target_frame_sql(self, query: Query) -> str:
+        pre_category = query.get_pre_category()
+        if pre_category is None:
+            return '(SELECT * FROM output_frame) target_frame'
+
+        assert pre_category in CATEGORIES
+        return '''
+        (
+            SELECT
+                output_frame.url AS url,
+                output_frame.titleEnglish AS titleEnglish,
+                output_frame.language AS language,
+                output_frame.country AS country,
+                output_frame.tokenType AS tokenType,
+                output_frame.token AS token,
+                output_frame.category AS category
+            FROM
+                output_frame
+            INNER JOIN
+                (
+                    SELECT
+                        url
+                    FROM
+                        output_frame
+                    WHERE
+                        tokenType = 'category'
+                        AND token = '%s'
+                    GROUP BY
+                        url
+                ) output_frame_allowed
+            ON
+                output_frame_allowed.url = output_frame.url
+        ) target_frame
+        ''' % pre_category

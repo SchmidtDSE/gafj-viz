@@ -1,5 +1,5 @@
 SELECT
-    count(DISTINCT url) AS cnt
+    count(DISTINCT target_frame.url) AS cnt
 FROM
-    output_frame
+    TARGET_FRAME
 WHERE_CLAUSE

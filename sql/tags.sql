@@ -1,8 +1,8 @@
 SELECT
-    output_frame.token AS token,
-    count(DISTINCT output_frame.url) AS cnt
+    target_frame.token AS token,
+    count(DISTINCT target_frame.url) AS cnt
 FROM
-    output_frame
+    TARGET_FRAME
 INNER JOIN
     (
         SELECT
@@ -15,11 +15,11 @@ INNER JOIN
             url
     ) match_url
 ON
-    output_frame.url = match_url.url
+    target_frame.url = match_url.url
 WHERE_CLAUSE
-    AND output_frame.tokenType = 'tag'
+    AND target_frame.tokenType = 'tag'
 GROUP BY
-    output_frame.token
+    target_frame.token
 ORDER BY
     cnt DESC
 LIMIT 10

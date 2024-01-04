@@ -8,13 +8,21 @@ PATH_DB = 'articles.db'
 
 class Query:
 
-    def __init__(self, category: str, country: OPT_STR, tag: OPT_STR, keyword: OPT_STR):
+    def __init__(self, category: str, pre_category: OPT_STR, country: OPT_STR, tag: OPT_STR,
+        keyword: OPT_STR):
         self._category = category
+        self._pre_category = pre_category
         self._country = country
         self._tag = tag
         self._keyword = keyword
 
     def get_category(self) -> str:
+        return self._category
+
+    def has_pre_category(self) -> bool:
+        return self._pre_category is not None 
+
+    def get_pre_category(self) -> OPT_STR:
         return self._category
 
     def has_country(self) -> bool:

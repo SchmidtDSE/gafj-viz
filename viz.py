@@ -42,6 +42,9 @@ class VizColumn:
         if mouse_x < self._x or mouse_x > self._x + COLUMN_WIDTH:
             return
 
+        if abs(80 - mouse_y) < 50:
+            current_state.set_category_hovering(self._category)
+
         for prefix_name, y in self._placements.items():
             if abs(y - mouse_y) < 10:
                 prefix, name = prefix_name.split('_')
@@ -50,10 +53,10 @@ class VizColumn:
                     current_state.set_tag_hovering(name)
                 elif prefix == 'keywords':
                     current_state.set_keyword_hovering(name)
-                elif prefix == 'categories':
-                    current_state.set_category_hovering(name)
                 elif prefix == 'countries':
                     current_state.set_country_hovering(name)
+
+                return
 
     def get_placements(self) -> typing.Dict[str, float]:
         return self._placements
@@ -66,7 +69,9 @@ class VizColumn:
 
         y = 0
 
-        y = self._draw_header(y)
+        category_selected = current_state.get_category_selected() == self._category
+        category_hovering = current_state.get_category_hovering() == self._category
+        y = self._draw_header(y, category_selected, category_hovering)
 
         y = self._draw_counted_groups(
             'tags',
@@ -138,9 +143,11 @@ class VizColumn:
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
-    def _draw_header(self, y: int):
+    def _draw_header(self, y: int, selected: bool, hovering: bool):
         self._sketch.push_transform()
         self._sketch.push_style()
+
+        color = self._get_color(selected, hovering)
 
         self._sketch.translate(COLUMN_WIDTH / 2, y + 80)
 
@@ -154,7 +161,7 @@ class VizColumn:
         self._sketch.set_stroke_weight(10)
         self._sketch.set_stroke(DEEP_BG_COLOR)
         self._sketch.draw_arc(0, 0, 50, 50, 0, 360)
-        self._sketch.set_stroke(INACTIVE_COLOR)
+        self._sketch.set_stroke(color)
         self._sketch.draw_arc(0, 0, 50, 50, 0, end_angle)
 
         self._sketch.clear_stroke()
@@ -163,7 +170,7 @@ class VizColumn:
         self._sketch.draw_rect(0, -10, 85, 10)
 
         self._sketch.clear_stroke()
-        self._sketch.set_fill(INACTIVE_COLOR)
+        self._sketch.set_fill(color)
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
         self._sketch.set_text_align('center', 'baseline')
         self._sketch.draw_text(0, -5, REWRITES.get(self._category, self._category))
@@ -219,11 +226,7 @@ class VizColumn:
             name = group['name']
             prefix_name = prefix + '_' + name
 
-            color = INACTIVE_COLOR
-            if selected_name == name:
-                color = ACTIVE_COLOR
-            elif hovering_name == name:
-                color = HOVER_COLOR
+            color = self._get_color(selected_name == name, hovering_name == name)
 
             self._sketch.clear_stroke()
 
@@ -286,11 +289,20 @@ class VizColumn:
 
         return y + 30
 
+    def _get_color(self, selected: bool, hovering: bool) -> str:
+        if selected:
+            return ACTIVE_COLOR
+        elif hovering:
+            return HOVER_COLOR
+        else:
+            return INACTIVE_COLOR
+
 
 class NewsVisualization:
 
     def __init__(self):
         self._changed = True
+        self._drawn = False
         self._state = state_util.VizState()
         self._accessor = data_util.LocalDataAccessor()
         self._sketch = sketching.Sketch2D(1225, 900, 'News Visualization')
@@ -313,6 +325,21 @@ class NewsVisualization:
         self._sketch.push_transform()
         self._sketch.push_style()
 
+        if self._drawn:
+            prior_state_str = self._state.serialize()
+            
+            self._state.clear_category_hovering()
+            self._state.clear_country_hovering()
+            self._state.clear_keyword_hovering()
+            self._state.clear_tag_hovering()
+
+            mouse = self._sketch.get_mouse()
+            mouse_x = mouse.get_pointer_x()
+            mouse_y = mouse.get_pointer_y()
+            for column in self._columns:
+                column.check_hover(self._state, mouse_x, mouse_y)
+            self._changed = prior_state_str != self._state.serialize()
+
         if self._changed:
             self._sketch.clear(BG_COLOR)
 
@@ -321,20 +348,8 @@ class NewsVisualization:
                 column.draw(self._state, placements)
                 placements = column.get_placements()
 
+            self._drawn = True
             self._changed = False
-
-        prior_state_str = self._state.serialize()
-
-        self._state.set_country_hovering(None)
-        self._state.set_keyword_hovering(None)
-        self._state.set_tag_hovering(None)
-
-        mouse = self._sketch.get_mouse()
-        mouse_x = mouse.get_pointer_x()
-        mouse_y = mouse.get_pointer_y()
-        for column in self._columns:
-            column.check_hover(self._state, mouse_x, mouse_y)
-        self._changed = prior_state_str != self._state.serialize()
 
         self._sketch.pop_style()
         self._sketch.pop_transform()

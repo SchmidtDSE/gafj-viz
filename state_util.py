@@ -4,12 +4,32 @@ import data_util
 class VizState:
 
     def __init__(self):
+        self._category_selected: data_util.OPT_STR = None
+        self._category_hovering: data_util.OPT_STR = None
         self._country_selected: data_util.OPT_STR = None
         self._country_hovering: data_util.OPT_STR = None
         self._tag_selected: data_util.OPT_STR = None
         self._tag_hovering: data_util.OPT_STR = None
         self._keyword_selected: data_util.OPT_STR = None
         self._keyword_hovering: data_util.OPT_STR = None
+
+    def set_category_selected(self, new_val: str):
+        self._category_selected = new_val
+
+    def get_category_selected(self) -> str:
+        return self._category_selected
+
+    def clear_category_selected(self):
+        self._category_selected = None
+
+    def set_category_hovering(self, new_val: str):
+        self._category_hovering = new_val
+
+    def get_category_hovering(self) -> str:
+        return self._category_hovering
+
+    def clear_category_hovering(self):
+        self._category_hovering = None
     
     def set_country_selected(self, new_val: str):
         self._country_selected = new_val
@@ -68,6 +88,7 @@ class VizState:
     def get_query(self, category: str) -> data_util.Query:
         return data_util.Query(
             category,
+            self._category_selected,
             self._country_selected,
             self._tag_selected,
             self._keyword_selected
@@ -75,6 +96,8 @@ class VizState:
 
     def serialize(self) -> str:
         pieces = [
+            self._category_selected,
+            self._category_hovering,
             self._country_selected,
             self._country_hovering,
             self._tag_selected,

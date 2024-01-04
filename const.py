@@ -16,3 +16,12 @@ REWRITES = {
     'health and body': 'health & body',
     'environment and resources': 'env & resource'
 }
+
+
+def get_color(selected: bool, hovering: bool) -> str:
+    if selected:
+        return ACTIVE_COLOR
+    elif hovering:
+        return HOVER_COLOR
+    else:
+        return INACTIVE_COLOR

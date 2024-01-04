@@ -6,6 +6,7 @@ import abstract
 import const
 import data_util
 import state_util
+import table_util
 
 
 class GridColumn:
@@ -17,6 +18,25 @@ class GridColumn:
         self._x = x
         self._placements: typing.Dict[str, float] = {}
         self._results = results
+
+        self._tags_table = table_util.BarTable(
+            self._sketch,
+            'tags',
+            'Top Tags',
+            '% of query'
+        )
+        self._keywords_table = table_util.BarTable(
+            self._sketch,
+            'keywords',
+            'Top Keywords',
+            '% of query'
+        )
+        self._countries_table = table_util.BarTable(
+            self._sketch,
+            'countries',
+            'Countries',
+            '% of all in country'
+        )
 
     def get_category(self) -> str:
         return self._category
@@ -61,39 +81,33 @@ class GridColumn:
 
         self._placements.clear()
 
-        y = self._draw_counted_groups(
-            'tags',
-            'Top Tags',
-            '% of query',
+        y = self._tags_table.draw(
+            0,
             y,
             self._results.get_tags(),
             current_state.get_tag_selected(),
             current_state.get_tag_hovering(),
             lambda x: self._results.get_total_count(),
-            prior_placements,
-            self._placements
+            prior_placements=prior_placements,
+            placements=self._placements
         )
         
-        y = self._draw_counted_groups(
-            'keywords',
-            'Top Keywords',
-            '% of query',
+        y = self._keywords_table.draw(
+            0,
             y,
             self._results.get_keywords(),
             current_state.get_keyword_selected(),
             current_state.get_keyword_hovering(),
             lambda x: self._results.get_total_count(),
-            prior_placements,
-            self._placements
+            prior_placements=prior_placements,
+            placements=self._placements
         )
         
         country_totals = self._results.get_country_totals()
         country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
 
-        y = self._draw_counted_groups(
-            'countries',
-            'Countries',
-            '% of all in country',
+        y = self._countries_table.draw(
+            0,
             y,
             self._results.get_countries(),
             current_state.get_country_selected(),
@@ -103,30 +117,7 @@ class GridColumn:
             self._placements
         )
 
-        y = self._draw_axis(y)
-
-        self._sketch.pop_style()
-        self._sketch.pop_transform()
-
-    def _draw_axis(self, y: int):
-        self._sketch.push_transform()
-        self._sketch.push_style()
-
-        self._sketch.translate(0, y)
-
-        self._sketch.clear_fill()
-        self._sketch.set_stroke(const.INACTIVE_COLOR)
-        self._sketch.draw_line(0, 0, const.COLUMN_WIDTH, 0)
-
-        self._sketch.clear_stroke()
-        self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
-        
-        self._sketch.set_text_align('left', 'top')
-        self._sketch.draw_text(0, 3, '0%')
-
-        self._sketch.set_text_align('right', 'top')
-        self._sketch.draw_text(const.COLUMN_WIDTH, 3, '100%')
+        y = self._countries_table.draw_axis(y)
 
         self._sketch.pop_style()
         self._sketch.pop_transform()
@@ -135,7 +126,7 @@ class GridColumn:
         self._sketch.push_transform()
         self._sketch.push_style()
 
-        color = self._get_color(selected, hovering)
+        color = const.get_color(selected, hovering)
 
         self._sketch.translate(const.COLUMN_WIDTH / 2, y + 70)
 
@@ -177,120 +168,6 @@ class GridColumn:
         self._sketch.pop_transform()
 
         return 140
-
-    def _interpret_groups(self, groups: data_util.COUNTED_GROUPS, total_getter,
-        count: int) -> typing.Dict:
-        def interpret_group(group: data_util.CountedGroup) -> typing.Dict:
-            name = group.get_name()
-            percent = group.get_count() / (total_getter(group.get_name()) + 0.0) * 100
-            return {
-                'name': name,
-                'percent': percent
-            }
-
-        results = [interpret_group(x) for x in groups]
-        results.sort(key=lambda x: x['percent'], reverse=True)
-        return results[:count]
-
-    def _draw_counted_groups(self, prefix: str, label: str, sub_title: str, y: int,
-        groups: data_util.COUNTED_GROUPS, selected_name: typing.Optional[str],
-        hovering_name: typing.Optional[str], total_getter,
-        prior_placements: typing.Dict[str, float], placements: typing.Dict[str, float],
-        count: int = 10):
-        self._sketch.push_transform()
-        self._sketch.push_style()
-
-        self._sketch.set_stroke_weight(1)
-
-        y += 14
-        self._sketch.clear_fill()
-        self._sketch.set_stroke(const.INACTIVE_COLOR)
-        self._sketch.draw_line(0, y, const.COLUMN_WIDTH, y)
-
-        self._sketch.clear_stroke()
-        self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
-        self._sketch.set_text_align('left', 'baseline')
-        self._sketch.draw_text(0, y - 5, label)
-
-        groups_interpreted = self._interpret_groups(groups, total_getter, count)
-
-        for group in groups_interpreted:
-            percent = group['percent']
-            name = group['name']
-            prefix_name = prefix + '_' + name
-
-            color = self._get_color(selected_name == name, hovering_name == name)
-
-            self._sketch.clear_stroke()
-
-            self._sketch.set_rect_mode('center')
-            self._sketch.set_fill(const.INACTIVE_COLOR)
-            for x in range(0, const.COLUMN_WIDTH + 1, 5):
-                self._sketch.draw_rect(x, y + 15, 1, 1)
-
-            self._sketch.set_rect_mode('corner')
-            self._sketch.set_fill(color)
-            self._sketch.draw_rect(0, y + 15, percent / 100 * const.COLUMN_WIDTH, 2)
-
-            self._sketch.set_fill(color)
-            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
-            self._sketch.set_text_align('left', 'baseline')
-            self._sketch.draw_text(0, y + 12, name)
-
-            placements[prefix_name] = y + 6
-
-            self._sketch.set_rect_mode('corner')
-            self._sketch.set_fill(const.BG_COLOR_LAYER)
-            self._sketch.draw_rect(const.COLUMN_WIDTH - 40, y + 3, 40, 10)
-
-            self._sketch.set_text_align('right', 'baseline')
-            self._sketch.set_fill(color)
-            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
-            self._sketch.draw_text(const.COLUMN_WIDTH, y + 11, '%.1f%%' % percent)
-
-            if prefix_name in prior_placements:
-                self._sketch.clear_fill()
-                self._sketch.set_stroke(color + '70')
-                self._sketch.set_stroke_weight(1)
-                self._sketch.draw_line(
-                    -3,
-                    placements[prefix_name],
-                    -1 * const.COLUMN_PADDING + 3,
-                    prior_placements[prefix_name]
-                )
-
-            y += 18
-
-        y += 4
-
-        self._sketch.clear_fill()
-        self._sketch.set_stroke(const.INACTIVE_COLOR)
-        self._sketch.set_stroke_weight(1)
-        self._sketch.draw_line(0, y, const.COLUMN_WIDTH, y)
-
-        self._sketch.clear_stroke()
-        self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
-        self._sketch.set_text_align('left', 'top')
-        self._sketch.draw_text(0, y + 4, sub_title)
-
-        self._sketch.pop_style()
-        self._sketch.pop_transform()
-
-        if len(groups) < count:
-            num_missing = count - len(groups)
-            y += 18 * num_missing
-
-        return y + 30
-
-    def _get_color(self, selected: bool, hovering: bool) -> str:
-        if selected:
-            return const.ACTIVE_COLOR
-        elif hovering:
-            return const.HOVER_COLOR
-        else:
-            return const.INACTIVE_COLOR
 
 
 class GridViz(abstract.VizMovement):

@@ -13,8 +13,8 @@ COLUMN_WIDTH = 200
 COLUMN_PADDING = 50
 
 INACTIVE_COLOR = '#D0D0D0'
-ACTIVE_COLOR = '#A6CEE3'
-HOVER_COLOR = '#B2DF8A'
+ACTIVE_COLOR = '#B2DF8A'
+HOVER_COLOR = '#FFFFFF'
 
 REWRITES = {
     'people and society': 'people & society',
@@ -34,6 +34,9 @@ class VizColumn:
         self._x = x
         self._placements: typing.Dict[str, float] = {}
         self._results = results
+
+    def get_category(self) -> str:
+        return self._category
 
     def set_results(self, results: data_util.Result):
         self._results = results
@@ -73,15 +76,17 @@ class VizColumn:
         category_hovering = current_state.get_category_hovering() == self._category
         y = self._draw_header(y, category_selected, category_hovering)
 
+        self._placements.clear()
+
         y = self._draw_counted_groups(
             'tags',
             'Top Tags',
-            '% of category',
+            '% of query',
             y,
             self._results.get_tags(),
             current_state.get_tag_selected(),
             current_state.get_tag_hovering(),
-            lambda x: self._results.get_group_count(),
+            lambda x: self._results.get_total_count(),
             prior_placements,
             self._placements
         )
@@ -89,12 +94,12 @@ class VizColumn:
         y = self._draw_counted_groups(
             'keywords',
             'Top Keywords',
-            '% of category',
+            '% of query',
             y,
             self._results.get_keywords(),
             current_state.get_keyword_selected(),
             current_state.get_keyword_hovering(),
-            lambda x: self._results.get_group_count(),
+            lambda x: self._results.get_total_count(),
             prior_placements,
             self._placements
         )
@@ -105,7 +110,7 @@ class VizColumn:
         y = self._draw_counted_groups(
             'countries',
             'Countries',
-            '% of country',
+            '% of all in country',
             y,
             self._results.get_countries(),
             current_state.get_country_selected(),
@@ -149,11 +154,16 @@ class VizColumn:
 
         color = self._get_color(selected, hovering)
 
-        self._sketch.translate(COLUMN_WIDTH / 2, y + 80)
+        self._sketch.translate(COLUMN_WIDTH / 2, y + 70)
 
         group_count = self._results.get_group_count()
         total_count = self._results.get_total_count()
-        category_percent = (group_count + 0.0) / total_count * 100
+        
+        if total_count == 0:
+            category_percent = 0
+        else:
+            category_percent = (group_count + 0.0) / total_count * 100
+        
         end_angle = category_percent / 100 * 360
         self._sketch.set_arc_mode('radius')
         self._sketch.set_angle_mode('degrees')
@@ -167,22 +177,23 @@ class VizColumn:
         self._sketch.clear_stroke()
         self._sketch.set_fill(DEEP_BG_COLOR)
         self._sketch.set_rect_mode('radius')
-        self._sketch.draw_rect(0, -10, 85, 10)
+        self._sketch.draw_rect(0, -13, 85, 10)
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(color)
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
         self._sketch.set_text_align('center', 'baseline')
-        self._sketch.draw_text(0, -5, REWRITES.get(self._category, self._category))
+        self._sketch.draw_text(0, -8, REWRITES.get(self._category, self._category))
 
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
         self._sketch.set_text_align('center', 'top')
-        self._sketch.draw_text(0, 5, '%.1f%%' % category_percent)
+        self._sketch.draw_text(0, 2, '%.1f%%' % category_percent)
+        self._sketch.draw_text(0, 14, 'of query')
 
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
-        return 160
+        return 140
 
     def _interpret_groups(self, groups: data_util.COUNTED_GROUPS, total_getter,
         count: int) -> typing.Dict:
@@ -206,7 +217,7 @@ class VizColumn:
         self._sketch.push_transform()
         self._sketch.push_style()
 
-        self._sketch.set_stroke_weight(2)
+        self._sketch.set_stroke_weight(1)
 
         y += 14
         self._sketch.clear_fill()
@@ -272,6 +283,7 @@ class VizColumn:
 
         self._sketch.clear_fill()
         self._sketch.set_stroke(INACTIVE_COLOR)
+        self._sketch.set_stroke_weight(1)
         self._sketch.draw_line(0, y, COLUMN_WIDTH, y)
 
         self._sketch.clear_stroke()
@@ -304,9 +316,13 @@ class NewsVisualization:
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
-        self._accessor = data_util.LocalDataAccessor()
         self._sketch = sketching.Sketch2D(1225, 900, 'News Visualization')
-        self._sketch.set_fps(20)
+        self._sketch.set_fps(15)
+
+        data_layer = self._sketch.get_data_layer()
+        compressed_data = data_layer.get_text('serialized.txt')
+        compressed_lines = compressed_data.split('\n')
+        self._accessor = data_util.CompressedDataAccessor(compressed_lines)
 
         self._columns = [
             self._build_column('people and society', 0),
@@ -316,7 +332,10 @@ class NewsVisualization:
             self._build_column('environment and resources', 4)
         ]
 
-        self._sketch.on_step(lambda x: self._draw())
+        self._sketch.on_step(lambda sketch: self._draw())
+        self._sketch.get_mouse().on_button_press(
+            lambda button, mouse: self._respond_to_click()
+        )
 
     def show(self):
         self._sketch.show()
@@ -327,7 +346,7 @@ class NewsVisualization:
 
         if self._drawn:
             prior_state_str = self._state.serialize()
-            
+
             self._state.clear_category_hovering()
             self._state.clear_country_hovering()
             self._state.clear_keyword_hovering()
@@ -353,6 +372,30 @@ class NewsVisualization:
 
         self._sketch.pop_style()
         self._sketch.pop_transform()
+
+    def _respond_to_click(self):
+        category = self._state.get_category_hovering()
+        if category is not None:
+            self._state.set_category_selected(category)
+
+        country = self._state.get_country_hovering()
+        if country is not None:
+            self._state.set_country_selected(country)
+
+        keyword = self._state.get_keyword_hovering()
+        if keyword is not None:
+            self._state.set_keyword_selected(keyword)
+
+        tag = self._state.get_tag_hovering()
+        if tag is not None:
+            self._state.set_tag_selected(tag)
+
+        for column in self._columns:
+            new_results = self._get_results_for_category(column.get_category())
+            column.set_results(new_results)
+
+        self._changed = True
+        self._drawn = False
 
     def _build_column(self, category: str, i: int) -> VizColumn:
         results = self._get_results_for_category(category)

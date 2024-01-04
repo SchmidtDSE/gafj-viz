@@ -1,3 +1,4 @@
+import itertools
 import os
 import sqlite3
 import typing
@@ -67,6 +68,24 @@ class CountedGroup:
 COUNTED_GROUPS = typing.List[CountedGroup]
 
 
+class Country:
+
+    def __init__(self, name: str):
+        self._name = name
+
+    def get_name(self) -> str:
+        return self._name
+
+
+class Category:
+
+    def __init__(self, name: str):
+        self._name = name
+
+    def get_name(self) -> str:
+        return self._name
+
+
 class Result:
 
     def __init__(self, total_count: int, group_count: int, categories: COUNTED_GROUPS,
@@ -102,165 +121,281 @@ class Result:
         return self._keywords
 
 
+class Tag:
+
+    def __init__(self, name: str, category: Category):
+        self._name = name
+        self._category = category
+
+    def get_name(self) -> str:
+        return self._name
+
+    def get_category(self) -> Category:
+        return self._category
+
+
+class Keyword:
+
+    def __init__(self, name: str, category: Category, tag: Tag):
+        self._name = name
+        self._category = category
+        self._tag = tag
+
+    def get_name(self) -> str:
+        return self._name
+
+    def get_category(self) -> Category:
+        return self._category
+
+    def get_tag(self) -> Tag:
+        return self._tag
+
+
+class ArticleSet:
+
+    def __init__(self, country: Country, categories: typing.List[Category], tags: typing.List[Tag],
+        keywords: typing.List[Keyword], count: int):
+        self._country = country
+        self._categories = categories
+        self._tags = tags
+        self._keywords = keywords
+        self._count = count
+    
+    def get_country(self) -> Country:
+        return self._country
+    
+    def get_categories(self) -> typing.List[Category]:
+        return self._categories
+
+    def has_category(self, name: str) -> bool:
+        return self._check_for(name, self._categories)
+    
+    def get_tags(self) -> typing.List[Tag]:
+        return self._tags
+
+    def has_tag(self, name: str) -> bool:
+        return self._check_for(name, self._tags)
+    
+    def get_keywords(self) -> typing.List[Keyword]:
+        return self._keywords
+
+    def has_keyword(self, name: str) -> bool:
+        return self._check_for(name, self._keywords)
+    
+    def get_count(self) -> int:
+        return self._count
+
+    def _check_for(self, name: str, target) -> bool:
+        names = map(lambda x: x.get_name(), target)
+        matched = filter(lambda x: x == name, names)
+        count = sum(map(lambda x: 1, matched))
+        return count > 0
+
+
 class DataAccessor:
 
-    def execute_query(query: Query) -> Result:
+    def execute_query(self, query: Query) -> Result:
         raise RuntimeError('Use implementor.')
 
 
-class LocalDataAccessor(DataAccessor):
+class CompressedDataAccessor(DataAccessor):
+
+    def __init__(self, contents: typing.Iterable[str]):
+        self._countries: typing.Dict[int, Country] = {}
+        self._categories: typing.Dict[int, Category] = {}
+        self._tags: typing.Dict[int, Tag] = {}
+        self._keywords: typing.Dict[int, Keyword] = {}
+        self._articles: typing.List[ArticleSet] = []
+
+        strategies = {
+            'n': lambda x: self._load_country(x),
+            'c': lambda x: self._load_category(x),
+            't': lambda x: self._load_tag(x),
+            'k': lambda x: self._load_keyword(x),
+            'a': lambda x: self._load_article_set(x)
+        }
+
+        for line in contents:
+            command = line[0]
+            strategy = strategies[command]
+            strategy(line)
 
     def execute_query(self, query: Query) -> Result:
-        connection = sqlite3.connect(PATH_DB)
+        addressable = self._get_addressable(query)
+        total_count = self._get_total_count(addressable)
+        by_country = self._get_by_country(self._articles)
 
-        total_count = self._get_total_no_query(connection)
+        category = query.get_category()
+        group_count = self._get_total_count_in_category(addressable, category)
+        countries = self._get_by_country_in_category(addressable, category)
+        categories = self._get_categories_in_category(addressable, category)
+        tags = self._get_tags_in_category(addressable, category)
+        keywords = self._get_keywords_in_category(addressable, category)
 
-        group_count_raw = self._execute_sql(connection, query, 'total.sql', True)
-        group_count = int(group_count_raw[0][0])
+        return Result(total_count, group_count, categories, countries, by_country, tags, keywords)
 
-        def execute_inner(filename: str, include_category: bool) -> COUNTED_GROUPS:
-            return self._execute_sql_for_counted_groups(
-                connection,
-                query,
-                filename,
-                include_category
-            )
-
-        categories = execute_inner('categories.sql', True)
-        countries = execute_inner('countries.sql', True)
-        country_totals = execute_inner('countries.sql', False)
-        tags = execute_inner('tags.sql', True)
-        keywords = execute_inner('keywords.sql', True)
-
-        connection.close()
-
-        return Result(
-            total_count,
-            group_count,
-            categories,
-            countries,
-            country_totals,
-            tags,
-            keywords
-        )
-
-    def _create_where_clause(self, query: Query, include_category: bool) -> str:
-        clauses = []
-
-        if include_category:
-            clauses.append('category = ?')
+    def _get_addressable(self, query: Query) -> typing.List[ArticleSet]:
+        addressable_group = self._articles
 
         if query.has_country():
-            clauses.append('country = ?')
+            target_country = query.get_country()
+            addressable_group = filter(
+                lambda article: article.get_country().get_name() == target_country,
+                addressable_group
+            )
+
+        if query.has_pre_category():
+            target_category = query.get_pre_category()
+            addressable_group = filter(
+                lambda article: article.has_category(target_category),
+                addressable_group
+            )
 
         if query.has_tag():
-            clauses.append('(token = ? AND tokenType = \'tag\')')
+            target_tag = query.get_tag()
+            addressable_group = filter(
+                lambda article: article.has_tag(target_tag),
+                addressable_group
+            )
 
         if query.has_keyword():
-            clauses.append('(token = ? AND tokenType = \'keyword\')')
+            target_keyword = query.get_keyword()
+            addressable_group = filter(
+                lambda article: article.has_keyword(target_keyword),
+                addressable_group
+            )
 
-        if len(clauses) == 0:
-            clauses.append('1 = 1')
+        return list(addressable_group)
 
-        return ' AND '.join(clauses)
+    def _get_total_count(self, target: typing.List[ArticleSet]) -> int:
+        return sum(map(lambda x: x.get_count(), target))
 
+    def _get_by_country(self, target: typing.Iterable[ArticleSet]) -> COUNTED_GROUPS:
+        ret_counts = {}
 
-    def _convert_query_to_params(self, sql_base: str, query: Query,
-        include_category: bool) -> typing.List:
+        for article in target:
+            country = article.get_country().get_name()
+            count = article.get_count()
+            ret_counts[country] = ret_counts.get(country, 0) + count
 
-        def get_clauses() -> typing.List:
-            clauses = []
+        return self._convert_dict_to_counted_groups(ret_counts)
 
-            if include_category:
-                clauses.append(query.get_category())
+    def _get_total_count_in_category(self, target: typing.List[ArticleSet],
+        category: str) -> typing.List[ArticleSet]:
+        in_category = filter(lambda x: x.has_category(category), target)
+        counts = map(lambda x: x.get_count(), in_category)
+        return sum(counts)
 
-            if query.has_country():
-                clauses.append(query.get_country())
+    def _get_by_country_in_category(self, target: typing.List[ArticleSet],
+        category: str) -> typing.List[ArticleSet]:
+        in_category = filter(lambda x: x.has_category(category), target)
+        return self._get_by_country(in_category)
 
-            if query.has_tag():
-                clauses.append(query.get_tag())
-
-            if query.has_keyword():
-                clauses.append(query.get_keyword())
-
-            return clauses
-
-        return get_clauses() * sql_base.count('WHERE_CLAUSE')
-
-    def _execute_sql(self, connection: sqlite3.Connection, query: Query,
-        filename: str, include_category: bool) -> typing.List[typing.Tuple]:
-        cursor = connection.cursor()
-
-        base_path = os.path.dirname(os.path.abspath(__file__))
-        full_path = os.path.join(base_path, 'sql', filename)
-        with open(full_path) as f:
-            sql_base = f.read()
-
-        sql = sql_base.replace(
-            'WHERE_CLAUSE',
-            'WHERE ' + self._create_where_clause(query, include_category)
+    def _get_categories_in_category(self, target: typing.List[ArticleSet],
+        category: str) -> typing.List[ArticleSet]:
+        in_category = filter(lambda x: x.has_category(category), target)
+        nested_categories = map(
+            lambda x: self._propogate_count(x.get_categories(), x.get_count()),
+            in_category
         )
+        categories = itertools.chain(*nested_categories)
+        return self._make_counts_from_flat(categories)
 
-        target_frame_sql = self._get_target_frame_sql(query)
-        sql = sql.replace('TARGET_FRAME', target_frame_sql)
-
-        result = cursor.execute(
-            sql,
-            self._convert_query_to_params(sql_base, query, include_category)
+    def _get_tags_in_category(self, target: typing.List[ArticleSet],
+        category: str) -> typing.List[ArticleSet]:
+        in_category = filter(lambda x: x.has_category(category), target)
+        nested_tags = map(
+            lambda x: self._propogate_count(x.get_tags(), x.get_count()),
+            in_category
         )
-        result_realized = list(result.fetchall())
+        tags = itertools.chain(*nested_tags)
+        tags_allowed = filter(
+            lambda x: x[0].get_category().get_name() == category,
+            tags
+        )
+        return self._make_counts_from_flat(tags_allowed)
 
-        cursor.close()
-        return result_realized
+    def _get_keywords_in_category(self, target: typing.List[ArticleSet],
+        category: str) -> typing.List[ArticleSet]:
+        in_category = filter(lambda x: x.has_category(category), target)
+        nested_keywords = map(
+            lambda x: self._propogate_count(x.get_keywords(), x.get_count()),
+            in_category
+        )
+        keywords = itertools.chain(*nested_keywords)
+        keywords_allowed = filter(
+            lambda x: x[0].get_tag().get_category().get_name() == category,
+            keywords
+        )
+        return self._make_counts_from_flat(keywords_allowed)
 
-    def _execute_sql_for_counted_groups(self, connection: sqlite3.Connection, query: Query,
-        filename: str, include_category: bool) -> COUNTED_GROUPS:
+    def _propogate_count(self, targets, count):
+        return map(lambda x: (x, count), targets)
+
+    def _make_counts_from_flat(self, obj_tuples):
+        str_tuples = map(lambda x: (x[0].get_name(), x[1]), obj_tuples)
         
-        def parse_counted_group(target: typing.Tuple) -> CountedGroup:
-            return CountedGroup(target[0], int(target[1]))
+        ret_counts = {}
+        for name, count in str_tuples:
+            ret_counts[name] = ret_counts.get(name, 0) + count
 
-        results_raw = self._execute_sql(connection, query, filename, include_category)
-        return [parse_counted_group(x) for x in results_raw]
+        return self._convert_dict_to_counted_groups(ret_counts)
 
-    def _get_total_no_query(self, connection: sqlite3.Connection) -> int:
-        cursor = connection.cursor()
-        cursor.execute('SELECT count(DISTINCT url) FROM output_frame')
-        total_count = int(cursor.fetchall()[0][0])
-        cursor.close()
+    def _convert_dict_to_counted_groups(self, target: typing.Dict[str, int]) -> COUNTED_GROUPS:
+        return [CountedGroup(x[0], x[1]) for x in target.items()]
 
-        return total_count
+    def _load_country(self, line: str):
+        pieces = line.split(' ')
+        new_id = int(pieces[1])
+        name = (' '.join(pieces[2:]))[1:-1]
+        self._countries[new_id] = Country(name)
 
-    def _get_target_frame_sql(self, query: Query) -> str:
-        pre_category = query.get_pre_category()
-        if pre_category is None:
-            return '(SELECT * FROM output_frame) target_frame'
+    def _load_category(self, line: str):
+        pieces = line.split(' ')
+        new_id = int(pieces[1])
+        name = (' '.join(pieces[2:]))[1:-1]
+        self._categories[new_id] = Category(name)
 
-        assert pre_category in CATEGORIES
-        return '''
-        (
-            SELECT
-                output_frame.url AS url,
-                output_frame.titleEnglish AS titleEnglish,
-                output_frame.language AS language,
-                output_frame.country AS country,
-                output_frame.tokenType AS tokenType,
-                output_frame.token AS token,
-                output_frame.category AS category
-            FROM
-                output_frame
-            INNER JOIN
-                (
-                    SELECT
-                        url
-                    FROM
-                        output_frame
-                    WHERE
-                        tokenType = 'category'
-                        AND token = '%s'
-                    GROUP BY
-                        url
-                ) output_frame_allowed
-            ON
-                output_frame_allowed.url = output_frame.url
-        ) target_frame
-        ''' % pre_category
+    def _load_tag(self, line: str):
+        pieces = line.split(' ')
+        category_id = int(pieces[1])
+        tag_id = int(pieces[2])
+
+        name = (' '.join(pieces[3:]))[1:-1]
+        category = self._categories[category_id]
+        
+        self._tags[tag_id] = Tag(name, category)
+
+    def _load_keyword(self, line: str):
+        pieces = line.split(' ')
+        category_id = int(pieces[1])
+        tag_id = int(pieces[2])
+        keyword_id = int(pieces[3])
+
+        name = (' '.join(pieces[4:]))[1:-1]
+        category = self._categories[category_id]
+        tag = self._tags[tag_id]
+        
+        self._keywords[keyword_id] = Keyword(name, category, tag)
+
+    def _load_article_set(self, line: str):
+        def load_id_list(target: str) -> typing.List[int]:
+            id_strs = target.split(';')
+            id_ints = map(lambda x: int(x), id_strs)
+            id_ints_allowed = filter(lambda x: x != -1, id_ints)
+            return list(id_ints_allowed)
+
+        pieces = line.split(' ')
+        country_id = int(pieces[1])
+        category_ids = load_id_list(pieces[2])
+        tag_ids = load_id_list(pieces[3])
+        keyword_ids = load_id_list(pieces[4])
+        count = int(pieces[5])
+
+        country = self._countries[country_id]
+        categories = [self._categories[x] for x in category_ids]
+        tags = [self._tags[x] for x in tag_ids]
+        keywords = [self._keywords[x] for x in keyword_ids]
+        
+        new_article_set = ArticleSet(country, categories, tags, keywords, count)
+        self._articles.append(new_article_set)

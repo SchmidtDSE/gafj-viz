@@ -1,3 +1,5 @@
+import typing
+
 import data_util
 
 
@@ -16,7 +18,7 @@ class VizState:
     def set_category_selected(self, new_val: str):
         self._category_selected = new_val
 
-    def get_category_selected(self) -> str:
+    def get_category_selected(self) -> typing.Optional[str]:
         return self._category_selected
 
     def clear_category_selected(self):
@@ -25,7 +27,7 @@ class VizState:
     def set_category_hovering(self, new_val: str):
         self._category_hovering = new_val
 
-    def get_category_hovering(self) -> str:
+    def get_category_hovering(self) -> typing.Optional[str]:
         return self._category_hovering
 
     def clear_category_hovering(self):
@@ -34,7 +36,7 @@ class VizState:
     def set_country_selected(self, new_val: str):
         self._country_selected = new_val
 
-    def get_country_selected(self) -> str:
+    def get_country_selected(self) -> typing.Optional[str]:
         return self._country_selected
 
     def clear_country_selected(self):
@@ -43,7 +45,7 @@ class VizState:
     def set_country_hovering(self, new_val: str):
         self._country_hovering = new_val
 
-    def get_country_hovering(self) -> str:
+    def get_country_hovering(self) -> typing.Optional[str]:
         return self._country_hovering
 
     def clear_country_hovering(self):
@@ -52,7 +54,7 @@ class VizState:
     def set_tag_selected(self, new_val: str):
         self._tag_selected = new_val
 
-    def get_tag_selected(self) -> str:
+    def get_tag_selected(self) -> typing.Optional[str]:
         return self._tag_selected
 
     def clear_tag_selected(self):
@@ -61,7 +63,7 @@ class VizState:
     def set_tag_hovering(self, new_val: str):
         self._tag_hovering = new_val
 
-    def get_tag_hovering(self) -> str:
+    def get_tag_hovering(self) -> typing.Optional[str]:
         return self._tag_hovering
 
     def clear_tag_hovering(self):
@@ -70,7 +72,7 @@ class VizState:
     def set_keyword_selected(self, new_val: str):
         self._keyword_selected = new_val
 
-    def get_keyword_selected(self) -> str:
+    def get_keyword_selected(self) -> typing.Optional[str]:
         return self._keyword_selected
 
     def clear_keyword_selected(self):
@@ -79,7 +81,7 @@ class VizState:
     def set_keyword_hovering(self, new_val: str):
         self._keyword_hovering = new_val
 
-    def get_keyword_hovering(self) -> str:
+    def get_keyword_hovering(self) -> typing.Optional[str]:
         return self._keyword_hovering
 
     def clear_keyword_hovering(self):

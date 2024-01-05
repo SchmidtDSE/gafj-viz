@@ -7,6 +7,7 @@ import state_util
 
 import const
 import grid_viz
+import overview_viz
 
 
 class NewsVisualization:
@@ -18,7 +19,7 @@ class NewsVisualization:
         self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT, 'News Visualization')
         self._sketch.set_fps(15)
 
-        self._movement = 'grid'
+        self._movement = 'overview'
         self._button_hover = 'none'
 
         data_layer = self._sketch.get_data_layer()
@@ -26,11 +27,12 @@ class NewsVisualization:
         compressed_lines = compressed_data.split('\n')
         self._accessor = data_util.CompressedDataAccessor(compressed_lines)
 
+        self._overview = overview_viz.OverviewViz(self._sketch, self._accessor, self._state)
         self._grid = grid_viz.GridViz(self._sketch, self._accessor, self._state)
 
         self._sketch.on_step(lambda sketch: self._draw())
         self._sketch.get_mouse().on_button_press(
-            lambda button: self._respond_to_click()
+            lambda button: self._respond_to_click(button)
         )
 
     def show(self):
@@ -39,6 +41,11 @@ class NewsVisualization:
     def _draw(self):
         self._sketch.push_transform()
         self._sketch.push_style()
+
+        target_viz = {
+            'overview': self._overview,
+            'grid': self._grid
+        }[self._movement]
 
         if self._drawn:
             prior_state_str = self._state.serialize()
@@ -51,14 +58,13 @@ class NewsVisualization:
             mouse = self._sketch.get_mouse()
             mouse_x = mouse.get_pointer_x()
             mouse_y = mouse.get_pointer_y()
-            
-            self._grid.check_hover(mouse_x, mouse_y)
+
+            target_viz.check_hover(mouse_x, mouse_y)
 
             in_footer = mouse_y > const.BUTTON_Y
+            button_hover_hold = self._button_hover
             self._button_hover = 'none'
             if in_footer:
-                button_hover_hold = self._button_hover
-
                 if mouse_x > const.BUTTON_X:
                     self._button_hover = 'button'
 
@@ -74,16 +80,16 @@ class NewsVisualization:
                 elif in_dropdown(200 + 185 * 3):
                     self._button_hover = 'keywords'
 
-                button_hover_change = button_hover_hold != self._button_hover
-                global_ui_change = button_hover_change
-            else:
-                global_ui_change = False
+            button_hover_change = button_hover_hold != self._button_hover
+            global_ui_change = button_hover_change
 
             self._changed = prior_state_str != self._state.serialize() or global_ui_change
 
         if self._changed:
             self._sketch.clear(const.BG_COLOR)
-            self._grid.draw()
+
+            target_viz.draw()
+
             self._draw_footer()
 
             self._drawn = True
@@ -92,7 +98,10 @@ class NewsVisualization:
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
-    def _respond_to_click(self):
+    def _respond_to_click(self, button):
+        if button.get_name() != 'leftMouse':
+            return
+
         category = self._state.get_category_hovering()
         if category is not None:
             self._state.set_category_selected(category)
@@ -109,7 +118,14 @@ class NewsVisualization:
         if tag is not None:
             self._state.set_tag_selected(tag)
 
+        if self._button_hover == 'button':
+            if self._movement == 'overview':
+                self._movement = 'grid'
+            elif self._movement == 'grid':
+                self._movement = 'overview'
+
         self._grid.refresh_data()
+        self._overview.refresh_data()
 
         self._changed = True
         self._drawn = False

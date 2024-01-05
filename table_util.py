@@ -16,6 +16,9 @@ class BarTable:
         self._label = label
         self._sub_title = sub_title
 
+    def set_sub_title(self, sub_title: str):
+        self._sub_title = sub_title
+
     def draw(self, x: int, y: int, groups: data_util.COUNTED_GROUPS,
         selected_name: typing.Optional[str], hovering_name: typing.Optional[str], total_getter,
         prior_placements: typing.Optional[typing.Dict[str, float]] = None,

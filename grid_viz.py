@@ -19,17 +19,20 @@ class GridColumn:
         self._placements: typing.Dict[str, float] = {}
         self._results = results
 
+        query_active = results.get_has_filters()
+        self._header_description = 'of query' if query_active else 'of all'
+
         self._tags_table = table_util.BarTable(
             self._sketch,
             'tags',
             'Top Tags',
-            '% of query'
+            '% of cateogry in query' if query_active else '% of category'
         )
         self._keywords_table = table_util.BarTable(
             self._sketch,
             'keywords',
             'Top Keywords',
-            '% of query'
+            '% of cateogry in query' if query_active else '% of category'
         )
         self._countries_table = table_util.BarTable(
             self._sketch,
@@ -42,6 +45,12 @@ class GridColumn:
         return self._category
 
     def set_results(self, results: data_util.Result):
+        query_active = results.get_has_filters()
+        sub_title = '% of category in query' if query_active else '% of category'
+        self._tags_table.set_sub_title(sub_title)
+        self._keywords_table.set_sub_title(sub_title)
+        self._header_description = 'of query' if query_active else 'of all'
+
         self._results = results
 
     def check_hover(self, current_state: state_util.VizState, mouse_x: float, mouse_y: float):
@@ -162,7 +171,7 @@ class GridColumn:
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
         self._sketch.set_text_align('center', 'top')
         self._sketch.draw_text(0, 2, '%.1f%%' % category_percent)
-        self._sketch.draw_text(0, 14, 'of query')
+        self._sketch.draw_text(0, 14, self._header_description)
 
         self._sketch.pop_style()
         self._sketch.pop_transform()

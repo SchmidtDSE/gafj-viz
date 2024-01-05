@@ -51,6 +51,15 @@ class Query:
     def get_keyword(self) -> OPT_STR:
         return self._keyword
 
+    def get_has_filters(self) -> bool:
+        all_flags = [
+            self.has_pre_category(),
+            self.has_country(),
+            self.has_tag(),
+            self.has_keyword()
+        ]
+        return sum(map(lambda x: 1 if x else 0, all_flags)) > 0
+
 
 class CountedGroup:
 
@@ -90,7 +99,7 @@ class Result:
 
     def __init__(self, total_count: int, group_count: int, categories: COUNTED_GROUPS,
         countries: COUNTED_GROUPS, country_totals: COUNTED_GROUPS, tags: COUNTED_GROUPS,
-        keywords: COUNTED_GROUPS):
+        keywords: COUNTED_GROUPS, has_filters: bool):
         self._total_count = total_count
         self._group_count = group_count
         self._categories = categories
@@ -98,6 +107,7 @@ class Result:
         self._country_totals = country_totals
         self._tags = tags
         self._keywords = keywords
+        self._has_filters = has_filters
 
     def get_total_count(self) -> int:
         return self._total_count
@@ -119,6 +129,9 @@ class Result:
 
     def get_keywords(self) -> COUNTED_GROUPS:
         return self._keywords
+
+    def get_has_filters(self) -> bool:
+        return self._has_filters
 
 
 class Tag:
@@ -232,7 +245,16 @@ class CompressedDataAccessor(DataAccessor):
         tags = self._get_tags_in_category(addressable, category)
         keywords = self._get_keywords_in_category(addressable, category)
 
-        return Result(total_count, group_count, categories, countries, by_country, tags, keywords)
+        return Result(
+            total_count,
+            group_count,
+            categories,
+            countries,
+            by_country,
+            tags,
+            keywords,
+            query.get_has_filters()
+        )
 
     def _get_addressable(self, query: Query) -> typing.List[ArticleSet]:
         addressable_group = self._articles

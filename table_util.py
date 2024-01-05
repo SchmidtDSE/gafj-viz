@@ -1,6 +1,6 @@
 import typing
 
-import sketching
+import sketchingpy
 
 import abstract
 import const
@@ -10,7 +10,7 @@ import state_util
 
 class BarTable:
 
-    def __init__(self, sketch: sketching.Sketch2D, prefix: str, label: str, sub_title: str):
+    def __init__(self, sketch: sketchingpy.Sketch2D, prefix: str, label: str, sub_title: str):
         self._sketch = sketch
         self._prefix = prefix
         self._label = label

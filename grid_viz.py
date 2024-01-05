@@ -1,6 +1,6 @@
 import typing
 
-import sketching
+import sketchingpy
 
 import abstract
 import const
@@ -11,7 +11,7 @@ import table_util
 
 class GridColumn:
 
-    def __init__(self, sketch: sketching.Sketch2D, category: str, x: int,
+    def __init__(self, sketch: sketchingpy.Sketch2D, category: str, x: int,
         results: data_util.Result):
         self._sketch = sketch
         self._category = category
@@ -172,7 +172,7 @@ class GridColumn:
 
 class GridViz(abstract.VizMovement):
 
-    def __init__(self, sketch: sketching.Sketch2D, accessor: data_util.DataAccessor,
+    def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):
         self._sketch = sketch
         self._accessor = accessor

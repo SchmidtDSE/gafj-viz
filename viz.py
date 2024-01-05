@@ -1,6 +1,6 @@
 import typing
 
-import sketching
+import sketchingpy
 
 import data_util
 import state_util
@@ -15,7 +15,7 @@ class NewsVisualization:
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
-        self._sketch = sketching.Sketch2D(1225, 900, 'News Visualization')
+        self._sketch = sketchingpy.Sketch2D(1225, 900, 'News Visualization')
         self._sketch.set_fps(15)
 
         data_layer = self._sketch.get_data_layer()
@@ -27,7 +27,7 @@ class NewsVisualization:
 
         self._sketch.on_step(lambda sketch: self._draw())
         self._sketch.get_mouse().on_button_press(
-            lambda button, mouse: self._respond_to_click()
+            lambda button: self._respond_to_click()
         )
 
     def show(self):

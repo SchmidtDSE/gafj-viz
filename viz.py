@@ -15,8 +15,11 @@ class NewsVisualization:
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
-        self._sketch = sketchingpy.Sketch2D(1225, 900, 'News Visualization')
+        self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT, 'News Visualization')
         self._sketch.set_fps(15)
+
+        self._movement = 'grid'
+        self._button_hover = 'none'
 
         data_layer = self._sketch.get_data_layer()
         compressed_data = data_layer.get_text('serialized.txt')
@@ -51,11 +54,38 @@ class NewsVisualization:
             
             self._grid.check_hover(mouse_x, mouse_y)
 
-            self._changed = prior_state_str != self._state.serialize()
+            in_footer = mouse_y > const.BUTTON_Y
+            self._button_hover = 'none'
+            if in_footer:
+                button_hover_hold = self._button_hover
+
+                if mouse_x > const.BUTTON_X:
+                    self._button_hover = 'button'
+
+                def in_dropdown(x: int) -> bool:
+                    return mouse_x > x and mouse_x < (x + 185)
+
+                if in_dropdown(200 + 185 * 0):
+                    self._button_hover = 'countries'
+                elif in_dropdown(200 + 185 * 1):
+                    self._button_hover = 'categories'
+                elif in_dropdown(200 + 185 * 2):
+                    self._button_hover = 'tags'
+                elif in_dropdown(200 + 185 * 3):
+                    self._button_hover = 'keywords'
+
+                button_hover_change = button_hover_hold != self._button_hover
+                global_ui_change = button_hover_change
+            else:
+                global_ui_change = False
+
+            self._changed = prior_state_str != self._state.serialize() or global_ui_change
 
         if self._changed:
             self._sketch.clear(const.BG_COLOR)
             self._grid.draw()
+            self._draw_footer()
+
             self._drawn = True
             self._changed = False
 
@@ -84,8 +114,98 @@ class NewsVisualization:
         self._changed = True
         self._drawn = False
 
-    
+    def _draw_footer(self):
+        self._sketch.push_transform()
+        self._sketch.push_style()
 
+        text_y = const.SELECTOR_Y + const.SELECTOR_HEIGHT - 16
+
+        def draw_select(x: int, text: str, state: str):
+            hovering = state == self._button_hover
+
+            self._sketch.clear_fill()
+            self._sketch.set_stroke(const.ACTIVE_COLOR if hovering else const.INACTIVE_COLOR)
+            self._sketch.draw_rect(x, text_y - 18, 180, 24)
+
+            self._sketch.clear_stroke()
+            self._sketch.set_fill(const.ACTIVE_COLOR if hovering else const.INACTIVE_COLOR)
+            self._sketch.draw_text(x + 5, text_y, text)
+            self._sketch.draw_text(x + 180 - 12, text_y, '>')
+
+        def make_label(value: typing.Optional[str], default_val: str) -> str:
+            label = value if value else default_val
+            if len(label) > 15:
+                return label[:15] + '...'
+            else:
+                return label
+
+        # Draw selector
+        self._sketch.set_fill(const.DEEP_BG_COLOR)
+        self._sketch.set_rect_mode('corner')
+        self._sketch.draw_rect(
+            const.SELECTOR_X,
+            const.SELECTOR_Y,
+            const.SELECTOR_WIDTH,
+            const.SELECTOR_HEIGHT
+        )
+
+        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.set_text_align('left', 'baseline')
+        self._sketch.set_fill(const.INACTIVE_COLOR)
+
+        x = 10
+        self._sketch.draw_text(x, text_y, 'Showing articles from')
+        
+        x += 190
+        country_selected = self._state.get_country_selected()
+        country_label = make_label(country_selected, 'all countries')
+        draw_select(x,  country_label, 'countries')
+
+        x += 185
+        category_selected = self._state.get_category_selected()
+        category_label = make_label(category_selected, 'all categories')
+        draw_select(x, category_label, 'categories')
+
+        x += 185
+        tag_selected = self._state.get_tag_selected()
+        tag_label = make_label(tag_selected, 'all tags')
+        draw_select(x, tag_label, 'tags')
+
+        x += 185
+        keyword_selected = self._state.get_keyword_selected()
+        keyword_label = make_label(keyword_selected, 'all keywords')
+        draw_select(x, keyword_label, 'keywords')
+
+        # Draw button
+        button_hover = self._button_hover == 'button'
+        self._sketch.set_stroke(const.ACTIVE_COLOR if button_hover else const.INACTIVE_COLOR)
+        self._sketch.set_fill(const.DARK_BG_COLOR if button_hover else const.DEEP_BG_COLOR)
+        self._sketch.set_rect_mode('corner')
+        self._sketch.draw_rect(
+            const.BUTTON_X,
+            const.BUTTON_Y,
+            const.BUTTON_WIDTH - 1,
+            const.BUTTON_HEIGHT
+        )
+
+        self._sketch.clear_stroke()
+        self._sketch.set_fill(const.ACTIVE_COLOR if button_hover else const.INACTIVE_COLOR)
+        self._sketch.set_text_align('center', 'baseline')
+        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.draw_text(
+            const.BUTTON_X + const.BUTTON_WIDTH / 2 - 1,
+            text_y,
+            self._get_button_text()
+        )
+
+        self._sketch.pop_style()
+        self._sketch.pop_transform()
+
+    def _get_button_text(self) -> str:
+        return {
+            'overview': 'Go to Grid >',
+            'grid': 'Go to Overview >'
+        }[self._movement]
 
 
 def main():

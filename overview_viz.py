@@ -2,8 +2,10 @@ import abstract
 
 import sketchingpy
 
+import const
 import data_util
 import state_util
+import table_util
 
 
 class OverviewViz(abstract.VizMovement):
@@ -13,16 +15,134 @@ class OverviewViz(abstract.VizMovement):
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
+        self._placements = {}
+
+        query = self._state.get_query()
+        self._results = self._accessor.execute_query(query)
+
+        query_active = self._results.get_has_filters()
+
+        self._categories_table = table_util.BarTable(
+            self._sketch,
+            'categories',
+            'Categories',
+            '% of query' if query_active else '% of all'
+        )
+        self._tags_table = table_util.BarTable(
+            self._sketch,
+            'tags',
+            'Top Tags',
+            '% of query' if query_active else '% of all'
+        )
+        self._keywords_table = table_util.BarTable(
+            self._sketch,
+            'keywords',
+            'Top Keywords',
+            '% of query' if query_active else '% of all'
+        )
+        self._countries_table = table_util.BarTable(
+            self._sketch,
+            'countries',
+            'Countries',
+            '% of query' if query_active else '% of all'
+        )
 
     def check_hover(self, mouse_x: float, mouse_y: float):
-        pass
+        def check_hover_prefix(x: int, prefix: str):
+            if mouse_x < x or mouse_x > x + const.COLUMN_WIDTH:
+                return
+
+            for prefix_name, y in self._placements.items():
+                candidate_prefix, name = prefix_name.split('_')
+                if abs(y - mouse_y) < 10 and candidate_prefix == prefix:
+                    if prefix == 'tags':
+                        self._state.set_tag_hovering(name)
+                    elif prefix == 'keywords':
+                        self._state.set_keyword_hovering(name)
+                    elif prefix == 'countries':
+                        self._state.set_country_hovering(name)
+                    elif prefix == 'categories':
+                        self._state.set_category_hovering(name)
+
+        x = const.WIDTH - const.COLUMN_WIDTH - 10
+        check_hover_prefix(x, 'countries')
+        
+        x -= const.COLUMN_WIDTH + 10
+        check_hover_prefix(x, 'tags')
+
+        x -= const.COLUMN_WIDTH + 10
+        check_hover_prefix(x, 'keywords')
+
+        x -= const.COLUMN_WIDTH + 10
+        check_hover_prefix(x, 'categories')
 
     def draw(self):
         self._sketch.push_transform()
         self._sketch.push_style()
 
+        x = const.WIDTH - const.COLUMN_WIDTH - 10
+
+        country_totals = self._results.get_country_totals()
+        country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
+
+        self._countries_table.draw(
+            x,
+            10,
+            self._results.get_countries(),
+            self._state.get_country_selected(),
+            self._state.get_country_hovering(),
+            lambda x: self._results.get_total_count(),
+            {},
+            self._placements,
+            count=30
+        )
+
+        x -= const.COLUMN_WIDTH + 10
+        self._tags_table.draw(
+            x,
+            10,
+            self._results.get_tags(),
+            self._state.get_tag_selected(),
+            self._state.get_tag_hovering(),
+            lambda x: self._results.get_total_count(),
+            {},
+            self._placements
+        )
+
+        x -= const.COLUMN_WIDTH + 10
+        self._keywords_table.draw(
+            x,
+            10,
+            self._results.get_keywords(),
+            self._state.get_keyword_selected(),
+            self._state.get_keyword_hovering(),
+            lambda x: self._results.get_total_count(),
+            {},
+            self._placements
+        )
+
+        x -= const.COLUMN_WIDTH + 10
+        self._categories_table.draw(
+            x,
+            10,
+            self._results.get_categories(),
+            self._state.get_category_selected(),
+            self._state.get_category_hovering(),
+            lambda x: self._results.get_total_count(),
+            {},
+            self._placements
+        )
+
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
     def refresh_data(self):
-        pass
+        query = self._state.get_query()
+        self._results = self._accessor.execute_query(query)
+
+        query_active = self._results.get_has_filters()
+        sub_title = '% of query' if query_active else '% of all'
+        self._countries_table.set_sub_title(sub_title)
+        self._categories_table.set_sub_title(sub_title)
+        self._tags_table.set_sub_title(sub_title)
+        self._keywords_table.set_sub_title(sub_title)

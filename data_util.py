@@ -16,7 +16,7 @@ CATEGORIES = {
 
 class Query:
 
-    def __init__(self, category: str, pre_category: OPT_STR, country: OPT_STR, tag: OPT_STR,
+    def __init__(self, category: OPT_STR, pre_category: OPT_STR, country: OPT_STR, tag: OPT_STR,
         keyword: OPT_STR):
         self._category = category
         self._pre_category = pre_category
@@ -24,7 +24,10 @@ class Query:
         self._tag = tag
         self._keyword = keyword
 
-    def get_category(self) -> str:
+    def has_category(self) -> bool:
+        return self._category is not None
+
+    def get_category(self) -> OPT_STR:
         return self._category
 
     def has_pre_category(self) -> bool:
@@ -303,19 +306,34 @@ class CompressedDataAccessor(DataAccessor):
         return self._convert_dict_to_counted_groups(ret_counts)
 
     def _get_total_count_in_category(self, target: typing.List[ArticleSet],
-        category: str) -> typing.List[ArticleSet]:
-        in_category = filter(lambda x: x.has_category(category), target)
+        category: OPT_STR) -> typing.List[ArticleSet]:
+        
+        if category:
+            in_category = filter(lambda x: x.has_category(category), target)
+        else:
+            in_category = target
+        
         counts = map(lambda x: x.get_count(), in_category)
         return sum(counts)
 
     def _get_by_country_in_category(self, target: typing.List[ArticleSet],
-        category: str) -> typing.List[ArticleSet]:
-        in_category = filter(lambda x: x.has_category(category), target)
+        category: OPT_STR) -> typing.List[ArticleSet]:
+
+        if category:
+            in_category = filter(lambda x: x.has_category(category), target)
+        else:
+            in_category = target
+
         return self._get_by_country(in_category)
 
     def _get_categories_in_category(self, target: typing.List[ArticleSet],
-        category: str) -> typing.List[ArticleSet]:
-        in_category = filter(lambda x: x.has_category(category), target)
+        category: OPT_STR) -> typing.List[ArticleSet]:
+
+        if category:
+            in_category = filter(lambda x: x.has_category(category), target)
+        else:
+            in_category = target
+
         nested_categories = map(
             lambda x: self._propogate_count(x.get_categories(), x.get_count()),
             in_category
@@ -324,31 +342,51 @@ class CompressedDataAccessor(DataAccessor):
         return self._make_counts_from_flat(categories)
 
     def _get_tags_in_category(self, target: typing.List[ArticleSet],
-        category: str) -> typing.List[ArticleSet]:
-        in_category = filter(lambda x: x.has_category(category), target)
+        category: OPT_STR) -> typing.List[ArticleSet]:
+
+        if category:
+            in_category = filter(lambda x: x.has_category(category), target)
+        else:
+            in_category = target
+
         nested_tags = map(
             lambda x: self._propogate_count(x.get_tags(), x.get_count()),
             in_category
         )
         tags = itertools.chain(*nested_tags)
-        tags_allowed = filter(
-            lambda x: x[0].get_category().get_name() == category,
-            tags
-        )
+
+        if category:
+            tags_allowed = filter(
+                lambda x: x[0].get_category().get_name() == category,
+                tags
+            )
+        else:
+            tags_allowed = tags
+
         return self._make_counts_from_flat(tags_allowed)
 
     def _get_keywords_in_category(self, target: typing.List[ArticleSet],
-        category: str) -> typing.List[ArticleSet]:
-        in_category = filter(lambda x: x.has_category(category), target)
+        category: OPT_STR) -> typing.List[ArticleSet]:
+
+        if category:
+            in_category = filter(lambda x: x.has_category(category), target)
+        else:
+            in_category = target
+
         nested_keywords = map(
             lambda x: self._propogate_count(x.get_keywords(), x.get_count()),
             in_category
         )
         keywords = itertools.chain(*nested_keywords)
-        keywords_allowed = filter(
-            lambda x: x[0].get_tag().get_category().get_name() == category,
-            keywords
-        )
+
+        if category:
+            keywords_allowed = filter(
+                lambda x: x[0].get_tag().get_category().get_name() == category,
+                keywords
+            )
+        else:
+            keywords_allowed = keywords
+
         return self._make_counts_from_flat(keywords_allowed)
 
     def _propogate_count(self, targets, count):

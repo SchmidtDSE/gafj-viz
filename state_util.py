@@ -87,7 +87,7 @@ class VizState:
     def clear_keyword_hovering(self):
         self._keyword_hovering = None
 
-    def get_query(self, category: str) -> data_util.Query:
+    def get_query(self, category: typing.Optional[str] = None) -> data_util.Query:
         return data_util.Query(
             category,
             self._category_selected,

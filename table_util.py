@@ -1,3 +1,4 @@
+import functools
 import typing
 
 import sketchingpy
@@ -159,6 +160,17 @@ class BarTable:
                 'percent': percent
             }
 
+        def custom_compare(a, b):
+            if a['percent'] == b['percent']:
+                if a['name'] < b['name']:
+                    return -1
+                elif a['name'] > b['name']:
+                    return 1
+                else:
+                    return 0
+            else:
+                return b['percent'] - a['percent']
+
         results = [interpret_group(x) for x in groups]
-        results.sort(key=lambda x: x['percent'], reverse=True)
+        results.sort(key=functools.cmp_to_key(custom_compare))
         return results[:count]

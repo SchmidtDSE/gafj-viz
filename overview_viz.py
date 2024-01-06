@@ -44,7 +44,7 @@ class OverviewViz(abstract.VizMovement):
             self._sketch,
             'countries',
             'Countries',
-            '% of query' if query_active else '% of all'
+            '% of all in country'
         )
 
     def check_hover(self, mouse_x: float, mouse_y: float):
@@ -93,7 +93,7 @@ class OverviewViz(abstract.VizMovement):
             self._results.get_countries(),
             self._state.get_country_selected(),
             self._state.get_country_hovering(),
-            lambda x: self._results.get_total_count(),
+            lambda x: country_totals_indexed[x],
             {},
             self._placements,
             count=30
@@ -144,7 +144,6 @@ class OverviewViz(abstract.VizMovement):
 
         query_active = self._results.get_has_filters()
         sub_title = '% of query' if query_active else '% of all'
-        self._countries_table.set_sub_title(sub_title)
         self._categories_table.set_sub_title(sub_title)
         self._tags_table.set_sub_title(sub_title)
         self._keywords_table.set_sub_title(sub_title)

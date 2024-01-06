@@ -1,7 +1,9 @@
-import abstract
+import math
+import typing
 
 import sketchingpy
 
+import abstract
 import const
 import data_util
 import state_util
@@ -15,10 +17,11 @@ class SelectionMovement(abstract.VizMovement):
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
-        self._placements = {}
+        self._placements = []
 
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)
+        query_active = query.get_has_filters()
 
         self._tables = []
         for i in range(0, 5):
@@ -28,25 +31,36 @@ class SelectionMovement(abstract.VizMovement):
                 'Top %d %s' % ((i + 1) * 30, self._get_label()),
                 '% of query' if query_active else '% of all'
             ))
+            self._placements.append({})
 
     def check_hover(self, mouse_x: float, mouse_y: float):
-        raise RuntimeError('Use implementor.')
+        group_number = math.floor(mouse_x / (const.COLUMN_WIDTH + 10) - 5)
+        if group_number >= len(self._tables):
+            return
+
+        placements = self._placements[group_number]
+
+        self._set_hovering(self._state, None)
+        for prefix_name, y in placements.items():
+            if abs(y - mouse_y) < 10:
+                prefix, name = prefix_name.split('_')
+                self._set_hovering(self._state, name)
 
     def draw(self):
-        self._placements.clear()
-
         for i in range(0, 5):
             target_slice = self._get_results(self._results)[(i*30):((i+1)*30)]
+            placements = self._placements[i]
+            placements.clear()
             if len(target_slice) > 0:
                 self._tables[i].draw(
                     5 + i * (const.COLUMN_WIDTH + 10),
-                    70,
+                    90,
                     target_slice,
                     self._get_selected(self._state),
                     self._get_hovering(self._state),
-                    lambda x: self._results.get_total_count(),
+                    lambda x: self._get_total(self._results, x),
                     {},
-                    self._placements,
+                    placements,
                     count=30
                 )
 
@@ -62,11 +76,47 @@ class SelectionMovement(abstract.VizMovement):
     def _get_results(self, results: data_util.Result):
         return self._get_results_raw(results)
 
-    def _get_results_raw(self, results: data_util.Result):
+    def _get_prefix(self) -> str:
+        return 'default'
+
+    def _get_label(self) -> str:
         raise RuntimeError('Use implementor.')
+
+    def _get_results_raw(self, results: data_util.Result) -> typing.List:
+        raise RuntimeError('Use implementor.')
+    
+    def _get_selected(self, state: state_util.VizState) -> typing.Optional[str]:
+        raise RuntimeError('Use implementor.')
+    
+    def _get_hovering(self, state: state_util.VizState) -> typing.Optional[str]:
+        raise RuntimeError('Use implementor.')
+
+    def _get_total(self, results: data_util.Result, name: str) -> int:
+        raise RuntimeError('Use implementor.')
+
+
+class CountrySelectionMovement(SelectionMovement):
+
+    def _get_label(self) -> str:
+        return 'Countries'
+
+    def _get_results_raw(self, results: data_util.Result):
+        return results.get_countries()
     
     def _get_selected(self, state: state_util.VizState):
-        raise RuntimeError('Use implementor.')
+        return state.get_country_selected()
     
     def _get_hovering(self, state: state_util.VizState):
-        raise RuntimeError('Use implementor.')
+        return state.get_country_hovering()
+
+    def _set_hovering(self, state: state_util.VizState, name: str):
+        return state.set_country_hovering(name)
+
+    def _get_total(self, results: data_util.Result, name: str) -> int:
+        country_totals = results.get_country_totals()
+        matching = filter(lambda x: x.get_name() == name, country_totals)
+        matching_first = next(matching, None)
+        if matching_first is None:
+            return 0
+        else:
+            return matching_first.get_count()

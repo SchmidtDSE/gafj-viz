@@ -8,6 +8,7 @@ import state_util
 import const
 import grid_viz
 import overview_viz
+import selection_viz
 
 
 class NewsVisualization:
@@ -21,6 +22,7 @@ class NewsVisualization:
 
         self._movement = 'overview'
         self._button_hover = 'none'
+        self._last_major_movement = 'overview'
 
         data_layer = self._sketch.get_data_layer()
         compressed_data = data_layer.get_text('serialized.txt')
@@ -29,6 +31,9 @@ class NewsVisualization:
 
         self._overview = overview_viz.OverviewViz(self._sketch, self._accessor, self._state)
         self._grid = grid_viz.GridViz(self._sketch, self._accessor, self._state)
+        self._selectors = {
+            'country': selection_viz.CountrySelectionMovement(self._sketch, self._accessor, self._state)
+        }
 
         self._sketch.on_step(lambda sketch: self._draw())
         self._sketch.get_mouse().on_button_press(
@@ -44,7 +49,8 @@ class NewsVisualization:
 
         target_viz = {
             'overview': self._overview,
-            'grid': self._grid
+            'grid': self._grid,
+            'country': self._selectors['country']
         }[self._movement]
 
         if self._drawn:
@@ -121,8 +127,14 @@ class NewsVisualization:
         if self._button_hover == 'button':
             if self._movement == 'overview':
                 self._movement = 'grid'
+                self._last_major_movement = 'grid'
             elif self._movement == 'grid':
                 self._movement = 'overview'
+                self._last_major_movement = 'overview'
+            else:
+                self._movement = self._last_major_movement
+        elif self._button_hover == 'countries':
+            self._movement = 'country'
 
         self._grid.refresh_data()
         self._overview.refresh_data()
@@ -221,7 +233,7 @@ class NewsVisualization:
         return {
             'overview': 'Go to Grid >',
             'grid': 'Go to Overview >'
-        }[self._movement]
+        }.get(self._movement, 'Done >')
 
 
 def main():

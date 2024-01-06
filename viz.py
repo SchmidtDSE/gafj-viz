@@ -140,11 +140,11 @@ class NewsVisualization:
             hovering = state == self._button_hover
 
             self._sketch.clear_fill()
-            self._sketch.set_stroke(const.ACTIVE_COLOR if hovering else const.INACTIVE_COLOR)
+            self._sketch.set_stroke(const.HOVER_COLOR if hovering else const.INACTIVE_COLOR)
             self._sketch.draw_rect(x, text_y - 18, 180, 24)
 
             self._sketch.clear_stroke()
-            self._sketch.set_fill(const.ACTIVE_COLOR if hovering else const.INACTIVE_COLOR)
+            self._sketch.set_fill(const.HOVER_COLOR if hovering else const.INACTIVE_COLOR)
             self._sketch.draw_text(x + 5, text_y, text)
             self._sketch.draw_text(x + 180 - 12, text_y, '>')
 
@@ -194,7 +194,7 @@ class NewsVisualization:
 
         # Draw button
         button_hover = self._button_hover == 'button'
-        self._sketch.set_stroke(const.ACTIVE_COLOR if button_hover else const.INACTIVE_COLOR)
+        self._sketch.set_stroke(const.HOVER_COLOR if button_hover else const.INACTIVE_COLOR)
         self._sketch.set_fill(const.DARK_BG_COLOR if button_hover else const.DEEP_BG_COLOR)
         self._sketch.set_rect_mode('corner')
         self._sketch.draw_rect(
@@ -205,7 +205,7 @@ class NewsVisualization:
         )
 
         self._sketch.clear_stroke()
-        self._sketch.set_fill(const.ACTIVE_COLOR if button_hover else const.INACTIVE_COLOR)
+        self._sketch.set_fill(const.HOVER_COLOR if button_hover else const.INACTIVE_COLOR)
         self._sketch.set_text_align('center', 'baseline')
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
         self._sketch.draw_text(

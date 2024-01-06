@@ -85,6 +85,8 @@ class OverviewViz(abstract.VizMovement):
         country_totals = self._results.get_country_totals()
         country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
 
+        self._placements.clear()
+
         self._countries_table.draw(
             x,
             10,

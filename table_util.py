@@ -24,7 +24,10 @@ class BarTable:
         selected_name: typing.Optional[str], hovering_name: typing.Optional[str], total_getter,
         prior_placements: typing.Optional[typing.Dict[str, float]] = None,
         placements: typing.Optional[typing.Dict[str, float]] = None,
-        count: int = 10) -> float:
+        count: int = 10, name_overrides: typing.Optional[typing.Dict[str, str]] = None) -> float:
+
+        if name_overrides is None:
+            name_overrides = {}
 
         prefix = self._prefix
         label = self._label
@@ -77,7 +80,7 @@ class BarTable:
             self._sketch.set_fill(color)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
             self._sketch.set_text_align('left', 'baseline')
-            self._sketch.draw_text(0, y + 12, name)
+            self._sketch.draw_text(0, y + 12, name_overrides.get(name, name))
 
             placements[prefix_name] = y + 6
 

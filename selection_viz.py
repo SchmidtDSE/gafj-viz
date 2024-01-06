@@ -29,7 +29,7 @@ class SelectionMovement(abstract.VizMovement):
                 self._sketch,
                 self._get_prefix(),
                 'Top %d %s' % ((i + 1) * 30, self._get_label()),
-                '% of query' if query_active else '% of all'
+                self._get_sub_text(query_active)
             ))
             self._placements.append({})
 
@@ -61,7 +61,8 @@ class SelectionMovement(abstract.VizMovement):
                     lambda x: self._get_total(self._results, x),
                     {},
                     placements,
-                    count=30
+                    count=30,
+                    name_overrides={'All': 'All ' + self._get_label()}
                 )
 
     def refresh_data(self):
@@ -69,15 +70,18 @@ class SelectionMovement(abstract.VizMovement):
         self._results = self._accessor.execute_query(query)
 
         query_active = self._results.get_has_filters()
-        sub_title = '% of query' if query_active else '% of all'
+        sub_title = self._get_sub_text(query_active)
         for table in self._tables:
             table.set_sub_title(sub_title)
 
     def _get_results(self, results: data_util.Result):
-        return self._get_results_raw(results)
+        return [data_util.CountedGroup('All', 1)] + self._get_results_raw(results)
 
     def _get_prefix(self) -> str:
         return 'default'
+
+    def _get_sub_text(self, query_active: bool) -> str:
+        return '% of query' if query_active else '% of all'
 
     def _get_label(self) -> str:
         raise RuntimeError('Use implementor.')
@@ -86,12 +90,22 @@ class SelectionMovement(abstract.VizMovement):
         raise RuntimeError('Use implementor.')
     
     def _get_selected(self, state: state_util.VizState) -> typing.Optional[str]:
-        raise RuntimeError('Use implementor.')
+        result = self._get_selected_inner(state)
+        if result is None:
+            return 'All'
+        else:
+            return result
     
     def _get_hovering(self, state: state_util.VizState) -> typing.Optional[str]:
         raise RuntimeError('Use implementor.')
 
     def _get_total(self, results: data_util.Result, name: str) -> int:
+        if name == 'All':
+            return 1
+        else:
+            return self._get_total_inner(results, name)
+
+    def _get_total_inner(self, results: data_util.Result, name: str) -> int:
         raise RuntimeError('Use implementor.')
 
 
@@ -103,7 +117,7 @@ class CountrySelectionMovement(SelectionMovement):
     def _get_results_raw(self, results: data_util.Result):
         return results.get_countries()
     
-    def _get_selected(self, state: state_util.VizState):
+    def _get_selected_inner(self, state: state_util.VizState):
         return state.get_country_selected()
     
     def _get_hovering(self, state: state_util.VizState):
@@ -112,7 +126,7 @@ class CountrySelectionMovement(SelectionMovement):
     def _set_hovering(self, state: state_util.VizState, name: str):
         return state.set_country_hovering(name)
 
-    def _get_total(self, results: data_util.Result, name: str) -> int:
+    def _get_total_inner(self, results: data_util.Result, name: str) -> int:
         country_totals = results.get_country_totals()
         matching = filter(lambda x: x.get_name() == name, country_totals)
         matching_first = next(matching, None)
@@ -120,3 +134,6 @@ class CountrySelectionMovement(SelectionMovement):
             return 0
         else:
             return matching_first.get_count()
+
+    def _get_sub_text(self, query_active: bool) -> str:
+        return '% of all in country'

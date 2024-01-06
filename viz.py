@@ -109,19 +109,27 @@ class NewsVisualization:
             return
 
         category = self._state.get_category_hovering()
-        if category is not None:
+        if category == 'All':
+            self._state.set_category_selected(None)
+        elif category is not None:
             self._state.set_category_selected(category)
 
         country = self._state.get_country_hovering()
-        if country is not None:
+        if country == 'All':
+            self._state.set_country_selected(None)
+        elif country is not None:
             self._state.set_country_selected(country)
 
         keyword = self._state.get_keyword_hovering()
-        if keyword is not None:
+        if keyword == 'All':
+            self._state.set_keyword_selected(None)
+        elif keyword is not None:
             self._state.set_keyword_selected(keyword)
 
         tag = self._state.get_tag_hovering()
-        if tag is not None:
+        if tag == 'All':
+            self._state.set_tag_selected(None)
+        elif tag is not None:
             self._state.set_tag_selected(tag)
 
         if self._button_hover == 'button':
@@ -134,10 +142,16 @@ class NewsVisualization:
             else:
                 self._movement = self._last_major_movement
         elif self._button_hover == 'countries':
+            self._state.set_country_selected(None)
             self._movement = 'country'
+        elif self._movement not in ['grid', 'overview']:
+            self._movement = self._last_major_movement
 
         self._grid.refresh_data()
         self._overview.refresh_data()
+
+        for selector in self._selectors.values():
+            selector.refresh_data()
 
         self._changed = True
         self._drawn = False

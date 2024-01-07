@@ -37,7 +37,7 @@ class GridColumn:
         self._countries_table = table_util.BarTable(
             self._sketch,
             'countries',
-            'Countries',
+            'Top Countries',
             '% of all in country'
         )
 

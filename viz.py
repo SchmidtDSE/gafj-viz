@@ -96,17 +96,19 @@ class NewsVisualization:
             if in_footer:
                 if mouse_x > const.BUTTON_X:
                     self._button_hover = 'button'
+                elif mouse_x > const.DOWNLOAD_X:
+                    self._button_hover = 'download'
 
                 def in_dropdown(x: int) -> bool:
                     return mouse_x > x and mouse_x < (x + 185)
 
-                if in_dropdown(200 + 185 * 0):
+                if in_dropdown(73 + 185 * 0):
                     self._button_hover = 'countries'
-                elif in_dropdown(200 + 185 * 1):
+                elif in_dropdown(73 + 185 * 1):
                     self._button_hover = 'categories'
-                elif in_dropdown(200 + 185 * 2):
+                elif in_dropdown(73 + 185 * 2):
                     self._button_hover = 'tags'
-                elif in_dropdown(200 + 185 * 3):
+                elif in_dropdown(73 + 185 * 3):
                     self._button_hover = 'keywords'
 
             button_hover_change = button_hover_hold != self._button_hover
@@ -227,10 +229,10 @@ class NewsVisualization:
         self._sketch.set_text_align('left', 'baseline')
         self._sketch.set_fill(const.INACTIVE_COLOR)
 
-        x = 10
-        self._sketch.draw_text(x, text_y, 'Showing articles from')
+        x = 3
+        self._sketch.draw_text(x, text_y, 'Filters:')
         
-        x += 190
+        x += 70
         country_selected = self._state.get_country_selected()
         country_label = make_label(country_selected, 'all countries')
         draw_select(x,  country_label, 'countries')
@@ -250,7 +252,7 @@ class NewsVisualization:
         keyword_label = make_label(keyword_selected, 'all keywords')
         draw_select(x, keyword_label, 'keywords')
 
-        # Draw button
+        # Draw viz button
         button_hover = self._button_hover == 'button'
         self._sketch.set_stroke(const.HOVER_COLOR if button_hover else const.INACTIVE_COLOR)
         self._sketch.set_fill(const.DARK_BG_COLOR if button_hover else const.DEEP_BG_COLOR)
@@ -270,6 +272,28 @@ class NewsVisualization:
             const.BUTTON_X + const.BUTTON_WIDTH / 2 - 1,
             text_y,
             self._get_button_text()
+        )
+
+        # Draw download button
+        download_hover = self._button_hover == 'download'
+        self._sketch.set_stroke(const.HOVER_COLOR if download_hover else const.INACTIVE_COLOR)
+        self._sketch.set_fill(const.DARK_BG_COLOR if download_hover else const.DEEP_BG_COLOR)
+        self._sketch.set_rect_mode('corner')
+        self._sketch.draw_rect(
+            const.DOWNLOAD_X,
+            const.DOWNLOAD_Y,
+            const.BUTTON_WIDTH - 1,
+            const.BUTTON_HEIGHT
+        )
+
+        self._sketch.clear_stroke()
+        self._sketch.set_fill(const.HOVER_COLOR if download_hover else const.INACTIVE_COLOR)
+        self._sketch.set_text_align('center', 'baseline')
+        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.draw_text(
+            const.DOWNLOAD_X + const.BUTTON_WIDTH / 2 - 1,
+            text_y,
+            'Get Articles >'
         )
 
         self._sketch.pop_style()

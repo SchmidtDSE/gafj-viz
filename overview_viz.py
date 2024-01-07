@@ -154,6 +154,16 @@ class OverviewViz(abstract.VizMovement):
 
         self._map_component.draw()
 
+        self._sketch.clear_stroke()
+        self._sketch.set_fill(const.INACTIVE_COLOR)
+        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
+        self._sketch.set_text_align('left', 'center')
+        self._sketch.draw_text(
+            const.WIDTH - const.COLUMN_WIDTH - 30,
+            countries_y_end + 100,
+            'Click to add filter. Click again\nto remove filter.'
+        )
+
         self._sketch.pop_style()
         self._sketch.pop_transform()
 

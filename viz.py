@@ -32,7 +32,26 @@ class NewsVisualization:
         self._overview = overview_viz.OverviewViz(self._sketch, self._accessor, self._state)
         self._grid = grid_viz.GridViz(self._sketch, self._accessor, self._state)
         self._selectors = {
-            'country': selection_viz.CountrySelectionMovement(self._sketch, self._accessor, self._state)
+            'country': selection_viz.CountrySelectionMovement(
+                self._sketch,
+                self._accessor,
+                self._state
+            ),
+            'category': selection_viz.CategorySelectionMovement(
+                self._sketch,
+                self._accessor,
+                self._state
+            ),
+            'tag': selection_viz.TagSelectionMovement(
+                self._sketch,
+                self._accessor,
+                self._state
+            ),
+            'keyword': selection_viz.KeywordSelectionMovement(
+                self._sketch,
+                self._accessor,
+                self._state
+            ),
         }
 
         self._sketch.on_step(lambda sketch: self._draw())
@@ -47,11 +66,15 @@ class NewsVisualization:
         self._sketch.push_transform()
         self._sketch.push_style()
 
-        target_viz = {
+        movements = {
             'overview': self._overview,
             'grid': self._grid,
-            'country': self._selectors['country']
-        }[self._movement]
+        }
+
+        for name in self._selectors:
+            movements[name] = self._selectors[name]
+
+        target_viz = movements[self._movement]
 
         if self._drawn:
             prior_state_str = self._state.serialize()
@@ -144,6 +167,15 @@ class NewsVisualization:
         elif self._button_hover == 'countries':
             self._state.set_country_selected(None)
             self._movement = 'country'
+        elif self._button_hover == 'categories':
+            self._state.set_category_selected(None)
+            self._movement = 'category'
+        elif self._button_hover == 'tags':
+            self._state.set_tag_selected(None)
+            self._movement = 'tag'
+        elif self._button_hover == 'keywords':
+            self._state.set_keyword_selected(None)
+            self._movement = 'keyword'
         elif self._movement not in ['grid', 'overview']:
             self._movement = self._last_major_movement
 

@@ -77,13 +77,15 @@ class OverviewViz(abstract.VizMovement):
         check_hover_prefix(x, 'countries')
         
         x -= const.COLUMN_WIDTH + 10
-        check_hover_prefix(x, 'tags')
-
-        x -= const.COLUMN_WIDTH + 10
         check_hover_prefix(x, 'keywords')
 
         x -= const.COLUMN_WIDTH + 10
+        check_hover_prefix(x, 'tags')
+
+        x -= const.COLUMN_WIDTH + 10
         check_hover_prefix(x, 'categories')
+
+        self._map_component.check_hover(mouse_x, mouse_y)
 
     def draw(self):
         self._sketch.push_transform()
@@ -158,3 +160,5 @@ class OverviewViz(abstract.VizMovement):
         self._categories_table.set_sub_title(sub_title)
         self._tags_table.set_sub_title(sub_title)
         self._keywords_table.set_sub_title(sub_title)
+
+        self._map_component.refresh_data()

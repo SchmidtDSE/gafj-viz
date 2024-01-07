@@ -1,3 +1,5 @@
+import math
+
 import sketchingpy
 
 import abstract
@@ -27,10 +29,38 @@ class MapViz(abstract.VizMovement):
         geo_polygons = sketch.parse_geojson(source)
         self._geo_shapes = [x.to_shape() for x in geo_polygons]
 
+        query = self._state.get_query()
+        self._results = self._accessor.execute_query(query)
+
+        centerpoints_raw = sketch.get_data_layer().get_csv('centerpoints.csv')
+        geopoints_flat = map(
+            lambda x: (
+                x['name'],
+                self._sketch.convert_geo_to_pixel(float(x['longitude']), float(x['latitude']))
+            ),
+            centerpoints_raw
+        )
+        self._geopoints_dict = dict(geopoints_flat)
+
         self._sketch.pop_map()
 
     def check_hover(self, mouse_x: float, mouse_y: float):
-        pass
+        countries = self._results.get_countries()
+        country_names = map(lambda x: x.get_name(), countries)
+
+        def get_dist(name: str) -> float:
+            point = self._geopoints_dict[name]
+            dist_x = mouse_x - point[0]
+            dist_y = mouse_y - point[1]
+            dist = math.sqrt(dist_x**2 + dist_y**2)
+            return dist
+
+        countries_with_dist = map(lambda x: (x, get_dist(x)), country_names)
+        countries_sorted = sorted(countries_with_dist, key=lambda x: x[1])
+        closest_name, closest_dist = countries_sorted[0]
+
+        if closest_dist <= 20:
+            self._state.set_country_hovering(closest_name)
 
     def draw(self):
         self._sketch.push_transform()
@@ -43,8 +73,45 @@ class MapViz(abstract.VizMovement):
         for shape in self._geo_shapes:
             self._sketch.draw_shape(shape)
 
+        self._sketch.set_ellipse_mode('radius')
+
+        country_totals = self._results.get_country_totals()
+        country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
+
+        countries = self._results.get_countries()
+        countries_indexed = dict(map(lambda x: (x.get_name(), x), countries))
+
+        for name, loc in self._geopoints_dict.items():
+            if name in countries_indexed:
+                selected = self._state.get_country_selected() == name
+                hovering = self._state.get_country_hovering() == name
+
+                color = const.INACTIVE_COLOR_MAP
+                if selected:
+                    color = const.ACTIVE_COLOR_MAP
+                elif hovering:
+                    color = const.HOVER_COLOR_MAP
+
+                if hovering:
+                    self._sketch.set_stroke(const.HOVER_COLOR)
+                    self._sketch.set_stroke_weight(1)
+                else:
+                    self._sketch.clear_stroke()
+
+                self._sketch.set_fill(color)
+
+                count = countries_indexed[name].get_count()
+                total = country_totals_indexed[name]
+                percent = (count + 0.0) / total * 100
+                radius = math.sqrt(400.0 / 100 * percent)
+                if radius < 1:
+                    radius = 1
+
+                self._sketch.draw_ellipse(loc[0], loc[1], radius, radius)
+
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
     def refresh_data(self):
-        pass
+        query = self._state.get_query()
+        self._results = self._accessor.execute_query(query)

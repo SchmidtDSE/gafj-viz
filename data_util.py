@@ -63,6 +63,17 @@ class Query:
         ]
         return sum(map(lambda x: 1 if x else 0, all_flags)) > 0
 
+    def get_id_str(self) -> str:
+        components = [
+            self._category,
+            self._pre_category,
+            self._country,
+            self._tag,
+            self._keyword
+        ]
+        components_str = map(lambda x: str(x), components)
+        return '\t'.join(components_str)
+
 
 class CountedGroup:
 
@@ -222,6 +233,9 @@ class CompressedDataAccessor(DataAccessor):
         self._tags: typing.Dict[int, Tag] = {}
         self._keywords: typing.Dict[int, Keyword] = {}
         self._articles: typing.List[ArticleSet] = []
+        
+        self._last_query_str = ''
+        self._last_result = None
 
         strategies = {
             'n': lambda x: self._load_country(x),
@@ -237,6 +251,10 @@ class CompressedDataAccessor(DataAccessor):
             strategy(line)
 
     def execute_query(self, query: Query) -> Result:
+        id_str = query.get_id_str()
+        if self._last_query_str == id_str:
+            return self._last_result
+
         addressable = self._get_addressable(query)
         total_count = self._get_total_count(addressable)
         by_country = self._get_by_country(self._articles)
@@ -248,7 +266,7 @@ class CompressedDataAccessor(DataAccessor):
         tags = self._get_tags_in_category(addressable, category)
         keywords = self._get_keywords_in_category(addressable, category)
 
-        return Result(
+        new_result = Result(
             total_count,
             group_count,
             categories,
@@ -258,6 +276,11 @@ class CompressedDataAccessor(DataAccessor):
             keywords,
             query.get_has_filters()
         )
+
+        self._last_query_str = id_str
+        self._last_result = new_result
+
+        return new_result
 
     def _get_addressable(self, query: Query) -> typing.List[ArticleSet]:
         addressable_group = self._articles

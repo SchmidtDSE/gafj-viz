@@ -106,11 +106,7 @@ class SelectionMovement(abstract.VizMovement):
         raise RuntimeError('Use implementor.')
     
     def _get_selected(self, state: state_util.VizState) -> typing.Optional[str]:
-        result = self._get_selected_inner(state)
-        if result is None:
-            return 'All'
-        else:
-            return result
+        return self._get_selected_inner(state)
     
     def _get_hovering(self, state: state_util.VizState) -> typing.Optional[str]:
         raise RuntimeError('Use implementor.')

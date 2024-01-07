@@ -4,6 +4,7 @@ import sketchingpy
 
 import const
 import data_util
+import map_viz
 import state_util
 import table_util
 
@@ -45,6 +46,14 @@ class OverviewViz(abstract.VizMovement):
             'countries',
             'Countries',
             '% of all in country'
+        )
+
+        self._map_component = map_viz.MapViz(
+            self._sketch,
+            self._accessor,
+            self._state,
+            const.WIDTH / 5 * 2,
+            const.HEIGHT / 4 * 3
         )
 
     def check_hover(self, mouse_x: float, mouse_y: float):
@@ -100,24 +109,24 @@ class OverviewViz(abstract.VizMovement):
         )
 
         x -= const.COLUMN_WIDTH + 10
-        self._tags_table.draw(
-            x,
-            10,
-            self._results.get_tags(),
-            self._state.get_tag_selected(),
-            self._state.get_tag_hovering(),
-            lambda x: self._results.get_total_count(),
-            {},
-            self._placements
-        )
-
-        x -= const.COLUMN_WIDTH + 10
         self._keywords_table.draw(
             x,
             10,
             self._results.get_keywords(),
             self._state.get_keyword_selected(),
             self._state.get_keyword_hovering(),
+            lambda x: self._results.get_total_count(),
+            {},
+            self._placements
+        )
+
+        x -= const.COLUMN_WIDTH + 10
+        self._tags_table.draw(
+            x,
+            10,
+            self._results.get_tags(),
+            self._state.get_tag_selected(),
+            self._state.get_tag_hovering(),
             lambda x: self._results.get_total_count(),
             {},
             self._placements
@@ -134,6 +143,8 @@ class OverviewViz(abstract.VizMovement):
             {},
             self._placements
         )
+
+        self._map_component.draw()
 
         self._sketch.pop_style()
         self._sketch.pop_transform()

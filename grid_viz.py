@@ -126,7 +126,7 @@ class GridColumn:
             self._placements
         )
 
-        y = self._countries_table.draw_axis(y)
+        y = self._countries_table.draw_axis(0, y)
 
         self._sketch.pop_style()
         self._sketch.pop_transform()

@@ -1,4 +1,5 @@
 import functools
+import math
 import typing
 
 import sketchingpy
@@ -128,14 +129,23 @@ class BarTable:
 
         return y + 30
 
-    def draw_axis(self, y: int) -> float:
+    def draw_axis(self, x: int, y: int, include_circles: bool = False) -> float:
         self._sketch.push_transform()
         self._sketch.push_style()
 
-        self._sketch.translate(0, y)
+        self._sketch.translate(x, y)
+
+        if include_circles:
+            self._sketch.clear_fill()
+            self._sketch.set_stroke(const.INACTIVE_COLOR_MAP)
+            self._sketch.set_stroke_weight(1)
+            self._sketch.set_ellipse_mode('radius')
+            self._sketch.draw_ellipse(const.COLUMN_WIDTH / 2, 0, math.sqrt(200), math.sqrt(200))
+            self._sketch.draw_ellipse(const.COLUMN_WIDTH, 0, math.sqrt(400), math.sqrt(400))
 
         self._sketch.clear_fill()
         self._sketch.set_stroke(const.INACTIVE_COLOR)
+        self._sketch.set_stroke_weight(1)
         self._sketch.draw_line(0, 0, const.COLUMN_WIDTH, 0)
 
         self._sketch.clear_stroke()

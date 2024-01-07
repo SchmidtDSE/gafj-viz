@@ -91,14 +91,14 @@ class OverviewViz(abstract.VizMovement):
         self._sketch.push_transform()
         self._sketch.push_style()
 
-        x = const.WIDTH - const.COLUMN_WIDTH - 10
+        x = const.WIDTH - const.COLUMN_WIDTH - 30
 
         country_totals = self._results.get_country_totals()
         country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
 
         self._placements.clear()
 
-        self._countries_table.draw(
+        countries_y_end = self._countries_table.draw(
             x,
             10,
             self._results.get_countries(),
@@ -110,7 +110,9 @@ class OverviewViz(abstract.VizMovement):
             count=30
         )
 
-        x -= const.COLUMN_WIDTH + 10
+        self._countries_table.draw_axis(x, countries_y_end, include_circles=True)
+
+        x -= const.COLUMN_WIDTH + 20
         self._keywords_table.draw(
             x,
             10,
@@ -122,7 +124,7 @@ class OverviewViz(abstract.VizMovement):
             self._placements
         )
 
-        x -= const.COLUMN_WIDTH + 10
+        x -= const.COLUMN_WIDTH + 20
         self._tags_table.draw(
             x,
             10,
@@ -134,7 +136,7 @@ class OverviewViz(abstract.VizMovement):
             self._placements
         )
 
-        x -= const.COLUMN_WIDTH + 10
+        x -= const.COLUMN_WIDTH + 20
         self._categories_table.draw(
             x,
             10,

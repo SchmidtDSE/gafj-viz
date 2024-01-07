@@ -27,25 +27,29 @@ class OverviewViz(abstract.VizMovement):
             self._sketch,
             'categories',
             'Categories',
-            '% of query' if query_active else '% of all'
+            '% of query' if query_active else '% of all',
+            True
         )
         self._tags_table = table_util.BarTable(
             self._sketch,
             'tags',
             'Top Tags',
-            '% of query' if query_active else '% of all'
+            '% of query' if query_active else '% of all',
+            True
         )
         self._keywords_table = table_util.BarTable(
             self._sketch,
             'keywords',
             'Top Keywords',
-            '% of query' if query_active else '% of all'
+            '% of query' if query_active else '% of all',
+            True
         )
         self._countries_table = table_util.BarTable(
             self._sketch,
             'countries',
             'Countries',
-            '% of all in country'
+            '% of all in country',
+            True
         )
 
         self._map_component = map_viz.MapViz(
@@ -73,16 +77,16 @@ class OverviewViz(abstract.VizMovement):
                     elif prefix == 'categories':
                         self._state.set_category_hovering(name)
 
-        x = const.WIDTH - const.COLUMN_WIDTH - 10
+        x = const.WIDTH - const.COLUMN_WIDTH - 30
         check_hover_prefix(x, 'countries')
         
-        x -= const.COLUMN_WIDTH + 10
+        x -= const.COLUMN_WIDTH + 20
         check_hover_prefix(x, 'keywords')
 
-        x -= const.COLUMN_WIDTH + 10
+        x -= const.COLUMN_WIDTH + 20
         check_hover_prefix(x, 'tags')
 
-        x -= const.COLUMN_WIDTH + 10
+        x -= const.COLUMN_WIDTH + 20
         check_hover_prefix(x, 'categories')
 
         self._map_component.check_hover(mouse_x, mouse_y)

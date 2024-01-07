@@ -12,11 +12,20 @@ import state_util
 
 class BarTable:
 
-    def __init__(self, sketch: sketchingpy.Sketch2D, prefix: str, label: str, sub_title: str):
+    def __init__(self, sketch: sketchingpy.Sketch2D, prefix: str, label: str, sub_title: str,
+        checkbox: bool):
         self._sketch = sketch
         self._prefix = prefix
         self._label = label
         self._sub_title = sub_title
+        self._checkbox = checkbox
+
+        if checkbox:
+            self._start_x = 7
+            self._width = const.COLUMN_WIDTH - 7
+        else:
+            self._start_x = 0
+            self._width = const.COLUMN_WIDTH
 
     def set_sub_title(self, sub_title: str):
         self._sub_title = sub_title
@@ -65,23 +74,25 @@ class BarTable:
             name = group['name']
             prefix_name = prefix + '_' + name
 
-            color = const.get_color(selected_name == name, hovering_name == name)
+            is_selected = selected_name == name
+            is_hovering = hovering_name == name
+            color = const.get_color(is_selected, is_hovering)
 
             self._sketch.clear_stroke()
 
             self._sketch.set_rect_mode('center')
             self._sketch.set_fill(const.INACTIVE_COLOR)
-            for x in range(0, const.COLUMN_WIDTH + 1, 5):
+            for x in range(self._start_x, const.COLUMN_WIDTH + 1, 5):
                 self._sketch.draw_rect(x, y + 15, 1, 1)
 
             self._sketch.set_rect_mode('corner')
             self._sketch.set_fill(color)
-            self._sketch.draw_rect(0, y + 15, percent / 100 * const.COLUMN_WIDTH, 2)
+            self._sketch.draw_rect(self._start_x, y + 15, percent / 100 * self._width, 2)
 
             self._sketch.set_fill(color)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
             self._sketch.set_text_align('left', 'baseline')
-            self._sketch.draw_text(0, y + 12, name_overrides.get(name, name))
+            self._sketch.draw_text(self._start_x, y + 12, name_overrides.get(name, name))
 
             placements[prefix_name] = y + 6
 
@@ -93,6 +104,18 @@ class BarTable:
             self._sketch.set_fill(color)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
             self._sketch.draw_text(const.COLUMN_WIDTH, y + 11, '%.1f%%' % percent)
+
+            if self._checkbox:
+                if is_selected:
+                    self._sketch.clear_stroke()
+                    self._sketch.set_fill(color)
+                else:
+                    self._sketch.set_stroke(color)
+                    self._sketch.set_stroke_weight(1)
+                    self._sketch.clear_fill()
+
+                self._sketch.set_rect_mode('center')
+                self._sketch.draw_rect(2, y + 7, 5, 5)
 
             if prefix_name in prior_placements:
                 self._sketch.clear_fill()
@@ -135,25 +158,29 @@ class BarTable:
 
         self._sketch.translate(x, y)
 
+        start_x = self._start_x
+        mid_x = (self._start_x + const.COLUMN_WIDTH) / 2
+        end_x = const.COLUMN_WIDTH
+
         if include_circles:
             self._sketch.clear_fill()
             self._sketch.set_stroke(const.INACTIVE_COLOR_MAP)
             self._sketch.set_stroke_weight(1)
             self._sketch.set_ellipse_mode('radius')
-            self._sketch.draw_ellipse(const.COLUMN_WIDTH / 2, 0, math.sqrt(200), math.sqrt(200))
-            self._sketch.draw_ellipse(const.COLUMN_WIDTH, 0, math.sqrt(400), math.sqrt(400))
+            self._sketch.draw_ellipse(mid_x, 0, math.sqrt(200), math.sqrt(200))
+            self._sketch.draw_ellipse(end_x, 0, math.sqrt(400), math.sqrt(400))
 
         self._sketch.clear_fill()
         self._sketch.set_stroke(const.INACTIVE_COLOR)
         self._sketch.set_stroke_weight(1)
-        self._sketch.draw_line(0, 0, const.COLUMN_WIDTH, 0)
+        self._sketch.draw_line(start_x, 0, const.COLUMN_WIDTH, 0)
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
         
         self._sketch.set_text_align('left', 'top')
-        self._sketch.draw_text(0, 3, '0%')
+        self._sketch.draw_text(start_x, 3, '0%')
 
         self._sketch.set_text_align('right', 'top')
         self._sketch.draw_text(const.COLUMN_WIDTH, 3, '100%')

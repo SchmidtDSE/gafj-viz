@@ -29,7 +29,8 @@ class SelectionMovement(abstract.VizMovement):
                 self._sketch,
                 self._get_prefix(),
                 'Top %d %s' % ((i + 1) * 30, self._get_label()),
-                self._get_sub_text(query_active)
+                self._get_sub_text(query_active),
+                False
             ))
             self._placements.append({})
 

@@ -135,25 +135,25 @@ class NewsVisualization:
         if category == 'All':
             self._state.set_category_selected(None)
         elif category is not None:
-            self._state.set_category_selected(category)
+            self._state.toggle_category_selected(category)
 
         country = self._state.get_country_hovering()
         if country == 'All':
             self._state.set_country_selected(None)
         elif country is not None:
-            self._state.set_country_selected(country)
+            self._state.toggle_country_selected(country)
 
         keyword = self._state.get_keyword_hovering()
         if keyword == 'All':
             self._state.set_keyword_selected(None)
         elif keyword is not None:
-            self._state.set_keyword_selected(keyword)
+            self._state.toggle_keyword_selected(keyword)
 
         tag = self._state.get_tag_hovering()
         if tag == 'All':
             self._state.set_tag_selected(None)
         elif tag is not None:
-            self._state.set_tag_selected(tag)
+            self._state.toggle_tag_selected(tag)
 
         if self._button_hover == 'button':
             if self._movement == 'overview':

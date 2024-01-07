@@ -18,6 +18,12 @@ class VizState:
     def set_category_selected(self, new_val: str):
         self._category_selected = new_val
 
+    def toggle_category_selected(self, new_val: str):
+        if self._category_selected == new_val:
+            self._category_selected = None
+        else:
+            self._category_selected = new_val
+
     def get_category_selected(self) -> typing.Optional[str]:
         return self._category_selected
 
@@ -35,6 +41,12 @@ class VizState:
     
     def set_country_selected(self, new_val: str):
         self._country_selected = new_val
+
+    def toggle_country_selected(self, new_val: str):
+        if self._country_selected == new_val:
+            self._country_selected = None
+        else:
+            self._country_selected = new_val
 
     def get_country_selected(self) -> typing.Optional[str]:
         return self._country_selected
@@ -54,6 +66,12 @@ class VizState:
     def set_tag_selected(self, new_val: str):
         self._tag_selected = new_val
 
+    def toggle_tag_selected(self, new_val: str):
+        if self._tag_selected == new_val:
+            self._tag_selected = None
+        else:
+            self._tag_selected = new_val
+
     def get_tag_selected(self) -> typing.Optional[str]:
         return self._tag_selected
 
@@ -71,6 +89,12 @@ class VizState:
     
     def set_keyword_selected(self, new_val: str):
         self._keyword_selected = new_val
+
+    def toggle_keyword_selected(self, new_val: str):
+        if self._keyword_selected == new_val:
+            self._keyword_selected = None
+        else:
+            self._keyword_selected = new_val
 
     def get_keyword_selected(self) -> typing.Optional[str]:
         return self._keyword_selected

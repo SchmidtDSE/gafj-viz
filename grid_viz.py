@@ -26,19 +26,22 @@ class GridColumn:
             self._sketch,
             'tags',
             'Top Tags',
-            '% of category in query' if query_active else '% of category'
+            '% of category in query' if query_active else '% of category',
+            True
         )
         self._keywords_table = table_util.BarTable(
             self._sketch,
             'keywords',
             'Top Keywords',
-            '% of category in query' if query_active else '% of category'
+            '% of category in query' if query_active else '% of category',
+            True
         )
         self._countries_table = table_util.BarTable(
             self._sketch,
             'countries',
             'Top Countries',
-            '% of all in country'
+            '% of all in country',
+            True
         )
 
     def get_category(self) -> str:

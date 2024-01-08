@@ -1,6 +1,6 @@
 class VizMovement:
 
-    def check_hover(self, mouse_x: float, mouse_y: float):
+    def check_state(self, mouse_x: float, mouse_y: float):
         raise RuntimeError('Use implementor.')
 
     def draw(self):

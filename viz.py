@@ -88,7 +88,7 @@ class NewsVisualization:
             mouse_x = mouse.get_pointer_x()
             mouse_y = mouse.get_pointer_y()
 
-            target_viz.check_hover(mouse_x, mouse_y)
+            target_viz.check_state(mouse_x, mouse_y)
 
             in_footer = mouse_y > const.BUTTON_Y
             button_hover_hold = self._button_hover

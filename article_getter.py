@@ -173,6 +173,28 @@ class AwsLambdaArticleGetter(ArticleGetter):
         return output_target.getvalue()
 
 
+class LocalArticleGetter(ArticleGetter):
+
+    def _get_query_params(self, target: typing.Dict) -> typing.Dict:
+        return target
+
+    def _get_source(self) -> typing.Iterable[str]:
+        parent_dir = os.path.parent(os.path.abspath(__file__))
+        full_path = os.path.join(parent_dir, 'articles.csv')
+        with open(full_path) as f:
+            lines = f.readlines()
+
+        return lines
+
+    def _make_response(self, matching: typing.Iterable[Article]):
+        return list(matching)
+
+
 def lambda_handler(event, context):
     article_getter = AwsLambdaArticleGetter()
     return article_getter.execute(event)
+
+
+def local_handler(params):
+    article_getter = LocalArticleGetter()
+    return article_getter.execute(params)

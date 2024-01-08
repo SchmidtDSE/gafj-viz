@@ -60,8 +60,8 @@ class OverviewViz(abstract.VizMovement):
             const.HEIGHT / 4 * 3
         )
 
-    def check_hover(self, mouse_x: float, mouse_y: float):
-        def check_hover_prefix(x: int, prefix: str):
+    def check_state(self, mouse_x: float, mouse_y: float):
+        def check_state_prefix(x: int, prefix: str):
             if mouse_x < x or mouse_x > x + const.COLUMN_WIDTH:
                 return
 
@@ -78,18 +78,18 @@ class OverviewViz(abstract.VizMovement):
                         self._state.set_category_hovering(name)
 
         x = const.WIDTH - const.COLUMN_WIDTH - 30
-        check_hover_prefix(x, 'countries')
+        check_state_prefix(x, 'countries')
         
         x -= const.COLUMN_WIDTH + 20
-        check_hover_prefix(x, 'keywords')
+        check_state_prefix(x, 'keywords')
 
         x -= const.COLUMN_WIDTH + 20
-        check_hover_prefix(x, 'tags')
+        check_state_prefix(x, 'tags')
 
         x -= const.COLUMN_WIDTH + 20
-        check_hover_prefix(x, 'categories')
+        check_state_prefix(x, 'categories')
 
-        self._map_component.check_hover(mouse_x, mouse_y)
+        self._map_component.check_state(mouse_x, mouse_y)
 
     def draw(self):
         self._sketch.push_transform()

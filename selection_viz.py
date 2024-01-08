@@ -34,7 +34,7 @@ class SelectionMovement(abstract.VizMovement):
             ))
             self._placements.append({})
 
-    def check_hover(self, mouse_x: float, mouse_y: float):
+    def check_state(self, mouse_x: float, mouse_y: float):
         group_number = math.floor(mouse_x / (const.COLUMN_WIDTH + 10) - 5)
         if group_number >= len(self._tables):
             return

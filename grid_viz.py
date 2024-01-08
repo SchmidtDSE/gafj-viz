@@ -56,7 +56,7 @@ class GridColumn:
 
         self._results = results
 
-    def check_hover(self, current_state: state_util.VizState, mouse_x: float, mouse_y: float):
+    def check_state(self, current_state: state_util.VizState, mouse_x: float, mouse_y: float):
         if mouse_x < self._x or mouse_x > self._x + const.COLUMN_WIDTH:
             return
 
@@ -198,9 +198,9 @@ class GridViz(abstract.VizMovement):
             self._build_column('environment and resources', 4)
         ]
 
-    def check_hover(self, mouse_x: float, mouse_y: float):
+    def check_state(self, mouse_x: float, mouse_y: float):
         for column in self._columns:
-            column.check_hover(self._state, mouse_x, mouse_y)
+            column.check_state(self._state, mouse_x, mouse_y)
 
     def draw(self):
         self._sketch.push_transform()

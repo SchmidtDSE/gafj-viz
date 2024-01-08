@@ -8,3 +8,6 @@ class VizMovement:
 
     def refresh_data(self):
         raise RuntimeError('Use implementor.')
+
+    def on_change_to(self):
+        pass

@@ -1,6 +1,8 @@
 import codecs
 import csv
 import io
+import os
+import pathlib
 import typing
 
 boto_available = False
@@ -179,7 +181,7 @@ class LocalArticleGetter(ArticleGetter):
         return target
 
     def _get_source(self) -> typing.Iterable[str]:
-        parent_dir = os.path.parent(os.path.abspath(__file__))
+        parent_dir = pathlib.Path(os.path.abspath(__file__)).parent
         full_path = os.path.join(parent_dir, 'articles.csv')
         with open(full_path) as f:
             lines = f.readlines()

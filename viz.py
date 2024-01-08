@@ -2,13 +2,13 @@ import typing
 
 import sketchingpy
 
-import data_util
-import state_util
-
+import article_preview_viz
 import const
+import data_util
 import grid_viz
 import overview_viz
 import selection_viz
+import state_util
 
 
 class NewsVisualization:
@@ -51,8 +51,13 @@ class NewsVisualization:
                 self._sketch,
                 self._accessor,
                 self._state
-            ),
+            )
         }
+        self._article_preview = article_preview_viz.ArticlePreviewViz(
+            self._sketch,
+            self._accessor,
+            self._state
+        )
 
         self._sketch.on_step(lambda sketch: self._draw())
         self._sketch.get_mouse().on_button_press(
@@ -69,6 +74,7 @@ class NewsVisualization:
         movements = {
             'overview': self._overview,
             'grid': self._grid,
+            'download': self._article_preview
         }
 
         for name in self._selectors:
@@ -166,18 +172,33 @@ class NewsVisualization:
                 self._last_major_movement = 'overview'
             else:
                 self._movement = self._last_major_movement
+
+            if self._movement == 'grid':
+                self._grid.on_change_to()
+            elif self._movement == 'overview':
+                self._overview.on_change_to()
+            else:
+                raise RuntimeError('Unexpected movement.')
+
         elif self._button_hover == 'countries':
             self._state.set_country_selected(None)
             self._movement = 'country'
+            self._selectors['country'].on_change_to()
         elif self._button_hover == 'categories':
             self._state.set_category_selected(None)
             self._movement = 'category'
+            self._selectors['category'].on_change_to()
         elif self._button_hover == 'tags':
             self._state.set_tag_selected(None)
             self._movement = 'tag'
+            self._selectors['tag'].on_change_to()
         elif self._button_hover == 'keywords':
             self._state.set_keyword_selected(None)
             self._movement = 'keyword'
+            self._selectors['keyword'].on_change_to()
+        elif self._button_hover == 'download':
+            self._movement = 'download'
+            self._article_preview.on_change_to()
         elif self._movement not in ['grid', 'overview']:
             self._movement = self._last_major_movement
 
@@ -186,6 +207,8 @@ class NewsVisualization:
 
         for selector in self._selectors.values():
             selector.refresh_data()
+
+        self._article_preview.refresh_data()
 
         self._changed = True
         self._drawn = False
@@ -293,7 +316,7 @@ class NewsVisualization:
         self._sketch.draw_text(
             const.DOWNLOAD_X + const.BUTTON_WIDTH / 2 - 1,
             text_y,
-            'Get Articles >'
+            self._get_download_text()
         )
 
         self._sketch.pop_style()
@@ -304,6 +327,12 @@ class NewsVisualization:
             'overview': 'Go to Grid >',
             'grid': 'Go to Overview >'
         }.get(self._movement, 'Done >')
+
+    def _get_download_text(self) -> str:
+        if self._movement == 'download':
+            return 'Download All >'
+        else:
+            return 'Get Articles >'
 
 
 def main():

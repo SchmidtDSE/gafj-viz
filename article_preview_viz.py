@@ -1,14 +1,16 @@
 import math
+import random
 
 import sketchingpy
 
 import abstract
+import article_getter
 import const
 import data_util
 import state_util
 
 
-class MapViz(abstract.VizMovement):
+class ArticlePreviewViz(abstract.VizMovement):
 
     def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):
@@ -40,6 +42,7 @@ class MapViz(abstract.VizMovement):
         if not self._loading_drawn:
             self._sketch.draw_text(5, 70, 'Please wait...')
             self._loading_drawn = True
+            self._state.invalidate()
         elif self._articles:
             self._draw_articles()
 
@@ -47,10 +50,10 @@ class MapViz(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def refresh_data(self):
-        if not self._loading_drawn:
+        if self._state_loaded == self._state.serialize():
             return
 
-        if self._state_loaded == self._state.serialize():
+        if not self._loading_drawn:
             return
 
         params = {}
@@ -67,8 +70,35 @@ class MapViz(abstract.VizMovement):
         add_to_params(self._state.get_country_selected(), 'country')
 
         self._articles = article_getter.local_handler(params)
+        random.shuffle(self._articles)
 
         self._state_loaded = self._state.serialize()
+        self._state.invalidate()
+
+    def on_change_to(self):
+        self._loading_drawn = False
 
     def _draw_articles(self):
-        pass
+        self._sketch.push_transform()
+        self._sketch.push_style()
+
+        y = 80
+        for article in self._articles[:20]:
+            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 16)
+            self._sketch.set_text_align('left', 'baseline')
+            self._sketch.draw_text(5, y, article.get_title_english())
+
+            text = ' | '.join([
+                article.get_country(),
+                article.get_published()[:10],
+                article.get_url()
+            ])
+
+            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 12)
+            self._sketch.set_text_align('left', 'top')
+            self._sketch.draw_text(5, y + 5, text)
+
+            y += 45
+
+        self._sketch.pop_style()
+        self._sketch.pop_transform()

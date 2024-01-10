@@ -1,6 +1,8 @@
 import codecs
 import csv
 import io
+import os
+import pathlib
 import typing
 
 boto_available = False
@@ -111,8 +113,8 @@ class ArticleGetter:
             articles = filter(lambda x: target_tag in x.get_tags(), articles)
 
         if 'category' in query_params:
-            target_tag = query_params['category']
-            articles = filter(lambda x: target_tag in x.get_categories(), articles)
+            target_category = query_params['category']
+            articles = filter(lambda x: target_category in x.get_categories(), articles)
 
         if 'country' in query_params:
             target_country = query_params['country']
@@ -173,6 +175,28 @@ class AwsLambdaArticleGetter(ArticleGetter):
         return output_target.getvalue()
 
 
+class LocalArticleGetter(ArticleGetter):
+
+    def _get_query_params(self, target: typing.Dict) -> typing.Dict:
+        return target
+
+    def _get_source(self) -> typing.Iterable[str]:
+        parent_dir = pathlib.Path(os.path.abspath(__file__)).parent
+        full_path = os.path.join(parent_dir, 'articles.csv')
+        with open(full_path) as f:
+            lines = f.readlines()
+
+        return lines
+
+    def _make_response(self, matching: typing.Iterable[Article]):
+        return list(matching)
+
+
 def lambda_handler(event, context):
     article_getter = AwsLambdaArticleGetter()
     return article_getter.execute(event)
+
+
+def local_handler(params):
+    article_getter = LocalArticleGetter()
+    return article_getter.execute(params)

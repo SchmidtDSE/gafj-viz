@@ -14,6 +14,7 @@ class VizState:
         self._tag_hovering: data_util.OPT_STR = None
         self._keyword_selected: data_util.OPT_STR = None
         self._keyword_hovering: data_util.OPT_STR = None
+        self._invalidation_id = 1
 
     def set_category_selected(self, new_val: str):
         self._category_selected = new_val
@@ -111,6 +112,9 @@ class VizState:
     def clear_keyword_hovering(self):
         self._keyword_hovering = None
 
+    def invalidate(self):
+        self._invalidation_id += 1
+
     def get_query(self, category: typing.Optional[str] = None) -> data_util.Query:
         return data_util.Query(
             category,
@@ -129,6 +133,7 @@ class VizState:
             self._tag_selected,
             self._tag_hovering,
             self._keyword_selected,
-            self._keyword_hovering
+            self._keyword_hovering,
+            str(self._invalidation_id)
         ]
         return '\t'.join(map(lambda x: str(x), pieces))

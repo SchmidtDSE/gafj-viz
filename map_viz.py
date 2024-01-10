@@ -44,7 +44,7 @@ class MapViz(abstract.VizMovement):
 
         self._sketch.pop_map()
 
-    def check_hover(self, mouse_x: float, mouse_y: float):
+    def check_state(self, mouse_x: float, mouse_y: float):
         countries = self._results.get_countries()
         country_names = map(lambda x: x.get_name(), countries)
 

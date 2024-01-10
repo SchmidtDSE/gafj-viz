@@ -113,8 +113,8 @@ class ArticleGetter:
             articles = filter(lambda x: target_tag in x.get_tags(), articles)
 
         if 'category' in query_params:
-            target_tag = query_params['category']
-            articles = filter(lambda x: target_tag in x.get_categories(), articles)
+            target_category = query_params['category']
+            articles = filter(lambda x: target_category in x.get_categories(), articles)
 
         if 'country' in query_params:
             target_country = query_params['country']

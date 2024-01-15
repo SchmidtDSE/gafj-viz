@@ -25,6 +25,9 @@ class NewsVisualization:
         self._button_hover = 'none'
         self._last_major_movement = 'overview'
 
+        self._mouse_x = None
+        self._mouse_y = None
+
         data_layer = self._sketch.get_data_layer()
         compressed_data = data_layer.get_text('serialized.txt')
         compressed_lines = compressed_data.split('\n')
@@ -85,17 +88,17 @@ class NewsVisualization:
 
         target_viz = movements[self._movement]
 
-        if self._drawn:
+        mouse = self._sketch.get_mouse()
+        mouse_x = mouse.get_pointer_x()
+        mouse_y = mouse.get_pointer_y()
+
+        if self._drawn and mouse_x == self._mouse_x and mouse_y == self._mouse_y:
             prior_state_str = self._state.serialize()
 
             self._state.clear_category_hovering()
             self._state.clear_country_hovering()
             self._state.clear_keyword_hovering()
             self._state.clear_tag_hovering()
-
-            mouse = self._sketch.get_mouse()
-            mouse_x = mouse.get_pointer_x()
-            mouse_y = mouse.get_pointer_y()
 
             target_viz.check_state(mouse_x, mouse_y)
 
@@ -124,6 +127,9 @@ class NewsVisualization:
             global_ui_change = button_hover_change
 
             self._changed = prior_state_str != self._state.serialize() or global_ui_change
+
+        self._mouse_x = mouse_x
+        self._mouse_y = mouse_y
 
         if self._changed or self._movement == 'download':
             self._sketch.clear(const.BG_COLOR)

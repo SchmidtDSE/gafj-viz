@@ -83,7 +83,7 @@ class BarTable:
             self._sketch.set_rect_mode('center')
             self._sketch.set_fill(const.INACTIVE_COLOR)
             for x in range(self._start_x, const.COLUMN_WIDTH + 1, 5):
-                self._sketch.draw_rect(x, y + 15, 1, 1)
+                self._sketch.draw_pixel(x, y + 15)
 
             self._sketch.set_rect_mode('corner')
             self._sketch.set_fill(color)
@@ -103,7 +103,7 @@ class BarTable:
             self._sketch.set_text_align('right', 'baseline')
             self._sketch.set_fill(color)
             self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
-            self._sketch.draw_text(const.COLUMN_WIDTH, y + 11, '%.1f%%' % percent)
+            self._sketch.draw_text(const.COLUMN_WIDTH, y + 12, '%.1f%%' % percent)
 
             if self._checkbox:
                 if is_selected:

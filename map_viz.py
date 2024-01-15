@@ -44,6 +44,8 @@ class MapViz(abstract.VizMovement):
 
         self._sketch.pop_map()
 
+        self._prepare_basemap()
+
     def check_state(self, mouse_x: float, mouse_y: float):
         countries = self._results.get_countries()
         country_names = map(lambda x: x.get_name(), countries)
@@ -62,9 +64,12 @@ class MapViz(abstract.VizMovement):
         if closest_dist <= 20:
             self._state.set_country_hovering(closest_name)
 
-    def draw(self):
+    def _prepare_basemap(self):
         self._sketch.push_transform()
         self._sketch.push_style()
+
+        self._sketch.create_buffer('basemap', const.WIDTH, const.HEIGHT)
+        self._sketch.enter_buffer('basemap')
 
         self._sketch.clear_fill()
         self._sketch.set_stroke(const.DEEP_BG_COLOR)
@@ -72,6 +77,17 @@ class MapViz(abstract.VizMovement):
 
         for shape in self._geo_shapes:
             self._sketch.draw_shape(shape)
+
+        self._sketch.exit_buffer()
+
+        self._sketch.pop_style()
+        self._sketch.pop_transform()
+
+    def draw(self):
+        self._sketch.push_transform()
+        self._sketch.push_style()
+
+        self._sketch.draw_buffer('basemap', 0, 0)
 
         self._sketch.set_ellipse_mode('radius')
 

@@ -44,7 +44,7 @@ class ArticlePreviewViz(abstract.VizMovement):
             self._loading_drawn = True
             self._state.invalidate()
         elif self._articles:
-            self._draw_articles()
+            self._draw_articles_buffer()
 
         self._sketch.pop_style()
         self._sketch.pop_transform()
@@ -74,13 +74,50 @@ class ArticlePreviewViz(abstract.VizMovement):
 
         self._state_loaded = self._state.serialize()
         self._state.invalidate()
+        self._draw_articles()
 
     def on_change_to(self):
+        self.refresh_data()
         self._loading_drawn = False
+
+    def download_articles(self):
+        def callback(filename):
+            if not filename.endswith('.csv'):
+                filename = filename + '.csv'
+
+            article_dicts = map(lambda x: x.to_dict(), self._articles)
+            self._sketch.get_data_layer().write_csv(
+                article_dicts,
+                [
+                    'url',
+                    'titleOriginal',
+                    'titleEnglish',
+                    'published',
+                    'country',
+                    'keywordList',
+                    'tagList',
+                    'categoryList'
+                ],
+                filename
+            )
+
+        self._sketch.get_dialog_layer().get_file_save_location(callback)
+
+    def _draw_articles_buffer(self):
+        self._sketch.draw_buffer('articles', 0, 0)
 
     def _draw_articles(self):
         self._sketch.push_transform()
         self._sketch.push_style()
+
+        self._sketch.create_buffer('articles', const.WIDTH, const.HEIGHT)
+        self._sketch.enter_buffer('articles')
+
+        self._sketch.clear_stroke()
+        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 30)
+        self._sketch.set_text_align('left', 'center')
+        self._sketch.set_fill(const.INACTIVE_COLOR)
+        self._sketch.draw_text(5, 25, 'Matching articles')
 
         y = 80
         for article in self._articles[:20]:
@@ -99,6 +136,8 @@ class ArticlePreviewViz(abstract.VizMovement):
             self._sketch.draw_text(5, y + 5, text)
 
             y += 45
+
+        self._sketch.exit_buffer()
 
         self._sketch.pop_style()
         self._sketch.pop_transform()

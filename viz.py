@@ -18,7 +18,7 @@ class NewsVisualization:
         self._drawn = False
         self._state = state_util.VizState()
         self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT, 'News Visualization')
-        self._sketch.set_fps(15)
+        self._sketch.set_fps(30)
 
         self._movement = 'overview'
         self._button_hover = 'none'
@@ -122,7 +122,7 @@ class NewsVisualization:
 
             self._changed = prior_state_str != self._state.serialize() or global_ui_change
 
-        if self._changed:
+        if self._changed or self._movement == 'download':
             self._sketch.clear(const.BG_COLOR)
 
             target_viz.draw()
@@ -197,9 +197,12 @@ class NewsVisualization:
             self._movement = 'keyword'
             self._selectors['keyword'].on_change_to()
         elif self._button_hover == 'download':
-            self._movement = 'download'
-            self._article_preview.on_change_to()
-        elif self._movement not in ['grid', 'overview']:
+            if self._movement == 'download':
+                self._download_articles()
+            else:
+                self._movement = 'download'
+                self._article_preview.on_change_to()
+        elif self._movement not in ['grid', 'overview', 'download']:
             self._movement = self._last_major_movement
 
         self._grid.refresh_data()
@@ -207,8 +210,6 @@ class NewsVisualization:
 
         for selector in self._selectors.values():
             selector.refresh_data()
-
-        self._article_preview.refresh_data()
 
         self._changed = True
         self._drawn = False
@@ -333,6 +334,9 @@ class NewsVisualization:
             return 'Download All >'
         else:
             return 'Get Articles >'
+
+    def _download_articles(self):
+        self._article_preview.download_articles()
 
 
 def main():

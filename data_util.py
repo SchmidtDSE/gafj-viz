@@ -1,6 +1,5 @@
 import itertools
 import os
-import sqlite3
 import typing
 
 OPT_STR = typing.Optional[str]

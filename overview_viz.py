@@ -159,9 +159,14 @@ class OverviewViz(abstract.VizMovement):
         self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
         self._sketch.set_text_align('left', 'center')
         self._sketch.draw_text(
-            const.WIDTH - const.COLUMN_WIDTH - 30,
+            const.WIDTH - const.COLUMN_WIDTH - 25,
             countries_y_end + 100,
-            'Click to add filter. Click again\nto remove filter.'
+            'Click to add filter. Click'
+        )
+        self._sketch.draw_text(
+            const.WIDTH - const.COLUMN_WIDTH - 25,
+            countries_y_end + 100 + 12,
+            'again to remove filter.'
         )
 
         self._sketch.pop_style()

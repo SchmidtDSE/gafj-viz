@@ -17,8 +17,9 @@ class NewsVisualization:
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
-        self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT, 'News Visualization')
-        self._sketch.set_fps(30)
+        
+        self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT)
+        self._sketch.set_fps(20)
 
         self._movement = 'overview'
         self._button_hover = 'none'
@@ -63,6 +64,8 @@ class NewsVisualization:
         self._sketch.get_mouse().on_button_press(
             lambda button: self._respond_to_click(button)
         )
+
+        self._table_counter = 0
 
     def show(self):
         self._sketch.show()
@@ -254,6 +257,7 @@ class NewsVisualization:
         self._sketch.set_fill(const.INACTIVE_COLOR)
 
         x = 3
+        self._sketch.clear_stroke()
         self._sketch.draw_text(x, text_y, 'Filters:')
         
         x += 70

@@ -21,8 +21,8 @@ class BarTable:
         self._checkbox = checkbox
 
         if checkbox:
-            self._start_x = 7
-            self._width = const.COLUMN_WIDTH - 7
+            self._start_x = 9
+            self._width = const.COLUMN_WIDTH - 9
         else:
             self._start_x = 0
             self._width = const.COLUMN_WIDTH
@@ -115,7 +115,7 @@ class BarTable:
                     self._sketch.clear_fill()
 
                 self._sketch.set_rect_mode('center')
-                self._sketch.draw_rect(2, y + 7, 5, 5)
+                self._sketch.draw_rect(4, y + 8, 5, 5)
 
             if prefix_name in prior_placements:
                 self._sketch.clear_fill()

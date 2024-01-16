@@ -101,7 +101,8 @@ class GridColumn:
             current_state.get_tag_hovering(),
             lambda x: self._results.get_total_count(),
             prior_placements=prior_placements,
-            placements=self._placements
+            placements=self._placements,
+            count=7
         )
         
         y = self._keywords_table.draw(
@@ -112,7 +113,8 @@ class GridColumn:
             current_state.get_keyword_hovering(),
             lambda x: self._results.get_total_count(),
             prior_placements=prior_placements,
-            placements=self._placements
+            placements=self._placements,
+            count=7
         )
         
         country_totals = self._results.get_country_totals()
@@ -126,7 +128,8 @@ class GridColumn:
             current_state.get_country_hovering(),
             lambda x: country_totals_indexed[x],
             prior_placements,
-            self._placements
+            self._placements,
+            count=7
         )
 
         y = self._countries_table.draw_axis(0, y)

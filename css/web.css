@@ -1,4 +1,93 @@
 @font-face {
     font-family: 'IBMPlexMono-Regular';
-    src: url('/third_party_web/IBMPlexMono-Regular.ttf')  format('truetype');
+    src: url('/third_party_web/IBMPlexMono-Regular.ttf') format('truetype');
+}
+
+a:link, a:visited, a:hover, a:active {
+    color: #F0F0F0;
+}
+
+a:hover, a:active {
+    color: #FFFFFF;
+}
+
+a.button:link, a.button:visited, a.button:hover, a.button:active {
+    text-decoration: none;
+}
+
+html {
+    font-family: IBMPlexMono-Regular;
+    background-color: #404040;
+    color: #F0F0F0;
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+nav .subtitle {
+    margin-bottom: 30px;
+}
+
+[role="tab"][aria-selected="true"] {
+    background-color: black;
+    border: 1px solid black;
+    border-bottom: 1px solid black;
+    color: white;
+}
+
+[role="tablist"] {
+    margin-bottom: 20px;
+    border-bottom: 1px solid black;
+    font-size: 14px;
+}
+
+[role="tab"]:hover:not([aria-selected="true"]) {
+    background-color: black;
+}
+
+[role="tablist"] a {
+    color: color;
+    text-decoration: none;
+}
+
+.button {
+    border: 1px solid #F0F0F0;
+    border-radius: 3px;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.button:hover {
+    background-color: black;
+}
+
+.center {
+    text-align: center;
+}
+
+.highlight {
+    display: inline-block;
+    background-color: black;
+    padding: 5px;
+}
+
+#app #app-intro .text {
+    margin-bottom: 10px;
+}
+
+#app #sketch {
+    display: none;
+}
+
+#app #sketch #sketch-canvas {
+    border: 1px solid #303030;
+    border-radius: 3px;
 }

@@ -4,17 +4,20 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
+        <!-- Tabby -->
+        <link rel="stylesheet" href="/third_party_web/tabby-ui.min.css">
+
         <!-- PyScript -->
-        <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.2/core.css">
-        <script type="module" src="https://pyscript.net/releases/2023.11.2/core.js"></script>
+        <link rel="stylesheet" href="/third_party/core.css">
+        <script type="module" src="/third_party/core.js"></script>
 
         <!-- Custom -->
-        <link rel="stylesheet" href="web.css">
+        <link rel="stylesheet" href="/css/web.css">
     </head>
     <body>
         <py-config>
         {
-            "packages": ["sketchingpy==0.1.0"],
+            "packages": ["/third_party/sketchingpy-0.1.1-py3-none-any.whl"],
             "files": {
                 "/article_preview_viz.py": "article_preview_viz.py",
                 "/abstract.py": "abstract.py",
@@ -27,51 +30,79 @@
                 "/overview_viz.py": "overview_viz.py",
                 "/selection_viz.py": "selection_viz.py",
                 "/state_util.py": "state_util.py",
-                "/table_util.py": "table_util.py"
+                "/table_util.py": "table_util.py",
+                "/csv/articles.csv": "csv/articles.csv"
             }
         }
         </py-config>
 
         <nav>
-            <h1>Food News Viz</h1>
-            <div class="subtitle">Exploring discussion of food in the news across the globe.</div>
+            <h1><div class="highlight">Food News Viz</div></h1>
+            <div class="subtitle"><div class="highlight">Open source exploration of food in the news across the globe.</div></div>
 
             <ul data-tabs>
-                <li><a data-tabby-default href="#intro">Introduction</a></li>
-                <li><a href="#web">Web</a></li>
+                <li><a data-tabby-default href="#home">Home</a></li>
+                <li><a href="#app">App</a></li>
                 <li><a href="#express">Express</a></li>
-                <li><a href="#desktop">Desktop</a></li>
                 <li><a href="#data">Data</a></li>
                 <li><a href="#insights">Insights</a></li>
                 <li><a href="#method">Method</a></li>
+                <li><a href="#about">About</a></li>
             </ul>
         </nav>
 
         <main>
-            <section id="intro">
+            <section id="home">
+                Under construction.
             </section>
 
-            <section id="web">
-                <div id="sketch-load-message">Loading...</div>
-                <canvas id="sketch-canvas"></canvas>
+            <section id="app">
+                <h2>Web Application</h2>
+                <div id="app-intro">
+                    <div class="text">
+                        This online interactive visualization allows users to explore the data in detail but may take a few moments to load for the first time. Some users such as those with slower internet connections, mobile devices, or certain adaptive (accessibility) technologies may prefer the <a href="#express" class="internal-link">express version</a>.
+                    </div>
+                    <div>
+                        <a class="button" id="open-web-app-button" href="#sketch">Open Web App</a>
+                    </div>
+                </div>
+                <div id="sketch">
+                    <div id="sketch-load-message">
+                        Loading... 
+                        <progress id="sketch-load-progress" max="20" value="0"></progress>
+                    </div>
+                    <div>
+                        <canvas id="sketch-canvas"></canvas>
+                    </div>
+                </div>
             </section>
 
             <section id="express">
-            </section>
-
-            <section id="desktop">
+                Under construction.
             </section>
 
             <section id="data">
+                Under construction.
             </section>
 
             <section id="insights">
+                Under construction.
             </section>
 
             <section id="method">
+                Under construction.
+            </section>
+
+            <section id="about">
+                Under construction.
             </section>
         </main>
-        
-        <script type="py" src="viz.py"></script>
+
     </body>
+
+    <!-- Tabby -->
+    <script src="/third_party_web/tabby.polyfills.min.js"></script>
+
+    <!-- Support -->
+    <script src="/js/main.js"></script>
 </html>

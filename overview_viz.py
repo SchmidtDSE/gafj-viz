@@ -57,7 +57,7 @@ class OverviewViz(abstract.VizMovement):
             self._accessor,
             self._state,
             const.WIDTH / 5 * 2,
-            const.HEIGHT / 4 * 3
+            const.HEIGHT / 7 * 5
         )
 
     def check_state(self, mouse_x: float, mouse_y: float):
@@ -101,6 +101,8 @@ class OverviewViz(abstract.VizMovement):
         country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
 
         self._placements.clear()
+
+        self._map_component.draw()
 
         countries_y_end = self._countries_table.draw(
             x,
@@ -152,20 +154,18 @@ class OverviewViz(abstract.VizMovement):
             self._placements
         )
 
-        self._map_component.draw()
-
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
         self._sketch.set_text_font(const.FONT, 11)
         self._sketch.set_text_align('left', 'center')
         self._sketch.draw_text(
             const.WIDTH - const.COLUMN_WIDTH - 25,
-            countries_y_end + 100,
+            countries_y_end + 50,
             'Click to add filter. Click'
         )
         self._sketch.draw_text(
             const.WIDTH - const.COLUMN_WIDTH - 25,
-            countries_y_end + 100 + 12,
+            countries_y_end + 50 + 12,
             'again to remove filter.'
         )
 

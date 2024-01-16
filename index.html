@@ -27,14 +27,50 @@
                 "/overview_viz.py": "overview_viz.py",
                 "/selection_viz.py": "selection_viz.py",
                 "/state_util.py": "state_util.py",
-                "/table_util.py": "table_util.py",
-                "/articles.csv": "articles.csv"
+                "/table_util.py": "table_util.py"
             }
         }
         </py-config>
 
-        <div id="sketch-load-message">Loading...</div>
-        <canvas id="sketch-canvas"></canvas>
+        <nav>
+            <h1>Food News Viz</h1>
+            <div class="subtitle">Exploring discussion of food in the news across the globe.</div>
+
+            <ul data-tabs>
+                <li><a data-tabby-default href="#intro">Introduction</a></li>
+                <li><a href="#web">Web</a></li>
+                <li><a href="#express">Express</a></li>
+                <li><a href="#desktop">Desktop</a></li>
+                <li><a href="#data">Data</a></li>
+                <li><a href="#insights">Insights</a></li>
+                <li><a href="#method">Method</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="intro">
+            </section>
+
+            <section id="web">
+                <div id="sketch-load-message">Loading...</div>
+                <canvas id="sketch-canvas"></canvas>
+            </section>
+
+            <section id="express">
+            </section>
+
+            <section id="desktop">
+            </section>
+
+            <section id="data">
+            </section>
+
+            <section id="insights">
+            </section>
+
+            <section id="method">
+            </section>
+        </main>
         
         <script type="py" src="viz.py"></script>
     </body>

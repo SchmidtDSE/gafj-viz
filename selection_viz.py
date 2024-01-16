@@ -74,7 +74,7 @@ class SelectionMovement(abstract.VizMovement):
         self._sketch.set_fill(const.DEEP_BG_COLOR)
         self._sketch.draw_rect(0, 0, const.WIDTH, 50)
 
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 30)
+        self._sketch.set_text_font(const.FONT, 30)
         self._sketch.set_text_align('left', 'center')
         self._sketch.set_fill(const.INACTIVE_COLOR)
         self._sketch.draw_text(5, 25, 'Selecting from ' + self._get_label())

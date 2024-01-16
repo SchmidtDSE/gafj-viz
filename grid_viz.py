@@ -167,11 +167,11 @@ class GridColumn:
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(color)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.set_text_font(const.FONT, 14)
         self._sketch.set_text_align('center', 'baseline')
         self._sketch.draw_text(0, -8, const.REWRITES.get(self._category, self._category))
 
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
+        self._sketch.set_text_font(const.FONT, 11)
         self._sketch.set_text_align('center', 'top')
         self._sketch.draw_text(0, 2, '%.1f%%' % category_percent)
         self._sketch.draw_text(0, 14, self._header_description)

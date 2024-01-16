@@ -34,7 +34,7 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._sketch.set_fill(const.DEEP_BG_COLOR)
         self._sketch.draw_rect(0, 0, const.WIDTH, 50)
 
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 30)
+        self._sketch.set_text_font(const.FONT, 30)
         self._sketch.set_text_align('left', 'center')
         self._sketch.set_fill(const.INACTIVE_COLOR)
         self._sketch.draw_text(5, 25, 'Matching articles')
@@ -114,14 +114,14 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._sketch.enter_buffer('articles')
 
         self._sketch.clear_stroke()
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 30)
+        self._sketch.set_text_font(const.FONT, 30)
         self._sketch.set_text_align('left', 'center')
         self._sketch.set_fill(const.INACTIVE_COLOR)
         self._sketch.draw_text(5, 25, 'Matching articles')
 
         y = 80
         for article in self._articles[:20]:
-            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 16)
+            self._sketch.set_text_font(const.FONT, 16)
             self._sketch.set_text_align('left', 'baseline')
             self._sketch.draw_text(5, y, article.get_title_english())
 
@@ -131,7 +131,7 @@ class ArticlePreviewViz(abstract.VizMovement):
                 article.get_url()
             ])
 
-            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 12)
+            self._sketch.set_text_font(const.FONT, 12)
             self._sketch.set_text_align('left', 'top')
             self._sketch.draw_text(5, y + 5, text)
 

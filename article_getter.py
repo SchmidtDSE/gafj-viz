@@ -1,6 +1,7 @@
 import codecs
 import csv
 import io
+import os
 import typing
 
 boto_available = False
@@ -179,7 +180,7 @@ class LocalArticleGetter(ArticleGetter):
         return target
 
     def _get_source(self) -> typing.Iterable[str]:
-        with open('articles.csv') as f:
+        with open(os.path.join('csv', 'articles.csv')) as f:
             lines = f.readlines()
 
         return lines

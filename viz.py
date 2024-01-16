@@ -1,3 +1,4 @@
+import os
 import typing
 
 import sketchingpy
@@ -29,7 +30,8 @@ class NewsVisualization:
         self._mouse_y = None
 
         data_layer = self._sketch.get_data_layer()
-        compressed_data = data_layer.get_text('serialized.txt')
+        path = os.path.join('txt', 'serialized.txt')
+        compressed_data = data_layer.get_text(path)
         compressed_lines = compressed_data.split('\n')
         self._accessor = data_util.CompressedDataAccessor(compressed_lines)
 
@@ -258,7 +260,7 @@ class NewsVisualization:
             const.SELECTOR_HEIGHT
         )
 
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.set_text_font(const.FONT, 14)
         self._sketch.set_text_align('left', 'baseline')
         self._sketch.set_fill(const.INACTIVE_COLOR)
 
@@ -301,7 +303,7 @@ class NewsVisualization:
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.HOVER_COLOR if button_hover else const.INACTIVE_COLOR)
         self._sketch.set_text_align('center', 'baseline')
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.set_text_font(const.FONT, 14)
         self._sketch.draw_text(
             const.BUTTON_X + const.BUTTON_WIDTH / 2 - 1,
             text_y,
@@ -323,7 +325,7 @@ class NewsVisualization:
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.HOVER_COLOR if download_hover else const.INACTIVE_COLOR)
         self._sketch.set_text_align('center', 'baseline')
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.set_text_font(const.FONT, 14)
         self._sketch.draw_text(
             const.DOWNLOAD_X + const.BUTTON_WIDTH / 2 - 1,
             text_y,

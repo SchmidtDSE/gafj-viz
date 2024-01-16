@@ -63,7 +63,7 @@ class BarTable:
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 14)
+        self._sketch.set_text_font(const.FONT, 14)
         self._sketch.set_text_align('left', 'baseline')
         self._sketch.draw_text(0, y - 5, label)
 
@@ -90,7 +90,7 @@ class BarTable:
             self._sketch.draw_rect(self._start_x, y + 15, percent / 100 * self._width, 2)
 
             self._sketch.set_fill(color)
-            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
+            self._sketch.set_text_font(const.FONT, 11)
             self._sketch.set_text_align('left', 'baseline')
             self._sketch.draw_text(self._start_x, y + 12, name_overrides.get(name, name))
 
@@ -102,7 +102,7 @@ class BarTable:
 
             self._sketch.set_text_align('right', 'baseline')
             self._sketch.set_fill(color)
-            self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
+            self._sketch.set_text_font(const.FONT, 10)
             self._sketch.draw_text(const.COLUMN_WIDTH, y + 12, '%.1f%%' % percent)
 
             if self._checkbox:
@@ -139,7 +139,7 @@ class BarTable:
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
+        self._sketch.set_text_font(const.FONT, 11)
         self._sketch.set_text_align('left', 'top')
         self._sketch.draw_text(0, y + 4, sub_title)
 
@@ -177,7 +177,7 @@ class BarTable:
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 10)
+        self._sketch.set_text_font(const.FONT, 10)
         
         self._sketch.set_text_align('left', 'top')
         self._sketch.draw_text(start_x, 3, '0%')

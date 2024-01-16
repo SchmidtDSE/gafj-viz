@@ -1,4 +1,5 @@
 import math
+import os
 
 import sketchingpy
 
@@ -25,14 +26,16 @@ class MapViz(abstract.VizMovement):
         self._sketch.set_map_placement(self._center_x, self._center_y)
         self._sketch.set_map_zoom(0.2)
 
-        source = sketch.get_data_layer().get_json('zoomed_out.geojson')
+        path = os.path.join('geojson', 'zoomed_out.geojson')
+        source = sketch.get_data_layer().get_json(path)
         geo_polygons = sketch.parse_geojson(source)
         self._geo_shapes = [x.to_shape() for x in geo_polygons]
 
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)
 
-        centerpoints_raw = sketch.get_data_layer().get_csv('centerpoints.csv')
+        path = os.path.join('csv', 'centerpoints.csv')
+        centerpoints_raw = sketch.get_data_layer().get_csv(path)
         geopoints_flat = map(
             lambda x: (
                 x['name'],

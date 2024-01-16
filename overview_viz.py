@@ -156,7 +156,7 @@ class OverviewViz(abstract.VizMovement):
 
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
-        self._sketch.set_text_font('IBMPlexMono-Regular.ttf', 11)
+        self._sketch.set_text_font(const.FONT, 11)
         self._sketch.set_text_align('left', 'center')
         self._sketch.draw_text(
             const.WIDTH - const.COLUMN_WIDTH - 25,

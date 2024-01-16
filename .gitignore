@@ -1,5 +1,6 @@
 *.db
 __pycache__
+.mypy_cache
 
 third_party/*.css
 third_party/*.js

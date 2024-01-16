@@ -26,8 +26,11 @@ class MapViz(abstract.VizMovement):
         self._sketch.set_map_placement(self._center_x, self._center_y)
         self._sketch.set_map_zoom(0.2)
 
+        data_layer = sketch.get_data_layer()
+        assert data_layer is not None
+
         path = os.path.join('geojson', 'zoomed_out.geojson')
-        source = sketch.get_data_layer().get_json(path)
+        source = data_layer.get_json(path)
         geo_polygons = sketch.parse_geojson(source)
         self._geo_shapes = [x.to_shape() for x in geo_polygons]
 
@@ -35,7 +38,7 @@ class MapViz(abstract.VizMovement):
         self._results = self._accessor.execute_query(query)
 
         path = os.path.join('csv', 'centerpoints.csv')
-        centerpoints_raw = sketch.get_data_layer().get_csv(path)
+        centerpoints_raw = data_layer.get_csv(path)
         geopoints_flat = map(
             lambda x: (
                 x['name'],

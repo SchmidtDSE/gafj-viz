@@ -1,7 +1,8 @@
-import abstract
+import typing
 
 import sketchingpy
 
+import abstract
 import const
 import data_util
 import map_viz
@@ -16,7 +17,7 @@ class OverviewViz(abstract.VizMovement):
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
-        self._placements = {}
+        self._placements: typing.Dict[str, int] = {}
 
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)
@@ -79,7 +80,7 @@ class OverviewViz(abstract.VizMovement):
 
         x = const.WIDTH - const.COLUMN_WIDTH - 30
         check_state_prefix(x, 'countries')
-        
+
         x -= const.COLUMN_WIDTH + 20
         check_state_prefix(x, 'keywords')
 

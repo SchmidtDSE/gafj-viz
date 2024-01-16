@@ -1,5 +1,4 @@
 import itertools
-import os
 import typing
 
 OPT_STR = typing.Optional[str]
@@ -30,7 +29,7 @@ class Query:
         return self._category
 
     def has_pre_category(self) -> bool:
-        return self._pre_category is not None 
+        return self._pre_category is not None
 
     def get_pre_category(self) -> OPT_STR:
         return self._pre_category
@@ -186,28 +185,28 @@ class ArticleSet:
         self._tags = tags
         self._keywords = keywords
         self._count = count
-    
+
     def get_country(self) -> Country:
         return self._country
-    
+
     def get_categories(self) -> typing.List[Category]:
         return self._categories
 
     def has_category(self, name: str) -> bool:
         return self._check_for(name, self._categories)
-    
+
     def get_tags(self) -> typing.List[Tag]:
         return self._tags
 
     def has_tag(self, name: str) -> bool:
         return self._check_for(name, self._tags)
-    
+
     def get_keywords(self) -> typing.List[Keyword]:
         return self._keywords
 
     def has_keyword(self, name: str) -> bool:
         return self._check_for(name, self._keywords)
-    
+
     def get_count(self) -> int:
         return self._count
 
@@ -232,9 +231,9 @@ class CompressedDataAccessor(DataAccessor):
         self._tags: typing.Dict[int, Tag] = {}
         self._keywords: typing.Dict[int, Keyword] = {}
         self._articles: typing.List[ArticleSet] = []
-        
+
         self._last_query_str = ''
-        self._last_result = None
+        self._last_result: typing.Optional[Result] = None
 
         strategies = {
             'n': lambda x: self._load_country(x),
@@ -252,6 +251,7 @@ class CompressedDataAccessor(DataAccessor):
     def execute_query(self, query: Query) -> Result:
         id_str = query.get_id_str()
         if self._last_query_str == id_str:
+            assert self._last_result is not None
             return self._last_result
 
         addressable = self._get_addressable(query)
@@ -282,7 +282,7 @@ class CompressedDataAccessor(DataAccessor):
         return new_result
 
     def _get_addressable(self, query: Query) -> typing.List[ArticleSet]:
-        addressable_group = self._articles
+        addressable_group: typing.Iterable[ArticleSet] = self._articles
 
         if query.has_country():
             target_country = query.get_country()
@@ -294,21 +294,21 @@ class CompressedDataAccessor(DataAccessor):
         if query.has_pre_category():
             target_category = query.get_pre_category()
             addressable_group = filter(
-                lambda article: article.has_category(target_category),
+                lambda article: article.has_category(target_category),  # type: ignore
                 addressable_group
             )
 
         if query.has_tag():
             target_tag = query.get_tag()
             addressable_group = filter(
-                lambda article: article.has_tag(target_tag),
+                lambda article: article.has_tag(target_tag),  # type: ignore
                 addressable_group
             )
 
         if query.has_keyword():
             target_keyword = query.get_keyword()
             addressable_group = filter(
-                lambda article: article.has_keyword(target_keyword),
+                lambda article: article.has_keyword(target_keyword),  # type: ignore
                 addressable_group
             )
 
@@ -318,7 +318,7 @@ class CompressedDataAccessor(DataAccessor):
         return sum(map(lambda x: x.get_count(), target))
 
     def _get_by_country(self, target: typing.Iterable[ArticleSet]) -> COUNTED_GROUPS:
-        ret_counts = {}
+        ret_counts: typing.Dict[str, int] = {}
 
         for article in target:
             country = article.get_country().get_name()
@@ -328,33 +328,30 @@ class CompressedDataAccessor(DataAccessor):
         return self._convert_dict_to_counted_groups(ret_counts)
 
     def _get_total_count_in_category(self, target: typing.List[ArticleSet],
-        category: OPT_STR) -> typing.List[ArticleSet]:
-        
+        category: OPT_STR) -> int:
+
+        in_category: typing.Iterable[ArticleSet] = target
         if category:
             in_category = filter(lambda x: x.has_category(category), target)
-        else:
-            in_category = target
-        
+
         counts = map(lambda x: x.get_count(), in_category)
         return sum(counts)
 
     def _get_by_country_in_category(self, target: typing.List[ArticleSet],
-        category: OPT_STR) -> typing.List[ArticleSet]:
+        category: OPT_STR) -> COUNTED_GROUPS:
 
+        in_category: typing.Iterable[ArticleSet] = target
         if category:
             in_category = filter(lambda x: x.has_category(category), target)
-        else:
-            in_category = target
 
         return self._get_by_country(in_category)
 
     def _get_categories_in_category(self, target: typing.List[ArticleSet],
-        category: OPT_STR) -> typing.List[ArticleSet]:
+        category: OPT_STR) -> COUNTED_GROUPS:
 
+        in_category: typing.Iterable[ArticleSet] = target
         if category:
             in_category = filter(lambda x: x.has_category(category), target)
-        else:
-            in_category = target
 
         nested_categories = map(
             lambda x: self._propogate_count(x.get_categories(), x.get_count()),
@@ -364,12 +361,11 @@ class CompressedDataAccessor(DataAccessor):
         return self._make_counts_from_flat(categories)
 
     def _get_tags_in_category(self, target: typing.List[ArticleSet],
-        category: OPT_STR) -> typing.List[ArticleSet]:
+        category: OPT_STR) -> COUNTED_GROUPS:
 
+        in_category: typing.Iterable[ArticleSet] = target
         if category:
             in_category = filter(lambda x: x.has_category(category), target)
-        else:
-            in_category = target
 
         nested_tags = map(
             lambda x: self._propogate_count(x.get_tags(), x.get_count()),
@@ -377,23 +373,21 @@ class CompressedDataAccessor(DataAccessor):
         )
         tags = itertools.chain(*nested_tags)
 
+        tags_allowed: typing.Iterable = tags
         if category:
             tags_allowed = filter(
                 lambda x: x[0].get_category().get_name() == category,
                 tags
             )
-        else:
-            tags_allowed = tags
 
         return self._make_counts_from_flat(tags_allowed)
 
     def _get_keywords_in_category(self, target: typing.List[ArticleSet],
-        category: OPT_STR) -> typing.List[ArticleSet]:
+        category: OPT_STR) -> COUNTED_GROUPS:
 
+        in_category: typing.Iterable[ArticleSet] = target
         if category:
             in_category = filter(lambda x: x.has_category(category), target)
-        else:
-            in_category = target
 
         nested_keywords = map(
             lambda x: self._propogate_count(x.get_keywords(), x.get_count()),
@@ -401,23 +395,22 @@ class CompressedDataAccessor(DataAccessor):
         )
         keywords = itertools.chain(*nested_keywords)
 
+        keywords_allowed: typing.Iterable = keywords
         if category:
             keywords_allowed = filter(
                 lambda x: x[0].get_tag().get_category().get_name() == category,
                 keywords
             )
-        else:
-            keywords_allowed = keywords
 
         return self._make_counts_from_flat(keywords_allowed)
 
     def _propogate_count(self, targets, count):
         return map(lambda x: (x, count), targets)
 
-    def _make_counts_from_flat(self, obj_tuples):
+    def _make_counts_from_flat(self, obj_tuples) -> COUNTED_GROUPS:
         str_tuples = map(lambda x: (x[0].get_name(), x[1]), obj_tuples)
-        
-        ret_counts = {}
+
+        ret_counts: typing.Dict[str, int] = {}
         for name, count in str_tuples:
             ret_counts[name] = ret_counts.get(name, 0) + count
 
@@ -445,7 +438,7 @@ class CompressedDataAccessor(DataAccessor):
 
         name = (' '.join(pieces[3:]))[1:-1]
         category = self._categories[category_id]
-        
+
         self._tags[tag_id] = Tag(name, category)
 
     def _load_keyword(self, line: str):
@@ -457,7 +450,7 @@ class CompressedDataAccessor(DataAccessor):
         name = (' '.join(pieces[4:]))[1:-1]
         category = self._categories[category_id]
         tag = self._tags[tag_id]
-        
+
         self._keywords[keyword_id] = Keyword(name, category, tag)
 
     def _load_article_set(self, line: str):
@@ -478,6 +471,6 @@ class CompressedDataAccessor(DataAccessor):
         categories = [self._categories[x] for x in category_ids]
         tags = [self._tags[x] for x in tag_ids]
         keywords = [self._keywords[x] for x in keyword_ids]
-        
+
         new_article_set = ArticleSet(country, categories, tags, keywords, count)
         self._articles.append(new_article_set)

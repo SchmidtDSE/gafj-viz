@@ -18,7 +18,7 @@ class NewsVisualization:
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
-        
+
         self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT)
         self._sketch.set_fps(20)
 
@@ -267,11 +267,11 @@ class NewsVisualization:
         x = 3
         self._sketch.clear_stroke()
         self._sketch.draw_text(x, text_y, 'Filters:')
-        
+
         x += 70
         country_selected = self._state.get_country_selected()
         country_label = make_label(country_selected, 'all countries')
-        draw_select(x,  country_label, 'countries')
+        draw_select(x, country_label, 'countries')
 
         x += 185
         category_selected = self._state.get_category_selected()

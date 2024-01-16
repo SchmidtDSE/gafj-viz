@@ -4,10 +4,8 @@ import typing
 
 import sketchingpy
 
-import abstract
 import const
 import data_util
-import state_util
 
 
 class BarTable:
@@ -30,7 +28,7 @@ class BarTable:
     def set_sub_title(self, sub_title: str):
         self._sub_title = sub_title
 
-    def draw(self, x: int, y: int, groups: data_util.COUNTED_GROUPS,
+    def draw(self, x: float, y: float, groups: data_util.COUNTED_GROUPS,
         selected_name: typing.Optional[str], hovering_name: typing.Optional[str], total_getter,
         prior_placements: typing.Optional[typing.Dict[str, float]] = None,
         placements: typing.Optional[typing.Dict[str, float]] = None,
@@ -42,10 +40,10 @@ class BarTable:
         prefix = self._prefix
         label = self._label
         sub_title = self._sub_title
-        
+
         if prior_placements is None:
             prior_placements = {}
-        
+
         if placements is None:
             placements = {}
 
@@ -152,7 +150,7 @@ class BarTable:
 
         return y + 30
 
-    def draw_axis(self, x: int, y: int, include_circles: bool = False) -> float:
+    def draw_axis(self, x: float, y: float, include_circles: bool = False) -> float:
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -178,7 +176,7 @@ class BarTable:
         self._sketch.clear_stroke()
         self._sketch.set_fill(const.INACTIVE_COLOR)
         self._sketch.set_text_font(const.FONT, 10)
-        
+
         self._sketch.set_text_align('left', 'top')
         self._sketch.draw_text(start_x, 3, '0%')
 
@@ -191,7 +189,7 @@ class BarTable:
         return y + 15
 
     def _interpret_groups(self, groups: data_util.COUNTED_GROUPS, total_getter,
-        count: int) -> typing.Dict:
+        count: int) -> typing.List[typing.Dict]:
         def interpret_group(group: data_util.CountedGroup) -> typing.Dict:
             name = group.get_name()
             percent = group.get_count() / (total_getter(group.get_name()) + 0.0) * 100

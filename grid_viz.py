@@ -85,7 +85,7 @@ class GridColumn:
 
         self._sketch.translate(self._x, 0)
 
-        y = 0
+        y = 0.0
 
         category_selected = current_state.get_category_selected() == self._category
         category_hovering = current_state.get_category_hovering() == self._category
@@ -104,7 +104,7 @@ class GridColumn:
             placements=self._placements,
             count=7
         )
-        
+
         y = self._keywords_table.draw(
             0,
             y,
@@ -116,7 +116,7 @@ class GridColumn:
             placements=self._placements,
             count=7
         )
-        
+
         country_totals = self._results.get_country_totals()
         country_totals_indexed = dict(map(lambda x: (x.get_name(), x.get_count()), country_totals))
 
@@ -137,7 +137,7 @@ class GridColumn:
         self._sketch.pop_style()
         self._sketch.pop_transform()
 
-    def _draw_header(self, y: int, selected: bool, hovering: bool):
+    def _draw_header(self, y: float, selected: bool, hovering: bool):
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -147,12 +147,11 @@ class GridColumn:
 
         group_count = self._results.get_group_count()
         total_count = self._results.get_total_count()
-        
-        if total_count == 0:
-            category_percent = 0
-        else:
+
+        category_percent = 0.0
+        if total_count != 0:
             category_percent = (group_count + 0.0) / total_count * 100
-        
+
         end_angle = category_percent / 100 * 360
         self._sketch.set_arc_mode('radius')
         self._sketch.set_angle_mode('degrees')

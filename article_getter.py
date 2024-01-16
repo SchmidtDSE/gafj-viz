@@ -6,7 +6,7 @@ import typing
 
 boto_available = False
 try:
-    import boto3
+    import boto3  # type: ignore
     boto_available = True
 except:
     boto_available = False
@@ -35,32 +35,32 @@ class Article:
         self._keywords = keywords
         self._tags = tags
         self._categories = categories
-    
+
     def get_url(self) -> str:
         return self._url
-    
+
     def get_title_original(self) -> str:
         return self._title_original
-    
+
     def get_title_english(self) -> str:
         return self._title_english
-    
+
     def get_published(self) -> str:
         return self._published
-    
+
     def get_country(self) -> str:
         return self._country
-    
+
     def get_keywords(self) -> typing.List[str]:
         return self._keywords
-    
+
     def get_tags(self) -> typing.List[str]:
         return self._tags
-    
+
     def get_categories(self) -> typing.List[str]:
         return self._categories
 
-    def to_dict(self) -> typing.Dict[str,str]:
+    def to_dict(self) -> typing.Dict[str, str]:
         return {
             'url': self.get_url(),
             'titleOriginal': self.get_title_original(),
@@ -85,7 +85,7 @@ class ArticleGetter:
         pieces = target_str.split('\t')
         if len(pieces) != 8:
             return None
-        
+
         return Article(
             pieces[0],
             pieces[1],
@@ -97,31 +97,39 @@ class ArticleGetter:
             pieces[7].split(';')
         )
 
-
     def _execute_query(self, query_params: typing.Dict[str, str],
         input_lines: typing.Iterable[str]) -> typing.Iterable[Article]:
         articles_with_none = map(lambda x: self._parse_row(x), input_lines)
-        articles = filter(lambda x: x is not None, articles_with_none)
+        articles = filter(lambda x: x is not None, articles_with_none)  # type: ignore
 
         if 'keyword' in query_params:
             target_keyword = query_params['keyword']
-            articles = filter(lambda x: target_keyword in x.get_keywords(), articles)
+            articles = filter(
+                lambda x: target_keyword in x.get_keywords(),  # type: ignore
+                articles
+            )
 
         if 'tag' in query_params:
             target_tag = query_params['tag']
-            articles = filter(lambda x: target_tag in x.get_tags(), articles)
+            articles = filter(lambda x: target_tag in x.get_tags(), articles)  # type: ignore
 
         if 'category' in query_params:
             target_category = query_params['category']
-            articles = filter(lambda x: target_category in x.get_categories(), articles)
+            articles = filter(
+                lambda x: target_category in x.get_categories(),  # type: ignore
+                articles
+            )
 
         if 'country' in query_params:
             target_country = query_params['country']
-            articles = filter(lambda x: x.get_country() == target_country, articles)
+            articles = filter(
+                lambda x: x.get_country() == target_country,  # type: ignore
+                articles
+            )
 
-        articles = filter(lambda x: x.get_url() != 'url', articles)
+        articles = filter(lambda x: x.get_url() != 'url', articles)  # type: ignore
 
-        return articles
+        return articles  # type: ignore
 
     def _get_query_params(self, target: typing.Dict) -> typing.Dict:
         raise RuntimeError('Use implementor.')
@@ -166,7 +174,7 @@ class AwsLambdaArticleGetter(ArticleGetter):
         articles_dicts = map(lambda x: x.to_dict(), articles)
 
         output_target = io.StringIO()
-        
+
         writer = csv.DictWriter(output_target, fieldnames=COLS, extrasaction='ignore')
         writer.writeheader()
         writer.writerows(articles_dicts)

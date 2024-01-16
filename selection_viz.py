@@ -17,7 +17,7 @@ class SelectionMovement(abstract.VizMovement):
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
-        self._placements = []
+        self._placements: typing.List[typing.Dict[str, int]] = []
 
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)
@@ -52,7 +52,9 @@ class SelectionMovement(abstract.VizMovement):
         self._sketch.push_style()
 
         for i in range(0, 5):
-            target_slice = self._get_results(self._results)[(i*30):((i+1)*30)]
+            start_i = i * 30
+            end_i = (i + 1) * 30
+            target_slice = self._get_results(self._results)[start_i:end_i]
             placements = self._placements[i]
             placements.clear()
             if len(target_slice) > 0:
@@ -105,11 +107,17 @@ class SelectionMovement(abstract.VizMovement):
 
     def _get_results_raw(self, results: data_util.Result) -> typing.List:
         raise RuntimeError('Use implementor.')
-    
+
     def _get_selected(self, state: state_util.VizState) -> typing.Optional[str]:
         return self._get_selected_inner(state)
-    
+
+    def _get_selected_inner(self, state: state_util.VizState) -> typing.Optional[str]:
+        raise RuntimeError('Use implementor.')
+
     def _get_hovering(self, state: state_util.VizState) -> typing.Optional[str]:
+        raise RuntimeError('Use implementor.')
+
+    def _set_hovering(self, state: state_util.VizState, name: typing.Optional[str]):
         raise RuntimeError('Use implementor.')
 
     def _get_total(self, results: data_util.Result, name: str) -> int:
@@ -129,15 +137,18 @@ class CountrySelectionMovement(SelectionMovement):
 
     def _get_results_raw(self, results: data_util.Result):
         return results.get_countries()
-    
+
     def _get_selected_inner(self, state: state_util.VizState):
         return state.get_country_selected()
-    
+
     def _get_hovering(self, state: state_util.VizState):
         return state.get_country_hovering()
 
-    def _set_hovering(self, state: state_util.VizState, name: str):
-        return state.set_country_hovering(name)
+    def _set_hovering(self, state: state_util.VizState, name: typing.Optional[str]):
+        if name:
+            state.set_country_hovering(name)
+        else:
+            state.clear_country_hovering()
 
     def _get_total_inner(self, results: data_util.Result, name: str) -> int:
         country_totals = results.get_country_totals()
@@ -159,15 +170,18 @@ class CategorySelectionMovement(SelectionMovement):
 
     def _get_results_raw(self, results: data_util.Result):
         return results.get_categories()
-    
+
     def _get_selected_inner(self, state: state_util.VizState):
         return state.get_category_selected()
-    
+
     def _get_hovering(self, state: state_util.VizState):
         return state.get_category_hovering()
 
-    def _set_hovering(self, state: state_util.VizState, name: str):
-        return state.set_category_hovering(name)
+    def _set_hovering(self, state: state_util.VizState, name: typing.Optional[str]):
+        if name:
+            state.set_category_hovering(name)
+        else:
+            state.clear_category_hovering()
 
     def _get_total_inner(self, results: data_util.Result, name: str) -> int:
         return results.get_total_count()
@@ -183,15 +197,18 @@ class TagSelectionMovement(SelectionMovement):
 
     def _get_results_raw(self, results: data_util.Result):
         return results.get_tags()
-    
+
     def _get_selected_inner(self, state: state_util.VizState):
         return state.get_tag_selected()
-    
+
     def _get_hovering(self, state: state_util.VizState):
         return state.get_tag_hovering()
 
-    def _set_hovering(self, state: state_util.VizState, name: str):
-        return state.set_tag_hovering(name)
+    def _set_hovering(self, state: state_util.VizState, name: typing.Optional[str]):
+        if name:
+            state.set_tag_hovering(name)
+        else:
+            state.clear_tag_hovering()
 
     def _get_total_inner(self, results: data_util.Result, name: str) -> int:
         return results.get_total_count()
@@ -207,15 +224,18 @@ class KeywordSelectionMovement(SelectionMovement):
 
     def _get_results_raw(self, results: data_util.Result):
         return results.get_keywords()
-    
+
     def _get_selected_inner(self, state: state_util.VizState):
         return state.get_keyword_selected()
-    
+
     def _get_hovering(self, state: state_util.VizState):
         return state.get_keyword_hovering()
 
-    def _set_hovering(self, state: state_util.VizState, name: str):
-        return state.set_keyword_hovering(name)
+    def _set_hovering(self, state: state_util.VizState, name: typing.Optional[str]):
+        if name:
+            state.set_keyword_hovering(name)
+        else:
+            state.clear_keyword_hovering()
 
     def _get_total_inner(self, results: data_util.Result, name: str) -> int:
         return results.get_total_count()

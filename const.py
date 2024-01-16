@@ -33,7 +33,7 @@ SELECTOR_Y = BUTTON_Y
 SELECTOR_WIDTH = WIDTH - (BUTTON_WIDTH + 5) * 2
 SELECTOR_HEIGHT = BUTTON_HEIGHT
 
-FONT = os.path.join('third_party', 'IBMPlexMono-Regular.ttf')
+FONT = os.path.join('third_party_web', 'IBMPlexMono-Regular.ttf')
 
 REWRITES = {
     'people and society': 'people & society',

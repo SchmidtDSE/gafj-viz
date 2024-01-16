@@ -179,7 +179,7 @@ class LocalArticleGetter(ArticleGetter):
         return target
 
     def _get_source(self) -> typing.Iterable[str]:
-        with open('./articles.csv') as f:
+        with open('articles.csv') as f:
             lines = f.readlines()
 
         return lines

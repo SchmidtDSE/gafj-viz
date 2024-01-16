@@ -1,3 +1,14 @@
 *.db
 __pycache__
-*.ttf
+
+third_party/*.css
+third_party/*.js
+third_party/*.whl
+third_party/*.json
+third_party/*.wasm
+third_party/*.mjs
+third_party/*.zip
+
+IBMPlexMono-Regular.ttf
+tabby-ui.min.css
+tabby.polyfills.min.js

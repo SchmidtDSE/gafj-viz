@@ -35,6 +35,7 @@ class NewsVisualization:
         self._mouse_y = None
 
         data_layer = self._sketch.get_data_layer()
+        assert data_layer is not None
         path = os.path.join('txt', 'serialized.txt')
         compressed_data = data_layer.get_text(path)
         compressed_lines = compressed_data.split('\n')
@@ -72,8 +73,10 @@ class NewsVisualization:
 
         if self._interactive:
             self._sketch.on_step(lambda sketch: self._draw())
-            self._sketch.get_mouse().on_button_press(
-                lambda button: self._respond_to_click(button)
+            mouse = self._sketch.get_mouse()
+            assert mouse is not None
+            mouse.on_button_press(
+                lambda button: self._respond_to_click(button)  # type: ignore
             )
 
         self._table_counter = 0

@@ -13,3 +13,5 @@ third_party/*.zip
 IBMPlexMono-Regular.ttf
 tabby-ui.min.css
 tabby.polyfills.min.js
+
+deploy

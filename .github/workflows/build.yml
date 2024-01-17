@@ -1,0 +1,36 @@
+name: Build
+
+on: push
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install python deps
+        run: pip install -r requirements.txt
+      - name: Get other deps
+        run: bash support/load_deps.sh
+      - name: Install optional build tools
+        run: pip install mypy pycodestyle pyflakes nose2
+      - name: Check flakes
+        run: pyflakes *.py
+      - name: Check style
+        run: pycodestyle *.py
+      - name: Check types
+        run: mypy *.py
+      - name: Run unit tests
+        run: nose2
+      - name: Run integration tests
+        run: bash support/test_integration.sh
+  

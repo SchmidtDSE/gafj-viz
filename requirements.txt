@@ -1,1 +1,2 @@
-sketchingpy~=0.1.2
+sketchingpy[desktopall]~=0.1.2
+sketchingpy[static]~=0.1.2

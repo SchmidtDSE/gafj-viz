@@ -33,3 +33,31 @@ jobs:
         run: nose2
       - name: Run integration tests
         run: bash support/test_integration.sh
+  deploy:
+    name: Deploy Web
+    environment: deploy
+    runs-on: ubuntu-latest
+    needs: [test, runStandalone, buildFigures]
+    if: github.ref == 'refs/heads/deploy'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install python deps
+        run: pip install -r requirements.txt
+      - name: Get other deps
+        run: bash support/load_deps.sh
+      - name: Prepare deploy
+        run: bash support/prepare_deploy.sh
+      - name: Upload
+        uses: Creepios/sftp-action@v1.0.3
+        with:
+          host: ${{ secrets.SFTPHOST }}
+          port: 22
+          username: ${{ secrets.SFTPUSER }}
+          password: ${{ secrets.SFTPPASSWORD }}
+          localPath: './deploy'
+          remotePath: './food-news-viz.org'

@@ -75,7 +75,7 @@ class Article:
 
 class ArticleGetter:
 
-    def execute(self, params: typing.Dict) -> typing.Dict:
+    def execute(self, params: typing.Dict):
         query_params = self._get_query_params(params)
         input_lines = self._get_source()
         matching = self._execute_query(query_params, input_lines)
@@ -202,6 +202,6 @@ def lambda_handler(event, context):
     return article_getter.execute(event)
 
 
-def local_handler(params):
+def local_handler(params: typing.Dict) -> typing.List[Article]:
     article_getter = LocalArticleGetter()
-    return article_getter.execute(params)
+    return article_getter.execute(params)  # type: ignore

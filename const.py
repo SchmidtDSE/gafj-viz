@@ -44,6 +44,10 @@ REWRITES = {
 }
 
 
+def rewrite(target: str) -> str:
+    return REWRITES.get(target, target)
+
+
 def get_color(selected: bool, hovering: bool) -> str:
     if hovering:
         return HOVER_COLOR

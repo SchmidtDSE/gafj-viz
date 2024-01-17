@@ -1,4 +1,5 @@
 import os
+import sys
 import typing
 
 import sketchingpy
@@ -14,13 +15,17 @@ import state_util
 
 class NewsVisualization:
 
-    def __init__(self):
+    def __init__(self, interactive: bool = True):
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
+        self._interactive = interactive
 
-        self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT)
-        self._sketch.set_fps(20)
+        if self._interactive:
+            self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT)
+            self._sketch.set_fps(20)
+        else:
+            self._sketch = sketchingpy.Sketch2DStatic(const.WIDTH, const.HEIGHT)
 
         self._movement = 'overview'
         self._button_hover = 'none'
@@ -65,15 +70,20 @@ class NewsVisualization:
             self._state
         )
 
-        self._sketch.on_step(lambda sketch: self._draw())
-        self._sketch.get_mouse().on_button_press(
-            lambda button: self._respond_to_click(button)
-        )
+        if self._interactive:
+            self._sketch.on_step(lambda sketch: self._draw())
+            self._sketch.get_mouse().on_button_press(
+                lambda button: self._respond_to_click(button)
+            )
 
         self._table_counter = 0
 
     def show(self):
-        self._sketch.show()
+        if self._interactive:
+            self._sketch.show()
+        else:
+            self._draw()
+            self._sketch.save_image('static.png')
 
     def _draw(self):
         self._sketch.push_transform()
@@ -90,9 +100,13 @@ class NewsVisualization:
 
         target_viz = movements[self._movement]
 
-        mouse = self._sketch.get_mouse()
-        mouse_x = mouse.get_pointer_x()
-        mouse_y = mouse.get_pointer_y()
+        if self._interactive:
+            mouse = self._sketch.get_mouse()
+            mouse_x = mouse.get_pointer_x()
+            mouse_y = mouse.get_pointer_y()
+        else:
+            mouse_x = 0
+            mouse_y = 0
 
         if self._drawn and mouse_x == self._mouse_x and mouse_y == self._mouse_y:
             prior_state_str = self._state.serialize()
@@ -352,7 +366,13 @@ class NewsVisualization:
 
 
 def main():
-    visualization = NewsVisualization()
+    if len(sys.argv) > 1:
+        mode = sys.argv[1]
+    else:
+        mode = 'interactive'
+
+    is_interactive = mode == 'interactive'
+    visualization = NewsVisualization(interactive=is_interactive)
     visualization.show()
 
 

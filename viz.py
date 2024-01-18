@@ -23,7 +23,7 @@ class NewsVisualization:
 
         if self._interactive:
             self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT)
-            self._sketch.set_fps(20)
+            self._sketch.set_fps(15)
         else:
             self._sketch = sketchingpy.Sketch2DStatic(const.WIDTH, const.HEIGHT)
 

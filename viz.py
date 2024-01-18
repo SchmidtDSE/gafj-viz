@@ -103,6 +103,30 @@ class NewsVisualization:
 
         target_viz = movements[self._movement]
 
+        self._check_mouse_pos()
+
+        if self._changed or self._movement == 'download':
+            self._sketch.clear(const.BG_COLOR)
+
+            target_viz.draw()
+
+            self._draw_footer()
+
+            self._drawn = True
+            self._changed = False
+
+        self._sketch.pop_style()
+        self._sketch.pop_transform()
+
+    def _check_mouse_pos(self, force=False):
+        movements = {
+            'overview': self._overview,
+            'grid': self._grid,
+            'download': self._article_preview
+        }
+
+        target_viz = movements[self._movement]
+
         if self._interactive:
             mouse = self._sketch.get_mouse()
             mouse_x = mouse.get_pointer_x()
@@ -111,7 +135,11 @@ class NewsVisualization:
             mouse_x = 0
             mouse_y = 0
 
-        if self._drawn and mouse_x == self._mouse_x and mouse_y == self._mouse_y:
+        should_check = self._drawn
+        mouse_stable = mouse_x == self._mouse_x and mouse_y == self._mouse_y
+        should_check = should_check and (force or mouse_stable)
+
+        if should_check:
             prior_state_str = self._state.serialize()
 
             self._state.clear_category_hovering()
@@ -150,22 +178,11 @@ class NewsVisualization:
         self._mouse_x = mouse_x
         self._mouse_y = mouse_y
 
-        if self._changed or self._movement == 'download':
-            self._sketch.clear(const.BG_COLOR)
-
-            target_viz.draw()
-
-            self._draw_footer()
-
-            self._drawn = True
-            self._changed = False
-
-        self._sketch.pop_style()
-        self._sketch.pop_transform()
-
     def _respond_to_click(self, button):
         if button.get_name() != 'leftMouse':
             return
+
+        self._check_mouse_pos(force=True)
 
         category = self._state.get_category_hovering()
         if category == 'All':
@@ -207,7 +224,6 @@ class NewsVisualization:
                 self._overview.on_change_to()
             else:
                 raise RuntimeError('Unexpected movement.')
-
         elif self._button_hover == 'countries':
             self._state.set_country_selected(None)
             self._movement = 'country'

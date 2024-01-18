@@ -7,4 +7,9 @@ cp -r csv deploy/csv
 cp -r geojson deploy/geojson
 cp -r js deploy/js
 cp -r third_party deploy/third_party
-cp -r third_party_web deploy/third_party_web 
+cp -r third_party_web deploy/third_party_web
+cd deploy
+
+for name in *.py; do
+    mv -- "$name" "${name%.py}.pyscript"
+done

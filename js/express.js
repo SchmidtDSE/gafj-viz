@@ -31,8 +31,13 @@ function getQueryParamsStr() {
 
 
 function executeExport() {
-    const targetUrl = EXPORT_URL + "?" + getQueryParamsStr();
-    window.open(targetUrl, '_blank');
+    const queryParamsStr = getQueryParamsStr();
+    if (queryParamsStr === "") {
+        window.open("/csv/articles.csv", "_blank");
+    } else {
+        const targetUrl = EXPORT_URL + "?" + queryParamsStr;
+        window.open(targetUrl, "_blank");
+    }
 }
 
 

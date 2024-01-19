@@ -75,11 +75,14 @@ class Article:
 
 class ArticleGetter:
 
-    def execute(self, params: typing.Dict):
+    def execute_to_obj(self, params: typing.Dict) -> typing.Iterable[Article]:
         query_params = self._get_query_params(params)
         input_lines = self._get_source()
         matching = self._execute_query(query_params, input_lines)
-        return self._make_response(matching)
+        return matching
+
+    def execute_to_native(self, params: typing.Dict):
+        return self._make_response(self.execute_to_obj(params))
 
     def _parse_row(self, target_str: str) -> typing.Optional[Article]:
         pieces = target_str.split('\t')
@@ -199,9 +202,9 @@ class LocalArticleGetter(ArticleGetter):
 
 def lambda_handler(event, context):
     article_getter = AwsLambdaArticleGetter()
-    return article_getter.execute(event)
+    return article_getter.execute_to_native(event)
 
 
 def local_handler(params: typing.Dict) -> typing.List[Article]:
     article_getter = LocalArticleGetter()
-    return article_getter.execute(params)  # type: ignore
+    return article_getter.execute_to_native(params)  # type: ignore

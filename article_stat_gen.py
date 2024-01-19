@@ -23,15 +23,15 @@ class StatGenerator:
         }.get(dimension, None)
 
         if strategy is None:
-            return []
+            return {}
 
         matching_values_nest = list(map(strategy, matching))
         matching_values = itertools.chain(*matching_values_nest)
 
-        counts = {}
+        counts: typing.Dict[str, float] = {}
         total = len(matching_values_nest)
         for value in matching_values:
-            counts[value] = counts.get(value, 0) + 1
+            counts[value] = counts.get(value, 0.0) + 1
 
         ret_tuples = map(lambda item: (item[0], item[1] / total), counts.items())
         return dict(ret_tuples)

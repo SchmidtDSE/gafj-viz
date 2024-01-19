@@ -32,12 +32,29 @@ class StatGenerator:
         matching_values = itertools.chain(*matching_values_nest)
 
         counts: typing.Dict[str, float] = {}
-        total = len(matching_values_nest)
+
+        if dimension == 'country':
+            country_counts = self.get_county_counts()
+            total_getter = lambda x: country_counts[x]
+        else:
+            total = len(matching_values_nest)
+            total_getter = lambda x: total
+
         for value in matching_values:
             counts[value] = counts.get(value, 0.0) + 1
 
-        ret_tuples = map(lambda item: (item[0], item[1] / total), counts.items())
+        ret_tuples = map(lambda item: (item[0], item[1] / total_getter(item[0])), counts.items())
         return dict(ret_tuples)
+
+    def get_county_counts(self) -> typing.Dict[str, int]:
+        all_articles = self._inner_getter.execute_to_obj({'queryStringParameters': {}})
+        all_article_countries = map(lambda x: x.get_country(), all_articles)
+
+        ret_counts: typing.Dict[str, int] = {}
+        for country in all_article_countries:
+            ret_counts[country] = ret_counts.get(country, 0) + 1
+
+        return ret_counts
 
 
 def make_csv_str(target: typing.Dict[str, float]) -> str:

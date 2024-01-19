@@ -13,7 +13,10 @@ class StatGenerator:
 
     def execute(self, params: typing.Dict) -> typing.Dict[str, float]:
         matching = self._inner_getter.execute_to_obj(params)
-        dimension = params['queryStringParameters']['dimension']
+        if 'queryStringParameters' in params:
+            dimension = params['queryStringParameters']['dimension']
+        else:
+            dimension = params['dimension']
 
         strategy = {
             'country': lambda x: [x.get_country()],

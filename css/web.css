@@ -16,6 +16,13 @@ a.button:link, a.button:visited, a.button:hover, a.button:active {
     text-decoration: none;
 }
 
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid black;
+}
+
 html {
     font-family: IBMPlexMono-Regular;
     background-color: #404040;

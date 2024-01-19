@@ -51,6 +51,7 @@ def lambda_handler(event, context):
     inner_getter = article_getter.AwsLambdaArticleGetter()
     generator = StatGenerator(inner_getter)
 
+    matching = generator.execute(event)
     csv_str = make_csv_str(matching)
 
     res = {

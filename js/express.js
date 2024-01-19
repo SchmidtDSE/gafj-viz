@@ -23,7 +23,8 @@ function getQueryParamsStr() {
         getQueryParam("dimension-select")
     ];
 
-    const validElements = elements.filter((x) => !isAll(x["value"]));
+    const validElementsWithBlank = elements.filter((x) => !isAll(x["value"]));
+    const validElements = validElementsWithBlank.filter((x) => x !== "");
     const elementStrs = validElements.map((x) => x["name"] + "=" + encodeURIComponent(x["value"]));
     return elementStrs.join("&");
 }

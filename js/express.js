@@ -36,12 +36,13 @@ function executeExport() {
 
 
 function updateReport(rows) {
+    debugger;
     rows.sort((a, b) => b["percent"] - a["percent"]);
 
-    const reportSelection = d3.select("express-report");
+    const reportSelection = d3.select("#express-report");
     reportSelection.html("");
 
-    const table = reportSelection.append("table");
+    const table = reportSelection.append("table").classed("express-results", true);
     const tableHead = table.append("thead");
     const tableHeadRow = tableHead.append("tr");
     tableHeadRow.append("th").html("Name");
@@ -52,7 +53,7 @@ function updateReport(rows) {
     tableRows.append("td").text((x) => x["name"]);
     
     const dataCells = tableRows.append("td");
-    dataCells.append("div").classed("data-label", true).html((x) => Math.round(x["percent"]));
+    dataCells.append("div").classed("data-label", true).html((x) => Math.round(x["percent"]) + "%");
     dataCells.append("div").classed("data-bar", true).style("width", (x) => {
         const numPixels = x["percent"] / 100 * 300;
         return numPixels + "px";
@@ -60,6 +61,7 @@ function updateReport(rows) {
 
     document.getElementById("express-status").innerHTML = "Loaded.";
     document.getElementById("execute-express-button").style.display = "inline-block";
+    document.getElementById("express-loading").style.display = "none";
 }
 
 
@@ -77,6 +79,7 @@ function executeStats() {
     document.getElementById("express-status").innerHTML = "Please wait...";
     document.getElementById("express-report").innerHTML = "";
     document.getElementById("execute-express-button").style.display = "none";
+    document.getElementById("express-loading").style.display = "inline-block";
     
     d3.dsv(",", targetUrl, convertRow).then(
         updateReport,
@@ -86,6 +89,7 @@ function executeStats() {
 
 
 function setupExpress() {
+    document.getElementById("express-loading").style.display = "none";
     document.getElementById("execute-express-button").addEventListener("click", (event) => {
         const dimension = document.getElementById("dimension-select").value;
         

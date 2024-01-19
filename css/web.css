@@ -83,6 +83,28 @@ nav .subtitle {
     margin-bottom: 16px;
 }
 
+.express-results {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.express-results th, .express-results td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.express-results td {
+    padding: 3px;
+}
+
+.express-results .data-bar {
+    background-color: white;
+    display: inline-block;
+    height: 5px;
+}
+
 .form-group {
     margin-top: 16px;
     margin-bottom: 16px;

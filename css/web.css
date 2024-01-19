@@ -9,6 +9,7 @@ a:link, a:visited, a:hover, a:active {
 
 a:hover, a:active {
     color: #FFFFFF;
+    background-color: black;
 }
 
 a.button:link, a.button:visited, a.button:hover, a.button:active {
@@ -28,6 +29,10 @@ h1 {
 
 h2 {
     font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
 }
 
 nav .subtitle {
@@ -73,14 +78,22 @@ nav .subtitle {
     text-align: center;
 }
 
+.cta {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
 .highlight {
     display: inline-block;
     background-color: black;
     padding: 5px;
 }
 
-#app #app-intro .text {
-    margin-bottom: 10px;
+.subsection {
+    margin-top: 16px;
+    padding-top: 16px;
+    margin-bottom: 32px;
+    border-top: 1px dotted black;
 }
 
 #app #sketch {

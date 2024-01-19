@@ -40,10 +40,9 @@
             <div class="subtitle"><div class="highlight">Open source exploration of food in the news across the globe.</div></div>
 
             <ul data-tabs>
-                <li><a data-tabby-default href="#home">Home</a></li>
+                <li><a data-tabby-default href="#introduction">Introduction</a></li>
                 <li><a href="#app">App</a></li>
                 <li><a href="#express">Express</a></li>
-                <li><a href="#data">Data</a></li>
                 <li><a href="#insights">Insights</a></li>
                 <li><a href="#method">Method</a></li>
                 <li><a href="#about">About</a></li>
@@ -51,17 +50,36 @@
         </nav>
 
         <main>
-            <section id="home">
-                Under construction.
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <div>
+                    Informing a food justice project, this social listening effort asks what is part of the conversation and what is missing when the world discusses food. It asks questions like:
+                </div>
+
+                <ul>
+                    <li>What are the commonly discussed food challenges?</li>
+                    <li>What terms are used to describe common justice topics like food security?</li>
+                    <li>What terms come up across different parts of the world when they talk about "good" food and what does that potentially tell us about the priorities or beliefs of those different regions?</li>
+                    <li>How do governance, policy, and justice feature in food conversations and how does that vary geographically?</li>
+                    <li>How can these data driven insights inform and inspire qualitative research?</li>
+                </ul>
+
+                <div>
+                    Specifically, using news media as a lens, this natural language processing effort uses machine learning / artificial intelligence to read thousands of articles from across countries and languages to see how often different topics appear and in which context. Distilling this insight into interactive data visualizations, this website provides research tools which enable users to explore this global dataset.
+                </div>
+                <div class="cta">
+                    <a class="button internal-link" href="#app">Explore</a> <a class="button internal-link" href="#insights">Insights</a> <a class="button internal-link" href="#method">Method</a>
+                </div>
+                <img src="/img/intro.png" alt="Picture of people made out of triangles">
             </section>
 
             <section id="app">
                 <h2>Web Application</h2>
                 <div id="app-intro">
                     <div class="text">
-                        This online interactive visualization allows users to explore the data in detail but may take a few moments to load for the first time. Some users such as those with slower internet connections, mobile devices, or certain adaptive (accessibility) technologies may prefer the <a href="#express" class="internal-link">express version</a>.
+                        This online interactive visualization allows users to explore the data in detail but may take a few moments to load for the first time. Some users such as those with slower internet connections, mobile devices, or certain adaptive (accessibility) technologies may prefer the <a href="#express" class="internal-link">express version</a>. Data exports under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC License</a> for academic / scientific research purposes only. See <a href="#about">about section</a> for additional conditions and details.
                     </div>
-                    <div>
+                    <div class="cta">
                         <a class="button" id="open-web-app-button" href="#sketch">Open Web App</a>
                     </div>
                 </div>
@@ -80,20 +98,88 @@
                 Under construction.
             </section>
 
-            <section id="data">
-                Under construction.
-            </section>
-
             <section id="insights">
                 Under construction.
             </section>
 
             <section id="method">
-                Under construction.
+                <h2>Method</h2>
+                This <a href="https://medium.com/ideo-colab/natural-language-processing-a-new-way-to-listen-to-people-about-health-8cfe9bece1ce">natural language processing</a> project utilizes a number of technologies to source data and then produce an interactive visualization:
+
+                <ul>
+                    <li>News sources are queried through <a href="https://newsdata.io/">Newsdata.io</a> using a filter for articles discussing food.</li>
+                    <li>Search parameters are converted to each article's language using <a href="https://aws.amazon.com/translate/">Amazon Translate</a>, the same automated system used to convert all article information to a single common language (English: the most common article original language) before additional processing.</li>
+                    <li>This application determines the topics of an article by having a machine read and catagorize their contents. This happens through either Method A or Method B.</li>
+                    <li>Method A: In an algorithm called <a href="https://dl.acm.org/doi/10.5555/944919.944937">LDA</a>, the computer examines how often different words appear in articles in general as well as how often they appear together, creating a sense for which words may be in the same topic (like dog and cat) and, thus, which topics a document contains.
+                    <li>Method B: After filtering commonly occuring words that may be less useful in determining article topic (<a href="https://www.learndatasci.com/glossary/tf-idf-term-frequency-inverse-document-frequency/">TF-IDF</a>), the words of an article are converted to numbers describing their meaning (<a href="https://towardsdatascience.com/word2vec-explained-49c52b4ccb71">Word2Vec</a>) where dog and cat may have more similar numbers than dog to truck. Finally, the computer clusters together similar words or, put another way, groups words with similar numbers (<a href="https://link.springer.com/chapter/10.1007/978-3-642-37456-2_14">HDBSCAN</a>).</li>
+                    <li>The team double checks and, when necessary, performs minor refinements of the resulting topics before performing "<a href="https://www.nngroup.com/articles/affinity-diagram/">affinity diagramming</a>" where topics are clustered further into a smaller number of "categories" as shown in the visualization.</li>
+                    <li>A visualization using <a href="https://developers.google.com/public-data/docs/canonical/countries_csv">country centroids</a> is built using a technology called <a href="https://sketchingpy.org/">Sketchingpy</a> and deployed to the web.</li>
+                </ul>
+
+                This research effort provides a formal description of these methods along with evaluation information and limitations in a <a href="/img/whitepaper.pdf">supplemental whitepaper</a>. The application currently uses Method B. The <a href="https://github.com/SchmidtDSE/gafj-viz">visualization code</a> and <a href="https://github.com/SchmidtDSE/gafj-pipeline">data pipeline code</a> are both open source where the linked repositories provide additional details on open source technologies used. Finally, <a href="/csv/articles.csv">the resulting dataset is available for download</a> under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC License</a> for academic / scientific research purposes only. Current coverage is from Dec 2022 to Nov 2023. See <a href="#about">about section</a> for additional conditions and details.
             </section>
 
             <section id="about">
-                Under construction.
+                <h2>About</h2>
+
+                This is an open source research project.
+
+                <section class="subsection">
+                    <h3>Credits</h3>
+
+                    Collaboration between the <a href="https://dse.berkeley.edu/">Eric and Wendy Schmidt Center for Data Science and Environment</a> and the <a href="https://futureoffood.org/">Global Alliance for the Future of Food</a>. See <a href="/humans.txt">humans.txt</a> for more details and full credits. Open source libraries used are available in <a href="https://github.com/SchmidtDSE/gafj-viz/blob/main/README.md">visualization README</a> and <a href="https://github.com/SchmidtDSE/gafj-pipeline/blob/main/README.md">data pipeline README</a>.
+                </section>
+
+                <section class="subsection">
+                    <h3>Data and open source</h3>
+
+                    Code available under an <a href="https://github.com/SchmidtDSE/gafj-viz/blob/main/LICENSE.md">open source license</a>. The project makes the following repositories available:
+
+                    <ul>
+                        <li><a href="https://github.com/SchmidtDSE/gafj-viz">Visualization</a></li>
+                        <li><a href="https://github.com/SchmidtDSE/gafj-pipeline">Pipline</a></li>
+                    </ul>
+
+                    Data available for academic and scientific research purposes only under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC License</a>. See provider <a href="https://newsdata.io/">Newsdata.io</a> for more information.
+                </section>
+
+                <section class="subsection">
+                    <h3>Privacy</h3>
+                    
+                    This application records standard server access logs for security and stability reasons, including to prevent abuse. This is a common practice employed by many websites necessary for maintaing application function. This information includes:
+
+                    <ul>
+                        <li>IP addresses which describe from which location and internet connection the application is accessed.</li>
+                        <li>User agent strings which provide basic information about the device and software ("browser") used to access the site.</li>
+                        <li>The requested URLs which are unique identifiers for data and other resources requested from our servers.</li>
+                    </ul>
+
+                    These logs are maintained for security reasons and to ensure strong application performance but are anonymized within 7 days of collection. These anonymized statistics are maintained indefinently as aggregated information for us to understand usage patterns in order to improve the service and maintain its performance. The anonymized data may also include error or bug reports. That said, and no other presonal identifying information is collected including email address, phone number, race, ethnicity, age, etc. Furthermore, please note that:
+
+                    <ul>
+                        <li>Personally identifying information is never shared or sold.</li>
+                        <li>Anonymized data do not include specific IP addresses.</li>
+                        <li>IP address is not retained past 7 days except for security / abuse prevention purposes if potential unusual behavior is deteced like in the case of a large number of requests.</li>
+                        <li>No information we collect is used for advertising.</li>
+                        <li>Though we do not ask users their age to respect their privacy, this webpage is intended for those 18 years and older.</li>
+                        <li>This website does not use cookies.</li>
+                        <li>Your device may "cache" parts of the application "locally" on your machine for performance reasons as dictated by your browsesr settings.</li>
+                    </ul>
+
+                    See <a href="https://www.dreamhost.com/legal/customer-data-processing-addendum/">DreamHost CDPA</a> for more information about our web host / subprocessor. Anonymized bug reports may be managed with with <a href="https://sentry.io">Sentry</a>. This page was last updated 2024-01-19 and may be revised in the future.
+                </section>
+
+                <section class="subsection">
+                    <h3>Security</h3>
+
+                    We take security seriously. Communication between your device and our servers is encrypted with secure socket layer SSL. Access to non-anonymized logs and the configuration / code for the application is limited to the current maintainers of the project, automated systems we've constructed for running the application, and our subprocessors. Note that anonymized data may be shared with project partners for the purposes of tracking project success and impact.
+                </section>
+
+                <section class="subsection">
+                    <h3>Rights and warranty</h3>
+
+                    By using these data and this website you agree to the privacy and security terms above. Furthermore, you agree that this application and its data are provided without any warranty of any kind. Use at your own risk and ensure you have appropriate rights to or fair use of the underlying content if appropriate when creating derivative products.
+                </section>
             </section>
         </main>
 

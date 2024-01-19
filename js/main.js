@@ -27,6 +27,14 @@ function main() {
     const tabs = new Tabby("[data-tabs]");
 
     document.getElementById("open-web-app-button").addEventListener("click", openWebApp);
+    document.addEventListener('tabby', (event) => {
+        const tab = event.target;
+        window.location.hash = new URL(tab.href).hash;
+    }, false);
+    window.addEventListener("hashchange", (event) => {
+        const targetUrl = new URL(window.location.href).hash;
+        tabs.toggle(targetUrl);
+    });
 }
 
 

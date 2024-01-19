@@ -167,7 +167,8 @@ class AwsLambdaArticleGetter(ArticleGetter):
             'headers': {
                 'Content-Type': 'text/csv',
                 'Content-Disposition': 'attachment',
-                'filename': 'articles_export.csv'
+                'filename': 'articles_export.csv',
+                'Access-Control-Allow-Origin': '*'
             },
             'body': csv_str
         }

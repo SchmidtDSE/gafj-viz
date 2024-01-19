@@ -64,7 +64,8 @@ def lambda_handler(event, context):
         'headers': {
             'Content-Type': 'text/csv',
             'Content-Disposition': 'attachment',
-            'filename': 'articles_summary.csv'
+            'filename': 'articles_summary.csv',
+            'Access-Control-Allow-Origin': '*'
         },
         'body': csv_str
     }

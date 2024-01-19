@@ -13,6 +13,7 @@ third_party/*.zip
 IBMPlexMono-Regular.ttf
 tabby-ui.min.css
 tabby.polyfills.min.js
+d3.min.js
 
 deploy
 lambda_deploy

@@ -77,7 +77,7 @@
                 <h2>Web Application</h2>
                 <div id="app-intro">
                     <div class="text">
-                        This online interactive visualization allows users to explore the data in detail but may take a few moments to load for the first time. Some users such as those with slower internet connections, mobile devices, or certain adaptive (accessibility) technologies may prefer the <a href="#express" class="internal-link">express version</a>. Data exports under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC License</a> for academic / scientific research purposes only. See <a href="#about">about section</a> for additional conditions and details.
+                        This online interactive visualization allows users to explore the data in detail but may take a few moments to load for the first time. Some users such as those with slower internet connections, some mobile devices, or certain adaptive (accessibility) technologies may prefer the <a href="#express" class="internal-link">express version</a>. Data exports under the <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC License</a> for academic / scientific research purposes only. See <a href="#about">about section</a> for additional conditions and details.
                     </div>
                     <div class="cta">
                         <a class="button" id="open-web-app-button" href="#sketch">Open Web App</a>
@@ -95,7 +95,195 @@
             </section>
 
             <section id="express">
-                Under construction.
+                <h2>Express version</h2>
+                This alternative version of the <a href="#app" class="internal-link">web application</a> may work better for some mobile devices, slower internet connections, or certain adaptive (accessibility) technologies. Simply prepare a query below and indicate if you want a visualization or data export.
+
+                <section class="subsection">
+                    <h3>Query</h3>
+                    <form>
+                        <div class="form-group">
+                            <div><label for="country-select">Country (use "All" for no filter)</label></div>
+                            <div>
+                                <select id="country-select">
+                                    <option value="all" selected>All</option>
+                                    <option value="Australia">Australia</option>
+                                    <option value="Bangladesh">Bangladesh</option>
+                                    <option value="Bulgaria">Bulgaria</option>
+                                    <option value="Canada">Canada</option>
+                                    <option value="Germany">Germany</option>
+                                    <option value="Hungary">Hungary</option>
+                                    <option value="India">India</option>
+                                    <option value="Indonesia">Indonesia</option>
+                                    <option value="Ireland">Ireland</option>
+                                    <option value="Kenya">Kenya</option>
+                                    <option value="Lithuania">Lithuania</option>
+                                    <option value="Mexico">Mexico</option>
+                                    <option value="Nigeria">Nigeria</option>
+                                    <option value="Pakistan">Pakistan</option>
+                                    <option value="Philippines">Philippines</option>
+                                    <option value="Romania">Romania</option>
+                                    <option value="Russian Federation">Russian Federation</option>
+                                    <option value="Saudi Arabia">Saudi Arabia</option>
+                                    <option value="Singapore">Singapore</option>
+                                    <option value="South Africa">South Africa</option>
+                                    <option value="Spain">Spain</option>
+                                    <option value="Thailand">Thailand</option>
+                                    <option value="Turkey">Turkey</option>
+                                    <option value="United Arab Emirates">United Arab Emirates</option>
+                                    <option value="United Kingdom">United Kingdom</option>
+                                    <option value="United States">United States</option>
+                                    <option value="Virgin Islands">Virgin Islands</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div><label for="category-select">Category (use "All" for no filter)</label></div>
+                            <div>
+                                <select id="category-select">
+                                    <option value="all" selected>All</option>
+                                    <option value="economy and industry">economy and industry</option>
+                                    <option value="environment and resources">environment and resources</option>
+                                    <option value="food and materials">food and materials</option>
+                                    <option value="health and body">health and body</option>
+                                    <option value="people and society">people and society</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div><label for="tag-select">Tag (use "All" for no filter)</label></div>
+                            <div>
+                                <select id="tag-select">
+                                    <option value="all" selected>All</option>
+                                    <option value="access">access</option>
+                                    <option value="acid">acid</option>
+                                    <option value="acute health">acute health</option>
+                                    <option value="additives">additives</option>
+                                    <option value="age">age</option>
+                                    <option value="agency">agency</option>
+                                    <option value="agricultural materials">agricultural materials</option>
+                                    <option value="agriculture">agriculture</option>
+                                    <option value="aid">aid</option>
+                                    <option value="alcohol">alcohol</option>
+                                    <option value="allergy">allergy</option>
+                                    <option value="analysis and science">analysis and science</option>
+                                    <option value="artificial">artificial</option>
+                                    <option value="bathroom">bathroom</option>
+                                    <option value="beverage">beverage</option>
+                                    <option value="body">body</option>
+                                    <option value="business (general)">business (general)</option>
+                                    <option value="business (individual)">business (individual)</option>
+                                    <option value="cbd">cbd</option>
+                                    <option value="chemicals">chemicals</option>
+                                    <option value="chronic health">chronic health</option>
+                                    <option value="clothes">clothes</option>
+                                    <option value="commerce">commerce</option>
+                                    <option value="community">community</option>
+                                    <option value="conflict and defense">conflict and defense</option>
+                                    <option value="cooperation">cooperation</option>
+                                    <option value="crime">crime</option>
+                                    <option value="cutlery, storage, appliance">cutlery, storage, appliance</option>
+                                    <option value="delivery">delivery</option>
+                                    <option value="diet">diet</option>
+                                    <option value="drugs and medication">drugs and medication</option>
+                                    <option value="eating">eating</option>
+                                    <option value="economy">economy</option>
+                                    <option value="energy">energy</option>
+                                    <option value="environment">environment</option>
+                                    <option value="family">family</option>
+                                    <option value="food security">food security</option>
+                                    <option value="food service">food service</option>
+                                    <option value="food type">food type</option>
+                                    <option value="game and sport">game and sport</option>
+                                    <option value="geography">geography</option>
+                                    <option value="governance">governance</option>
+                                    <option value="grocery">grocery</option>
+                                    <option value="health (general)">health (general)</option>
+                                    <option value="healthcare">healthcare</option>
+                                    <option value="holiday">holiday</option>
+                                    <option value="hope">hope</option>
+                                    <option value="hospitality">hospitality</option>
+                                    <option value="house">house</option>
+                                    <option value="hunger">hunger</option>
+                                    <option value="industry">industry</option>
+                                    <option value="ingredients">ingredients</option>
+                                    <option value="judge">judge</option>
+                                    <option value="justice">justice</option>
+                                    <option value="kitchen and pantry">kitchen and pantry</option>
+                                    <option value="labor">labor</option>
+                                    <option value="leadership">leadership</option>
+                                    <option value="legal">legal</option>
+                                    <option value="love">love</option>
+                                    <option value="meal">meal</option>
+                                    <option value="media">media</option>
+                                    <option value="mental health">mental health</option>
+                                    <option value="metal">metal</option>
+                                    <option value="money">money</option>
+                                    <option value="nature">nature</option>
+                                    <option value="nutrition">nutrition</option>
+                                    <option value="other producer">other producer</option>
+                                    <option value="people (general)">people (general)</option>
+                                    <option value="people (individual)">people (individual)</option>
+                                    <option value="people (types)">people (types)</option>
+                                    <option value="pets">pets</option>
+                                    <option value="plastic">plastic</option>
+                                    <option value="poison">poison</option>
+                                    <option value="policy">policy</option>
+                                    <option value="political action">political action</option>
+                                    <option value="poverty">poverty</option>
+                                    <option value="price">price</option>
+                                    <option value="processing">processing</option>
+                                    <option value="recipe">recipe</option>
+                                    <option value="reliance">reliance</option>
+                                    <option value="religion">religion</option>
+                                    <option value="resilience">resilience</option>
+                                    <option value="rest">rest</option>
+                                    <option value="risk">risk</option>
+                                    <option value="salt">salt</option>
+                                    <option value="sexual health">sexual health</option>
+                                    <option value="spice">spice</option>
+                                    <option value="stamps and vouchers">stamps and vouchers</option>
+                                    <option value="struggle">struggle</option>
+                                    <option value="sugar and sweeteners">sugar and sweeteners</option>
+                                    <option value="supplements">supplements</option>
+                                    <option value="supplies">supplies</option>
+                                    <option value="taste">taste</option>
+                                    <option value="tea and coffee">tea and coffee</option>
+                                    <option value="tech">tech</option>
+                                    <option value="travel, transport, logistics">travel, transport, logistics</option>
+                                    <option value="waste">waste</option>
+                                    <option value="water">water</option>
+                                    <option value="weather and disaster">weather and disaster</option>
+                                    <option value="writing / mail">writing / mail</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div><label for="keyword-input">Keyword (use "all" or empty for no filter)</label></div>
+                            <div><input type="text" id="keyword-input" value="all"></div>
+                        </div>
+                        <div class="form-group">
+                            <div><label for="dimension-select">Report</label></div>
+                            <div>
+                                <select id="dimension-select">
+                                    <option value="country">Country Statistics</option>
+                                    <option value="category">Category Statistics</option>
+                                    <option value="tag">Tag Statistics</option>
+                                    <option value="keyword" selected>Keyword Statistics</option>
+                                    <option value="all">Article Export</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button id="execute-express-button">Execute</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="subsection">
+                    <h3>Results</h3>
+                    <div id="express-status">Execute a query above.</div>
+                    <div id="express-report"></div>
+                </section>
             </section>
 
             <section id="insights">
@@ -185,9 +373,11 @@
 
     </body>
 
-    <!-- Tabby -->
+    <!-- Third party -->
     <script src="/third_party_web/tabby.polyfills.min.js?v=0.0.3"></script>
+    <script src="/third_party_web/d3.min.js?v=0.0.3"></script>
 
     <!-- Support -->
     <script src="/js/main.js?v=0.0.3"></script>
+    <script src="/js/express.js?v=0.0.3"></script>
 </html>

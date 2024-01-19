@@ -15,3 +15,4 @@ tabby-ui.min.css
 tabby.polyfills.min.js
 
 deploy
+lambda_deploy

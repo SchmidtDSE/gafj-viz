@@ -31,12 +31,11 @@ function getQueryParamsStr() {
 
 function executeExport() {
     const targetUrl = EXPORT_URL + "?" + getQueryParamsStr();
-    window.location.href = targetUrl;
+    window.open(targetUrl, '_blank');
 }
 
 
 function updateReport(rows) {
-    debugger;
     rows.sort((a, b) => b["percent"] - a["percent"]);
 
     const reportSelection = d3.select("#express-report");

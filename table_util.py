@@ -76,13 +76,12 @@ class BarTable:
             is_hovering = hovering_name == name
             color = const.get_color(is_selected, is_hovering)
 
+            if self._checkbox:
+                self._sketch.draw_buffer('dotted-line', self._start_x, y + 15)
+            else:
+                self._sketch.draw_buffer('dotted-line-long', self._start_x, y + 15)
+
             self._sketch.clear_stroke()
-
-            self._sketch.set_rect_mode('center')
-            self._sketch.set_fill(const.INACTIVE_COLOR)
-            for x in range(self._start_x, const.COLUMN_WIDTH + 1, 5):
-                self._sketch.draw_pixel(x, y + 15)
-
             self._sketch.set_rect_mode('corner')
             self._sketch.set_fill(color)
             self._sketch.draw_rect(self._start_x, y + 15, percent / 100 * self._width, 2)
@@ -212,3 +211,33 @@ class BarTable:
         results = [interpret_group(x) for x in groups]
         results.sort(key=functools.cmp_to_key(custom_compare))
         return results[:count]
+
+
+def create_dotted_line(sketch: sketchingpy.Sketch2D):
+    sketch.push_transform()
+    sketch.push_style()
+
+    sketch.create_buffer('dotted-line', const.COLUMN_WIDTH + 1, 1)
+    sketch.enter_buffer('dotted-line')
+
+    sketch.clear_stroke()
+    sketch.set_rect_mode('center')
+    sketch.set_fill(const.INACTIVE_COLOR)
+    for x in range(0, const.COLUMN_WIDTH - 5, 5):
+        sketch.draw_pixel(x, 0)
+
+    sketch.exit_buffer()
+
+    sketch.create_buffer('dotted-line-long', const.COLUMN_WIDTH + 1, 1)
+    sketch.enter_buffer('dotted-line-long')
+
+    sketch.clear_stroke()
+    sketch.set_rect_mode('center')
+    sketch.set_fill(const.INACTIVE_COLOR)
+    for x in range(0, const.COLUMN_WIDTH, 5):
+        sketch.draw_pixel(x, 0)
+
+    sketch.exit_buffer()
+
+    sketch.pop_style()
+    sketch.pop_transform()

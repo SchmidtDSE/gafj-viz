@@ -28,21 +28,21 @@ class OverviewViz(abstract.VizMovement):
             self._sketch,
             'categories',
             'Categories',
-            '% of query' if query_active else '% of all',
+            '% of query' if query_active else '% of all articles',
             True
         )
         self._tags_table = table_util.BarTable(
             self._sketch,
             'tags',
             'Top Tags',
-            '% of query' if query_active else '% of all',
+            '% of query' if query_active else '% of all articles',
             True
         )
         self._keywords_table = table_util.BarTable(
             self._sketch,
             'keywords',
             'Top Keywords',
-            '% of query' if query_active else '% of all',
+            '% of query' if query_active else '% of all articles',
             True
         )
         self._countries_table = table_util.BarTable(
@@ -178,7 +178,7 @@ class OverviewViz(abstract.VizMovement):
         self._results = self._accessor.execute_query(query)
 
         query_active = self._results.get_has_filters()
-        sub_title = '% of query' if query_active else '% of all'
+        sub_title = '% of query' if query_active else '% of all articles'
         self._categories_table.set_sub_title(sub_title)
         self._tags_table.set_sub_title(sub_title)
         self._keywords_table.set_sub_title(sub_title)

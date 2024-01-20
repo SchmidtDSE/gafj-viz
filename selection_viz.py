@@ -100,7 +100,7 @@ class SelectionMovement(abstract.VizMovement):
         return 'default'
 
     def _get_sub_text(self, query_active: bool) -> str:
-        return '% of query' if query_active else '% of all'
+        return '% of query' if query_active else '% of all articles'
 
     def _get_label(self) -> str:
         raise RuntimeError('Use implementor.')
@@ -187,7 +187,7 @@ class CategorySelectionMovement(SelectionMovement):
         return results.get_total_count()
 
     def _get_sub_text(self, query_active: bool) -> str:
-        return '% of query' if query_active else '% of all'
+        return '% of query' if query_active else '% of all articles'
 
 
 class TagSelectionMovement(SelectionMovement):
@@ -214,7 +214,7 @@ class TagSelectionMovement(SelectionMovement):
         return results.get_total_count()
 
     def _get_sub_text(self, query_active: bool) -> str:
-        return '% of query' if query_active else '% of all'
+        return '% of query' if query_active else '% of all articles'
 
 
 class KeywordSelectionMovement(SelectionMovement):
@@ -241,4 +241,4 @@ class KeywordSelectionMovement(SelectionMovement):
         return results.get_total_count()
 
     def _get_sub_text(self, query_active: bool) -> str:
-        return '% of query' if query_active else '% of all'
+        return '% of query' if query_active else '% of all articles'

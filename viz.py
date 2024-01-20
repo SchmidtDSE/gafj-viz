@@ -11,6 +11,7 @@ import grid_viz
 import overview_viz
 import selection_viz
 import state_util
+import table_util
 
 
 class NewsVisualization:
@@ -80,6 +81,8 @@ class NewsVisualization:
             )
 
         self._table_counter = 0
+
+        table_util.create_dotted_line(self._sketch)
 
     def show(self):
         if self._interactive:

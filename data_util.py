@@ -417,7 +417,8 @@ class CompressedDataAccessor(DataAccessor):
         return self._convert_dict_to_counted_groups(ret_counts)
 
     def _convert_dict_to_counted_groups(self, target: typing.Dict[str, int]) -> COUNTED_GROUPS:
-        return [CountedGroup(x[0], x[1]) for x in target.items()]
+        objs = map(lambda x: CountedGroup(x[0], x[1]), target.items())
+        return sorted(objs, key=lambda x: x.get_count(), reverse=True)
 
     def _load_country(self, line: str):
         pieces = line.split(' ')

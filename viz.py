@@ -122,7 +122,11 @@ class NewsVisualization:
         movements = {
             'overview': self._overview,
             'grid': self._grid,
-            'download': self._article_preview
+            'download': self._article_preview,
+            'country': self._selectors['country'],
+            'cateogry': self._selectors['category'],
+            'tag': self._selectors['tag'],
+            'keyword': self._selectors['keyword']
         }
 
         target_viz = movements[self._movement]

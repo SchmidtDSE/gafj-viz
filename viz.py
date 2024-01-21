@@ -127,7 +127,7 @@ class NewsVisualization:
             'grid': self._grid,
             'download': self._article_preview,
             'country': self._selectors['country'],
-            'cateogry': self._selectors['category'],
+            'category': self._selectors['category'],
             'tag': self._selectors['tag'],
             'keyword': self._selectors['keyword']
         }

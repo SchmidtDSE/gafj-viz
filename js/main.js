@@ -1,3 +1,12 @@
+/**
+ * Logic for running the overarching web application in which the visualization application sits.
+ * 
+ * @license BSD
+ */
+
+/**
+ * Start the web application.
+ */
 function openWebApp() {
     document.getElementById("app-intro").style.display = "none";
     document.getElementById("sketch").style.display = "block";
@@ -23,6 +32,9 @@ function openWebApp() {
 }
 
 
+/**
+ * Driver entrypoint.
+ */
 function main() {
     const tabs = new Tabby("[data-tabs]");
 
@@ -34,6 +46,7 @@ function main() {
     window.addEventListener("hashchange", (event) => {
         const targetUrl = new URL(window.location.href).hash;
         tabs.toggle(targetUrl);
+        event.preventDefault();
     });
 }
 

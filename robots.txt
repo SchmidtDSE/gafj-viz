@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /txt/serialized.txt
+
+User-agent: *
+Disallow: /csv/articles.csv
+
+User-agent: *
+Allow: /

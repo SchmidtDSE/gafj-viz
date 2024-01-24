@@ -1,0 +1,19 @@
+/* TEAM */
+    Tool and AI Lead: Sam Pottinger
+    Site: gleap.org
+    Twitter: @SamSpotsTime
+    Bluesky: @sampottinger.com
+    LinkedIn: in/sampottinger
+    GitHub: @sampottinger
+    Role: Software engineering, machine learning, lead UX / design, lead data visualization, CI / CD. Sam serves as the web admin.
+
+    Guide: Joanne Cheung
+    Site: joannekcheung.com
+    Twitter: @joannekcheung
+    Role: Organization, background research, literature review, and project guidance including overall project lead.
+
+/* SITE */
+    Last update: 2024-01-23
+    Language: English
+    Doctype: HTML5
+    Software: D3, Vanilla JS, Sketchingpy, see more at https://github.com/SchmidtDSE/gafj-viz/README.md#open-source

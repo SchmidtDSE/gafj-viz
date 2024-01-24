@@ -18,8 +18,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” 
 
 Data
 --------------------------------------------------------------------------------
-Data including build artifacts are made available under the [CC-BY-NC License](https://creativecommons.org/licenses/by-nc/4.0/). Please credit as follows:
+Note that original article publisher retains copyright to some article metadata like title. Use at your own risk and ensure you have appropriate rights to or fair use of the underlying content if appropriate given specific use of data. Data including build artifacts are made available under the [CC-BY-NC License](https://creativecommons.org/licenses/by-nc/4.0/). Please credit as follows:
 
 Copyright 2024 (c) Regents of University of California ([The Eric and Wendy Schmidt Center for Data Science and the Environment at UC Berkeley](https://dse.berkeley.edu/)).
 
-By using these data you agree they are made available without any warranty of any kind. Use at your own risk and ensure you have appropriate rights to or fair use of the underlying content if appropriate.
+By using these data you agree they are made available without any warranty of any kind.

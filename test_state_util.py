@@ -1,3 +1,8 @@
+"""Tests for state objects.
+
+License: BSD
+"""
+
 import unittest
 
 import state_util

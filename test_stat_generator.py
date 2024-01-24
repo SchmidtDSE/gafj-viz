@@ -1,3 +1,8 @@
+"""Tests for the alternative pipeline for generating aggregate statistics outside the visualization.
+
+License: BSD
+"""
+
 import article_getter
 import article_stat_gen
 

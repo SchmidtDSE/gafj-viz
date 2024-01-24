@@ -1,3 +1,8 @@
+"""Tests for logic to look up individual article metdata.
+
+License: BSD
+"""
+
 import unittest
 
 import article_getter

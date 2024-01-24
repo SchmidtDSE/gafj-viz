@@ -56,7 +56,7 @@ class Article:
 
     def get_url(self) -> str:
         """Get the location where the full article can found.
-        
+
         Returns:
             The URL at which the full article can be found.
         """
@@ -64,7 +64,7 @@ class Article:
 
     def get_title_original(self) -> str:
         """Get the text of the article's original title.
-        
+
         Returns:
             The title before machine translation.
         """
@@ -72,7 +72,7 @@ class Article:
 
     def get_title_english(self) -> str:
         """Get the text of the article's title in English.
-        
+
         Returns:
             The title after machine translation.
         """

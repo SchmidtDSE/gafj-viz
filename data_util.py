@@ -180,7 +180,7 @@ class CountedGroup:
 
     def get_name(self) -> str:
         """Get a description of a common attribute of articles in this group.
-        
+
         Returns:
             A string name which identifies a common attribute of of all of the articles in this
             group.

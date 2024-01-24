@@ -1,3 +1,7 @@
+"""Visualization movement which shows an overview of the dataset including a map.
+
+License: BSD
+"""
 import typing
 
 import sketchingpy
@@ -11,9 +15,17 @@ import table_util
 
 
 class OverviewViz(abstract.VizMovement):
+    """Visualization movement where the user starts the application."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):
+        """Create a new overview visualization movement instance.
+
+        Args:
+            sketch: The sketch in which the movement is to be drawn.
+            accessor: Object offering access to article statistics.
+            state: The global visualization state to represent and manipulate.
+        """
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
@@ -62,6 +74,12 @@ class OverviewViz(abstract.VizMovement):
         )
 
     def check_state(self, mouse_x: float, mouse_y: float):
+        """Update the states of all components in this movement.
+
+        Args:
+            mouse_x: The x coordinate of the cursor or last touchscreen interaction.
+            mouse_y: The y coordinate of the cursor or last touchscreen interaction.
+        """
         def check_state_prefix(x: int, prefix: str):
             if mouse_x < x or mouse_x > x + const.COLUMN_WIDTH:
                 return
@@ -93,6 +111,7 @@ class OverviewViz(abstract.VizMovement):
         self._map_component.check_state(mouse_x, mouse_y)
 
     def draw(self):
+        """Redraw the overview."""
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -174,6 +193,7 @@ class OverviewViz(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def refresh_data(self):
+        """Update the data for all components in this visualization."""
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)
 

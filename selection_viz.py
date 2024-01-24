@@ -1,3 +1,8 @@
+"""Visualization movements letting the user change the value of a filter.
+
+License: BSD
+"""
+
 import math
 import typing
 
@@ -11,9 +16,17 @@ import table_util
 
 
 class SelectionMovement(abstract.VizMovement):
+    """Abstract base class for movements which lets the user change the value of a filter."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):
+        """Create a new filter selection movement.
+
+        Args:
+            sketch: The sketch in which the movement is to be drawn.
+            accessor: Object offering access to article statistics.
+            state: The global visualization state to represent and manipulate.
+        """
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
@@ -35,6 +48,12 @@ class SelectionMovement(abstract.VizMovement):
             self._placements.append({})
 
     def check_state(self, mouse_x: float, mouse_y: float):
+        """Update the states of all components in this movement.
+
+        Args:
+            mouse_x: The x coordinate of the cursor or last touchscreen interaction.
+            mouse_y: The y coordinate of the cursor or last touchscreen interaction.
+        """
         group_number = math.floor(mouse_x / (const.COLUMN_WIDTH + 10) - 5)
         if group_number >= len(self._tables):
             return
@@ -48,6 +67,7 @@ class SelectionMovement(abstract.VizMovement):
                 self._set_hovering(self._state, name)
 
     def draw(self):
+        """Redraw the overview."""
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -85,6 +105,7 @@ class SelectionMovement(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def refresh_data(self):
+        """Update the data for all components in this visualization."""
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)
 
@@ -131,6 +152,7 @@ class SelectionMovement(abstract.VizMovement):
 
 
 class CountrySelectionMovement(SelectionMovement):
+    """A version of the selection movement that lets the user change the country filter."""
 
     def _get_label(self) -> str:
         return 'Countries'
@@ -164,6 +186,7 @@ class CountrySelectionMovement(SelectionMovement):
 
 
 class CategorySelectionMovement(SelectionMovement):
+    """A version of the selection movement that lets the user change the category filter."""
 
     def _get_label(self) -> str:
         return 'Categories'
@@ -191,6 +214,7 @@ class CategorySelectionMovement(SelectionMovement):
 
 
 class TagSelectionMovement(SelectionMovement):
+    """A version of the selection movement that lets the user change the tag filter."""
 
     def _get_label(self) -> str:
         return 'Tags'
@@ -218,6 +242,7 @@ class TagSelectionMovement(SelectionMovement):
 
 
 class KeywordSelectionMovement(SelectionMovement):
+    """A version of the selection movement that lets the user change the keyword filter."""
 
     def _get_label(self) -> str:
         return 'Keywords'

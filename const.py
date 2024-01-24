@@ -1,3 +1,8 @@
+"""Visualization-wide constants and utility functions to support use of those constants.
+
+License: BSD
+"""
+
 import os
 
 WIDTH = 1225
@@ -45,10 +50,29 @@ REWRITES = {
 
 
 def rewrite(target: str) -> str:
+    """Intercept a string and rewrite if found in const.REWRITES.
+
+    Args:
+        target: The string to potentially rewrite.
+
+    Returns:
+        Rewritten string if intercepted or the original string if no rewrite available.
+    """
     return REWRITES.get(target, target)
 
 
 def get_color(selected: bool, hovering: bool) -> str:
+    """Determine which color constant to use.
+
+    Args:
+        selected: Flag indicating if the element is statefully selected by the user. True if
+            selected and False otherwise.
+        hovering: Flag indicating if the user's cursor is hovering over the elment. True if hovering
+            and False otherwise.
+
+    Returns:
+        Color to use
+    """
     if hovering:
         return HOVER_COLOR
     elif selected:

@@ -1,3 +1,8 @@
+"""Tests for utilities to query for aggregate statistics.
+
+License: BSD
+"""
+
 import os
 import unittest
 

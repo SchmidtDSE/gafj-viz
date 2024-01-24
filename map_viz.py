@@ -1,3 +1,8 @@
+"""Logic for running the map either as visualization movement or component.
+
+License: BSD
+"""
+
 import math
 import os
 
@@ -10,9 +15,19 @@ import state_util
 
 
 class MapViz(abstract.VizMovement):
+    """Movement or component which shows country distribution of articles in a global map."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState, center_x: float, center_y: float):
+        """Create a new map view.
+
+        Args:
+            sketch: The sketch in which the map is to be drawn.
+            accessor: Object offering access to article summary statistics.
+            state: The global state object to reflect and change.
+            center_x: The horizontal coordinate to center the map within the sketch.
+            center_y: The vertical coordinate to center the map within the sketch.
+        """
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
@@ -53,6 +68,15 @@ class MapViz(abstract.VizMovement):
         self._prepare_basemap()
 
     def check_state(self, mouse_x: float, mouse_y: float):
+        """Update the internal state of the map.
+
+        Update the internal state of the map, checking for mouse / pointer / touchscreen events
+        while updating the global viz state if appropriate.
+
+        Args:
+            mouse_x: The x coordinate of the mouse or last touchscreen interaction.
+            mouse_y: The y coordinate of the mouse or last touchscreen interaction.
+        """
         countries = self._results.get_countries()
         country_names = map(lambda x: x.get_name(), countries)
 
@@ -90,6 +114,7 @@ class MapViz(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def draw(self):
+        """Redraw the map."""
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -135,5 +160,6 @@ class MapViz(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def refresh_data(self):
+        """Update the data shown in this map."""
         query = self._state.get_query()
         self._results = self._accessor.execute_query(query)

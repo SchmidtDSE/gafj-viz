@@ -1,3 +1,7 @@
+"""Utility to draw data tables with embedded bar charts.
+
+License: BSD
+"""
 import functools
 import math
 import typing
@@ -9,9 +13,20 @@ import data_util
 
 
 class BarTable:
+    """Visualization component showing an embedded bar chart in a table."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, prefix: str, label: str, sub_title: str,
         checkbox: bool):
+        """Create a new bar table instance.
+
+        Args:
+            sketch: The sketch in which this table will be drawn.
+            prefix: Prefix to prepend to group names to indentify their type.
+            label: The human readable label to show at the top of the table.
+            sub_title: The subtitle describing the table to show at the bottom.
+            checkbox: Flag indicating if the user should be shown a checkbox for each row. True to
+                show a checkbox and False otherwise.
+        """
         self._sketch = sketch
         self._prefix = prefix
         self._label = label
@@ -26,6 +41,11 @@ class BarTable:
             self._width = const.COLUMN_WIDTH
 
     def set_sub_title(self, sub_title: str):
+        """Update the subtitle at the bottom of the table.
+
+        Args:
+            sub_title: The new subtitle to show at the bottom of the table.
+        """
         self._sub_title = sub_title
 
     def draw(self, x: float, y: float, groups: data_util.COUNTED_GROUPS,
@@ -33,6 +53,26 @@ class BarTable:
         prior_placements: typing.Optional[typing.Dict[str, float]] = None,
         placements: typing.Optional[typing.Dict[str, float]] = None,
         count: int = 10, name_overrides: typing.Optional[typing.Dict[str, str]] = None) -> float:
+        """Draw this table without a legend.
+
+        Args:
+            x: The horizontal coordinate at which the left of the table should be drawn.
+            y: The vertical coordinate at which the top of the table should be drawn.
+            groups: The groups to draw in the body of the table.
+            selected_name: The name of the group currently selected by the user or None if no group
+                selected.
+            hovering_name: The name of the group currently hovering by the user or None if no group
+                hovering.
+            total_getter: Function taking the name of a group and returning the total against which
+                a percent should be generated.
+            prior_placements: The placements of the groups from the prior table with which to draw
+                slopegraphs. Pass None if no prior table. defaults to None
+            placements: Dictionary into which group placements should be recorded or None if a new
+                dictionary should be made. Defaults to None.
+            count: The maximum number of rows to show in this table.  Defaults to 10.
+            name_overrides: String rewrites for group names or None if no rewrites. Defaults to
+                None.
+        """
 
         if name_overrides is None:
             name_overrides = {}
@@ -150,6 +190,14 @@ class BarTable:
         return y + 30
 
     def draw_axis(self, x: float, y: float, include_circles: bool = False) -> float:
+        """Draw an axis legend.
+
+        Args:
+            x: The horizontal coordinate of the left side of the legend.
+            x: The vertical coordinate of the legend's line.
+            include_circles: Flag indicating if map circle legend should be included. True to draw
+                the circles and False otherwise. Defaults to False.
+        """
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -214,6 +262,11 @@ class BarTable:
 
 
 def create_dotted_line(sketch: sketchingpy.Sketch2D):
+    """Pre-render dotted lines for use in data tables.
+
+    Args:
+        sketch: The sketch in which to create buffers for dotted line prerenders.
+    """
     sketch.push_transform()
     sketch.push_style()
 

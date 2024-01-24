@@ -1,3 +1,13 @@
+"""Main entry point for the news article visualization.
+
+Main entry point for the news article visualization, logic which can be used through import or
+through CLI invocation. If used from command line, takes an optional argument for mode where
+interactive means run interactively and static means execute in static mode, outputting an image.
+This is typically used for testing. If the mode is not interactive or static, defaults to static.
+
+License: BSD
+"""
+
 import os
 import sys
 import typing
@@ -15,8 +25,16 @@ import table_util
 
 
 class NewsVisualization:
+    """Create a new news metadata visualization."""
 
     def __init__(self, interactive: bool = True):
+        """Create a new visualization.
+
+        Args:
+            interactive: Flag indicating if this should run interactively for a user. True means run
+                interactively and False means output a static image. Defaults to True. False
+                typically used for testing.
+        """
         self._changed = True
         self._drawn = False
         self._state = state_util.VizState()
@@ -85,6 +103,7 @@ class NewsVisualization:
         table_util.create_dotted_line(self._sketch)
 
     def show(self):
+        """Display this visualization or save image if not interactive."""
         if self._interactive:
             self._sketch.show()
         else:
@@ -392,6 +411,7 @@ class NewsVisualization:
 
 
 def main():
+    """Entry point for the visualization script if run outside browser."""
     if len(sys.argv) > 1:
         mode = sys.argv[1]
     else:

@@ -1,3 +1,8 @@
+"""Alternative endpoint for generating query article statistics used for express version.
+
+License: BSD
+"""
+
 import csv
 import io
 import itertools
@@ -7,11 +12,26 @@ import article_getter
 
 
 class StatGenerator:
+    """Utility to generate statistics outside the interactive visualization."""
 
     def __init__(self, inner_getter: article_getter.ArticleGetter):
+        """Create a new generator.
+
+        Args:
+            inner_getter: Article getter to decorate with functionality to generate statistics.
+        """
         self._inner_getter = inner_getter
 
     def execute(self, params: typing.Dict) -> typing.Dict[str, float]:
+        """Execute a query and generate summary statistics to describe the resulting aggregation.
+
+        Args:
+            params: Dictionary with parameters describing the query.
+
+        Returns:
+            Mapping from group to count of matching articles in that group where group may be
+            country, tag, category, keyword, etc.
+        """
         matching = self._inner_getter.execute_to_obj(params)
         if 'queryStringParameters' in params:
             dimension = params['queryStringParameters']['dimension']
@@ -34,7 +54,7 @@ class StatGenerator:
         counts: typing.Dict[str, float] = {}
 
         if dimension == 'country':
-            country_counts = self.get_county_counts()
+            country_counts = self.get_country_counts()
             total_getter = lambda x: country_counts[x]
         else:
             total = len(matching_values_nest)
@@ -46,7 +66,12 @@ class StatGenerator:
         ret_tuples = map(lambda item: (item[0], item[1] / total_getter(item[0])), counts.items())
         return dict(ret_tuples)
 
-    def get_county_counts(self) -> typing.Dict[str, int]:
+    def get_country_counts(self) -> typing.Dict[str, int]:
+        """Get the total number of articles per country in the dataset.
+
+        Returns:
+            Mapping from name of country to count of articles.
+        """
         all_articles = self._inner_getter.execute_to_obj({'queryStringParameters': {}})
         all_article_countries = map(lambda x: x.get_country(), all_articles)
 
@@ -58,6 +83,14 @@ class StatGenerator:
 
 
 def make_csv_str(target: typing.Dict[str, float]) -> str:
+    """Convert a collection of group counts to the string contents of a CSV file.
+
+    Args:
+        target: The values to serialize to CSV.
+
+    Returns:
+        The input target as a CSV string.
+    """
     output_target = io.StringIO()
 
     target_flat = map(lambda x: {'name': x[0], 'percent': x[1]}, target.items())
@@ -70,6 +103,15 @@ def make_csv_str(target: typing.Dict[str, float]) -> str:
 
 
 def lambda_handler(event, context):
+    """Entrypoint / driver for Lambda-based execution.
+
+    Args:
+        event: Information about the Lambda event including query parameters.
+        context: Unused Lambda contextual information.
+
+    Returns:
+        Lambda compatible HTTP response.
+    """
     inner_getter = article_getter.AwsLambdaArticleGetter()
     generator = StatGenerator(inner_getter)
 

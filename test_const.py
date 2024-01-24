@@ -1,3 +1,8 @@
+"""Tests for constants and functions that help use those constants.
+
+License: BSD
+"""
+
 import unittest
 
 import const

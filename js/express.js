@@ -1,12 +1,30 @@
+/**
+ * Logic for running the express version.
+ * 
+ * @license BSD
+ */
+
 const EXPORT_URL = "https://6saet4fqci.execute-api.us-east-2.amazonaws.com/default/gafj-topic-explorer-export";
 const STATS_URL = "https://g69mcjf2re.execute-api.us-east-2.amazonaws.com/default/gafj-topic-explorer-stat";
 
 
+/**
+ * Determine if a value refers to all / no filter value.
+ * 
+ * @param target The string selected or provided by the user.
+ * @return True if interpreted as no filter and false otherwise.
+ */
 function isAll(target) {
     return target === "all" || target === "All" || target === "";
 }
 
 
+/**
+ * Get a parameter for a user defined query.
+ * 
+ * @param elementId The ID of the input element from which to get a user defined query parameter.
+ * @return Object with name of query parameter and query parameter value.
+ */
 function getQueryParam(elementId) {
     const name = elementId.split("-")[0];
     const value = document.getElementById(elementId).value;
@@ -14,6 +32,11 @@ function getQueryParam(elementId) {
 }
 
 
+/**
+ * Get a URL query parameter string from the query defined by the user.
+ * 
+ * @return URL appendable string describing the user defined query.
+ */
 function getQueryParamsStr() {
     const elements = [
         getQueryParam("country-select"),
@@ -30,6 +53,9 @@ function getQueryParamsStr() {
 }
 
 
+/**
+ * Request a CSV export by opening a new tab using a URL defined by the user's query.
+ */
 function executeExport() {
     const queryParamsStr = getQueryParamsStr();
     if (queryParamsStr === "") {
@@ -41,6 +67,11 @@ function executeExport() {
 }
 
 
+/**
+ * Update the express report visualization table.
+ * 
+ * @param rows The records to show in the visualization table (Array of Object).
+ */
 function updateReport(rows) {
     rows.sort((a, b) => b["percent"] - a["percent"]);
 
@@ -70,6 +101,12 @@ function updateReport(rows) {
 }
 
 
+/**
+ * Parse a raw row returned by the express API service.
+ * 
+ * @param rawRow The raw row returned by the server.
+ * @return The row but with its values interpreted and cast.
+ */
 function convertRow(rawRow) {
     return {
         "name": rawRow["name"],
@@ -78,6 +115,9 @@ function convertRow(rawRow) {
 }
 
 
+/**
+ * Execute a request for article aggregate stats using the user's currently defined query.
+ */
 function executeStats() {
     const targetUrl = STATS_URL + "?" + getQueryParamsStr();
     
@@ -93,6 +133,9 @@ function executeStats() {
 }
 
 
+/**
+ * Prepare the express visualization including event listeners.
+ */
 function setupExpress() {
     document.getElementById("express-loading").style.display = "none";
     document.getElementById("execute-express-button").addEventListener("click", (event) => {

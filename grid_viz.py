@@ -1,3 +1,7 @@
+"""Logic for running the grid visualization movement.
+
+License: BSD
+"""
 import typing
 
 import sketchingpy
@@ -10,9 +14,18 @@ import table_util
 
 
 class GridColumn:
+    """A single column in the grid movement with a single category."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, category: str, x: int,
         results: data_util.Result):
+        """Create a new grid column.
+
+        Args:
+            sketch: The sketch in which this grid column is drawn.
+            category: The category represented by this column.
+            x: The horizontal coordinate at which this column should start.
+            results: The results to be shown in this column.
+        """
         self._sketch = sketch
         self._category = category
         self._x = x
@@ -45,9 +58,19 @@ class GridColumn:
         )
 
     def get_category(self) -> str:
+        """Get the name of the category that this column represents.
+
+        Returns:
+            The name of the category represented by this column.
+        """
         return self._category
 
     def set_results(self, results: data_util.Result):
+        """Update the results displayed in this visualization.
+
+        Args:
+            results: The results to display within this grid column.
+        """
         query_active = results.get_has_filters()
         sub_title = '% of category in query' if query_active else '% of category'
         self._tags_table.set_sub_title(sub_title)
@@ -57,6 +80,16 @@ class GridColumn:
         self._results = results
 
     def check_state(self, current_state: state_util.VizState, mouse_x: float, mouse_y: float):
+        """Update the internal visualization state of this grid column.
+
+        Update the internal visualization state of this grid column, checking for hover events and
+        updating a visualization state.
+
+        Args:
+            current_state: The visualization state object to update.
+            mouse_x: The x coordinate of the cursor or last touchscreen interaction.
+            mouse_y: The y coordinate of the cursor or last touchscreen interaction.
+        """
         if mouse_x < self._x or mouse_x > self._x + const.COLUMN_WIDTH:
             return
 
@@ -77,9 +110,21 @@ class GridColumn:
                 return
 
     def get_placements(self) -> typing.Dict[str, float]:
+        """Get the y coordinate placement of groups (tags, categories, keywords) in this column.
+
+        Returns:
+            Mapping from group name to y coordinate of that group in this column.
+        """
         return self._placements
 
     def draw(self, current_state: state_util.VizState, prior_placements: typing.Dict[str, float]):
+        """Draw this visualization component.
+
+        Args:
+            current_state: The visualization state object to reflect in drawing.
+            prior_placements: The y coordinates at which groups were drawn in the grid column to the
+                left or an empty dictionary if no column to the left.
+        """
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -185,9 +230,17 @@ class GridColumn:
 
 
 class GridViz(abstract.VizMovement):
+    """Movement which shows the grid view."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):
+        """Create a new instance of the grid view visualization movement.
+
+        Args:
+            sketch: The sketch in which this movement is drawn.
+            accessor: Object proivding access to article statistics.
+            state: Global visualization state object.
+        """
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
@@ -201,10 +254,17 @@ class GridViz(abstract.VizMovement):
         ]
 
     def check_state(self, mouse_x: float, mouse_y: float):
+        """Update the states of all columns in this movement.
+
+        Args:
+            mouse_x: The x coordinate of the cursor or last touchscreen interaction.
+            mouse_y: The y coordinate of the cursor or last touchscreen interaction.
+        """
         for column in self._columns:
             column.check_state(self._state, mouse_x, mouse_y)
 
     def draw(self):
+        """Redraw the grid movement."""
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -217,6 +277,7 @@ class GridViz(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def refresh_data(self):
+        """Update the data for all of the columns in this movement."""
         for column in self._columns:
             new_results = self._get_results_for_category(column.get_category())
             column.set_results(new_results)

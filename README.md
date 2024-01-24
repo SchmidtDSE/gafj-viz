@@ -70,3 +70,9 @@ The "express" version also uses:
 
  - [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) under the [Apache v2 License](https://github.com/boto/boto3/blob/develop/LICENSE).
  - [D3.js](https://d3js.org/) under the [ISC License](https://github.com/d3/d3/blob/main/LICENSE).
+
+Thanks also to:
+
+ - [Color Brewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) under the [Apache v2 License](https://github.com/axismaps/colorbrewer/).
+ - [Google Country Centerpoints](https://developers.google.com/public-data/docs/canonical/countries_csv) under the [CC-BY-4.0 License](https://creativecommons.org/licenses/by/4.0/).
+ - [Natural Earth](https://www.naturalearthdata.com/) under the public domain.

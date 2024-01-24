@@ -1,3 +1,8 @@
+"""Visualization movement which previews individual article's metadata.
+
+License: BSD
+"""
+
 import random
 
 import sketchingpy
@@ -10,9 +15,17 @@ import state_util
 
 
 class ArticlePreviewViz(abstract.VizMovement):
+    """Movement which shows title and other metadata previews of articles matching a query."""
 
     def __init__(self, sketch: sketchingpy.Sketch2D, accessor: data_util.DataAccessor,
         state: state_util.VizState):
+        """Create a new instance of this movement.
+
+        Args:
+            sketch: The sketch in which this movement operates.
+            accessor: Unused accessor which provides access to article aggregate statistics.
+            state: Object describing the global visualization state modified by multiple movements.
+        """
         self._sketch = sketch
         self._accessor = accessor
         self._state = state
@@ -21,10 +34,12 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._state_loaded = None
 
     def check_state(self, mouse_x: float, mouse_y: float):
+        """Refresh data if articles not loaded, otherwise noop."""
         if not self._articles:
             self.refresh_data()
 
     def draw(self):
+        """Draw article list or a please wait message."""
         self._sketch.push_transform()
         self._sketch.push_style()
 
@@ -49,6 +64,7 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._sketch.pop_transform()
 
     def refresh_data(self):
+        """Load underlying article metadata list if required."""
         if self._state_loaded == self._state.serialize():
             return
 
@@ -76,10 +92,12 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._draw_articles()
 
     def on_change_to(self):
+        """Prepare loading screen prior to first or invalidated cache draw."""
         self.refresh_data()
         self._loading_drawn = False
 
     def download_articles(self):
+        """Produce a CSV export describing matching articles."""
         def callback(filename):
             if not filename.endswith('.csv'):
                 filename = filename + '.csv'

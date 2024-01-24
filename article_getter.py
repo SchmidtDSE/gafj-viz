@@ -1,3 +1,8 @@
+"""Logic for querying for individual article's data as opposed to aggregated stats.
+
+License: BSD
+"""
+
 import codecs
 import csv
 import io
@@ -23,10 +28,23 @@ OBJ_PATH = 'articles.csv'
 
 
 class Article:
+    """Record with details of a single article's metadata."""
 
     def __init__(self, url: str, title_original: str, title_english: str, published: str,
         country: str, keywords: typing.List[str], tags: typing.List[str],
         categories: typing.List[str]):
+        """Create a new article record.
+
+        Args:
+            url: The URL at which the full article can be found.
+            title_original: The title before machine translation.
+            title_english: The title after machine translation.
+            published: ISO8601 string describing when the article was published.
+            country: Full human-readable name of the country in which the article was published.
+            keywords: List of keywords found in the article.
+            tags: List of tags assigned to the article.
+            categories: List of categories that the article is part of.
+        """
         self._url = url
         self._title_original = title_original
         self._title_english = title_english
@@ -37,30 +55,75 @@ class Article:
         self._categories = categories
 
     def get_url(self) -> str:
+        """Get the location where the full article can found.
+        
+        Returns:
+            The URL at which the full article can be found.
+        """
         return self._url
 
     def get_title_original(self) -> str:
+        """Get the text of the article's original title.
+        
+        Returns:
+            The title before machine translation.
+        """
         return self._title_original
 
     def get_title_english(self) -> str:
+        """Get the text of the article's title in English.
+        
+        Returns:
+            The title after machine translation.
+        """
         return self._title_english
 
     def get_published(self) -> str:
+        """Get date or timestamp indicating when this article was published.
+
+        Returns:
+            ISO8601 string describing when the article was published.
+        """
         return self._published
 
     def get_country(self) -> str:
+        """Get the location where this article was published.
+
+        Returns:
+            Full human-readable name of the country in which the article was published.
+        """
         return self._country
 
     def get_keywords(self) -> typing.List[str]:
+        """Get the keywords assigned to this article by the topic model.
+
+        Returns:
+            List of keywords found in the article.
+        """
         return self._keywords
 
     def get_tags(self) -> typing.List[str]:
+        """Get the tags assigned to this article by the topic model.
+
+        Returns:
+            List of tags assigned to the article.
+        """
         return self._tags
 
     def get_categories(self) -> typing.List[str]:
+        """Get the categories assigned to this article by the topic model.
+
+        Returns:
+            List of categories that the article is part of.
+        """
         return self._categories
 
     def to_dict(self) -> typing.Dict[str, str]:
+        """Get a JSON serializable dictionary form of this object.
+
+        Returns:
+            Dictionary containing primitives.
+        """
         return {
             'url': self.get_url(),
             'titleOriginal': self.get_title_original(),
@@ -74,14 +137,31 @@ class Article:
 
 
 class ArticleGetter:
+    """Abstract base class for a strategy to query and filter articles."""
 
     def execute_to_obj(self, params: typing.Dict) -> typing.Iterable[Article]:
+        """Execute a query and return article objects.
+
+        Args:
+            params: Dictionary describing the query.
+
+        Returns:
+            Matching Article objects.
+        """
         query_params = self._get_query_params(params)
         input_lines = self._get_source()
         matching = self._execute_query(query_params, input_lines)
         return matching
 
     def execute_to_native(self, params: typing.Dict):
+        """Execute a query and return a "native" format depending on getter.
+
+        Args:
+            params: Dictionary describing the query.
+
+        Returns:
+            Native version of the matching Article objects.
+        """
         return self._make_response(self.execute_to_obj(params))
 
     def _parse_row(self, target_str: str) -> typing.Optional[Article]:
@@ -145,6 +225,7 @@ class ArticleGetter:
 
 
 class AwsLambdaArticleGetter(ArticleGetter):
+    """Getter which queries for data from S3 and returns a Lambda HTTP response."""
 
     def _get_query_params(self, target: typing.Dict) -> typing.Dict:
         return target['queryStringParameters']
@@ -187,6 +268,7 @@ class AwsLambdaArticleGetter(ArticleGetter):
 
 
 class LocalArticleGetter(ArticleGetter):
+    """Getter which queries for articles from a file and returns Article objects."""
 
     def _get_query_params(self, target: typing.Dict) -> typing.Dict:
         return target
@@ -202,10 +284,27 @@ class LocalArticleGetter(ArticleGetter):
 
 
 def lambda_handler(event, context):
+    """Entrypoint / driver for Lambda-based execution.
+
+    Args:
+        event: Information about the Lambda event including query parameters.
+        context: Unused Lambda contextual information.
+
+    Returns:
+        Lambda compatible HTTP response.
+    """
     article_getter = AwsLambdaArticleGetter()
     return article_getter.execute_to_native(event)
 
 
 def local_handler(params: typing.Dict) -> typing.List[Article]:
+    """Entrypoint / driver for visualization app-based execution.
+
+    Args:
+        params: The parameters of the query.
+
+    Returns:
+        List of Articles.
+    """
     article_getter = LocalArticleGetter()
     return article_getter.execute_to_native(params)  # type: ignore

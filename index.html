@@ -6,31 +6,31 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
         <!-- Tabby -->
-        <link rel="stylesheet" href="/third_party_web/tabby-ui.min.css?v=0.1.2">
+        <link rel="stylesheet" href="/third_party_web/tabby-ui.min.css?v=0.1.3">
 
         <!-- PyScript -->
-        <link rel="stylesheet" href="/third_party/core.css?v=0.1.2">
-        <script type="module" src="/third_party/core.js?v=0.1.2"></script>
+        <link rel="stylesheet" href="/third_party/core.css?v=0.1.3">
+        <script type="module" src="/third_party/core.js?v=0.1.3"></script>
 
         <!-- Custom -->
-        <link rel="stylesheet" href="/css/web.css?v=0.1.2">
+        <link rel="stylesheet" href="/css/web.css?v=0.1.3">
     </head>
     <body>
         <py-config>
         {
             "packages": ["/third_party/sketchingpy-0.1.5-py3-none-any.whl"],
             "files": {
-                "/article_preview_viz.pyscript?v=0.1.2": "article_preview_viz.py",
-                "/abstract.pyscript?v=0.1.2": "abstract.py",
-                "/article_getter.pyscript?v=0.1.2": "article_getter.py",
-                "/const.pyscript?v=0.1.2": "const.py",
-                "/data_util.pyscript?v=0.1.2": "data_util.py",
-                "/grid_viz.pyscript?v=0.1.2": "grid_viz.py",
-                "/map_viz.pyscript?v=0.1.2": "map_viz.py",
-                "/overview_viz.pyscript?v=0.1.2": "overview_viz.py",
-                "/selection_viz.pyscript?v=0.1.2": "selection_viz.py",
-                "/state_util.pyscript?v=0.1.2": "state_util.py",
-                "/table_util.pyscript?v=0.1.2": "table_util.py",
+                "/article_preview_viz.pyscript?v=0.1.3": "article_preview_viz.py",
+                "/abstract.pyscript?v=0.1.3": "abstract.py",
+                "/article_getter.pyscript?v=0.1.3": "article_getter.py",
+                "/const.pyscript?v=0.1.3": "const.py",
+                "/data_util.pyscript?v=0.1.3": "data_util.py",
+                "/grid_viz.pyscript?v=0.1.3": "grid_viz.py",
+                "/map_viz.pyscript?v=0.1.3": "map_viz.py",
+                "/overview_viz.pyscript?v=0.1.3": "overview_viz.py",
+                "/selection_viz.pyscript?v=0.1.3": "selection_viz.py",
+                "/state_util.pyscript?v=0.1.3": "state_util.py",
+                "/table_util.pyscript?v=0.1.3": "table_util.py",
                 "/csv/articles.csv": "csv/articles.csv"
             }
         }
@@ -43,6 +43,7 @@
 
             <ul data-tabs>
                 <li><a data-tabby-default href="#introduction">Introduction</a></li>
+                <li><a href="#tutorial">Tutorial</a></li>
                 <li><a href="#app">App</a></li>
                 <li><a href="#express">Express</a></li>
                 <li><a href="#insights">Insights</a></li>
@@ -70,9 +71,25 @@
                     Specifically, using news media as a lens, this natural language processing effort uses machine learning / artificial intelligence to read thousands of articles from across countries and languages to see how often different topics appear and in which context. Distilling this insight into interactive data visualizations, this website provides research tools which enable users to explore this global dataset.
                 </div>
                 <div class="cta">
-                    <a class="button internal-link" href="#app">Explore</a> <a class="button internal-link" href="#insights">Insights</a> <a class="button internal-link" href="#method">Method</a>
+                    <a class="button internal-link" href="#tutorial">Explore</a>
+                    <a class="button internal-link" href="#insights">Insights</a>
+                    <a class="button internal-link" href="#method">Method</a>
                 </div>
                 <img src="/img/intro.png" alt="Picture of people made out of triangles">
+            </section>
+
+            <section id="tutorial">
+                <h2>Tutorial</h2>
+                <div>
+                    Before getting started, this short video tutorial goes through an example analysis, showing how to use the interactive web-based visualization.
+                </div>
+
+                <div class="cta">
+                    <a class="button internal-link" href="#app">Go to App</a>
+                    <a class="button internal-link" href="#insights">Skip to Insights</a>
+                </div>
+
+                <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/906555824?h=9c82f7d79d&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Food News Viz Tutorial"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
             </section>
 
             <section id="app">
@@ -356,7 +373,7 @@
                         <li>Your device may "cache" parts of the application "locally" on your machine for performance reasons as dictated by your browsesr settings.</li>
                     </ul>
 
-                    See <a href="https://www.dreamhost.com/legal/customer-data-processing-addendum/">DreamHost CDPA</a> for more information about our web host / subprocessor. Anonymized bug reports may be managed with with <a href="https://sentry.io">Sentry</a>. Finally, use of the "express" version also generates web traffic with AWS as described in the <a href="https://docs.aws.amazon.com/whitepapers/latest/navigating-gdpr-compliance/aws-data-processing-addendum-dpa.html">Amazon Web Services DPA</a>. This page was last updated 2024-01-19 and may be revised in the future.
+                    See <a href="https://www.dreamhost.com/legal/customer-data-processing-addendum/">DreamHost CDPA</a> for more information about our web host / subprocessor. Anonymized bug reports may be managed with with <a href="https://sentry.io">Sentry</a>. Furthermore, video hosting is provided by Vimeo and traffic may be generated against their servers under the <a href="https://vimeo.com/terms">Vimeo terms</a>. Finally, use of the "express" version also generates web traffic with AWS as described in the <a href="https://docs.aws.amazon.com/whitepapers/latest/navigating-gdpr-compliance/aws-data-processing-addendum-dpa.html">Amazon Web Services DPA</a>. This page was last updated 2024-01-19 and may be revised in the future.
                 </section>
 
                 <section class="subsection">
@@ -384,10 +401,10 @@
     </body>
 
     <!-- Third party -->
-    <script src="/third_party_web/tabby.polyfills.min.js?v=0.1.2"></script>
-    <script src="/third_party_web/d3.min.js?v=0.1.2"></script>
+    <script src="/third_party_web/tabby.polyfills.min.js?v=0.1.3"></script>
+    <script src="/third_party_web/d3.min.js?v=0.1.3"></script>
 
     <!-- Support -->
-    <script src="/js/main.js?v=0.1.2"></script>
-    <script src="/js/express.js?v=0.1.2"></script>
+    <script src="/js/main.js?v=0.1.3"></script>
+    <script src="/js/express.js?v=0.1.3"></script>
 </html>

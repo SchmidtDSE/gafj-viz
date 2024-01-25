@@ -60,7 +60,7 @@ class OverviewViz(abstract.VizMovement):
         self._countries_table = table_util.BarTable(
             self._sketch,
             'countries',
-            'Countries',
+            'Country of Publication',
             '% of all in country',
             True
         )

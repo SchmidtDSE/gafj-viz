@@ -155,7 +155,7 @@ class CountrySelectionMovement(SelectionMovement):
     """A version of the selection movement that lets the user change the country filter."""
 
     def _get_label(self) -> str:
-        return 'Countries'
+        return 'Publication Countries'
 
     def _get_results_raw(self, results: data_util.Result):
         return results.get_countries()

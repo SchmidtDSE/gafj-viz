@@ -43,6 +43,7 @@ class NewsVisualization:
         if self._interactive:
             self._sketch = sketchingpy.Sketch2D(const.WIDTH, const.HEIGHT)
             self._sketch.set_fps(15)
+            self._sketch.set_title('Food News Viz')
         else:
             self._sketch = sketchingpy.Sketch2DStatic(const.WIDTH, const.HEIGHT)
 

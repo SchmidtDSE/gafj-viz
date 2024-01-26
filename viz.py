@@ -51,9 +51,6 @@ class NewsVisualization:
         self._button_hover = 'none'
         self._last_major_movement = 'overview'
 
-        self._mouse_x = None
-        self._mouse_y = None
-
         data_layer = self._sketch.get_data_layer()
         assert data_layer is not None
         path = os.path.join('txt', 'serialized.txt')
@@ -163,8 +160,7 @@ class NewsVisualization:
             mouse_y = 0
 
         should_check = self._drawn
-        mouse_stable = mouse_x == self._mouse_x and mouse_y == self._mouse_y
-        should_check = should_check and (force or mouse_stable)
+        should_check = should_check or force
 
         if should_check:
             prior_state_str = self._state.serialize()
@@ -201,9 +197,6 @@ class NewsVisualization:
             global_ui_change = button_hover_change
 
             self._changed = prior_state_str != self._state.serialize() or global_ui_change
-
-        self._mouse_x = mouse_x
-        self._mouse_y = mouse_y
 
     def _respond_to_click(self, button):
         if button.get_name() != 'leftMouse':

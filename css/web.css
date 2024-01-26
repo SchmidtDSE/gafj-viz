@@ -123,6 +123,10 @@ nav .subtitle {
     padding: 5px;
 }
 
+.padded-start {
+    margin-bottom: 20px;
+}
+
 .skip-link {
     background: rgba(0, 0, 0, 0.5);
     height: 20px;

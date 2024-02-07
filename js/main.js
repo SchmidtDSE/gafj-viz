@@ -13,7 +13,7 @@ function openWebApp() {
 
     const scriptTag = document.createElement("script");
     scriptTag.type = "py";
-    scriptTag.src = "viz.pyscript?v=0.1.3";
+    scriptTag.src = "viz.pyscript?v=0.1.4";
     document.getElementById("sketch").appendChild(scriptTag);
 
     document.getElementById("app").classList.add("center");

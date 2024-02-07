@@ -32,6 +32,15 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._loading_drawn = False
         self._articles = None
         self._state_loaded = None
+        self._locked = False
+
+    def lock(self):
+        """Have the visualization ignore inputs."""
+        pass
+
+    def unlock(self):
+        """Have the visualization respond to inputs."""
+        pass
 
     def check_state(self, mouse_x: float, mouse_y: float):
         """Refresh data if articles not loaded, otherwise noop."""

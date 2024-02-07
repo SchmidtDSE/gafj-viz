@@ -67,6 +67,16 @@ class MapViz(abstract.VizMovement):
 
         self._prepare_basemap()
 
+        self._locked = False
+
+    def lock(self):
+        """Have the visualization ignore inputs."""
+        self._locked = True
+
+    def unlock(self):
+        """Have the visualization respond to inputs."""
+        self._locked = False
+
     def check_state(self, mouse_x: float, mouse_y: float):
         """Update the internal state of the map.
 
@@ -77,6 +87,9 @@ class MapViz(abstract.VizMovement):
             mouse_x: The x coordinate of the mouse or last touchscreen interaction.
             mouse_y: The y coordinate of the mouse or last touchscreen interaction.
         """
+        if self._locked:
+            return
+
         countries = self._results.get_countries()
         country_names = map(lambda x: x.get_name(), countries)
 

@@ -254,6 +254,16 @@ class GridViz(abstract.VizMovement):
             self._build_column('environment and resources', 4)
         ]
 
+        self._locked = False
+
+    def lock(self):
+        """Have the visualization ignore inputs."""
+        self._locked = True
+
+    def unlock(self):
+        """Have the visualization respond to inputs."""
+        self._locked = False
+
     def check_state(self, mouse_x: float, mouse_y: float):
         """Update the states of all columns in this movement.
 
@@ -261,6 +271,9 @@ class GridViz(abstract.VizMovement):
             mouse_x: The x coordinate of the cursor or last touchscreen interaction.
             mouse_y: The y coordinate of the cursor or last touchscreen interaction.
         """
+        if self._locked:
+            return
+
         for column in self._columns:
             column.check_state(self._state, mouse_x, mouse_y)
 

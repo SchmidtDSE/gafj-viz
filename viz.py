@@ -423,7 +423,7 @@ class NewsVisualization:
 
         def callback(value_cased):
             value = value_cased.lower()
-            
+
             if value.strip() == '':
                 value = None
 
@@ -444,7 +444,7 @@ class NewsVisualization:
 
             self._changed = True
             self._drawn = False
-            
+
             self._movement = self._last_major_movement
 
             self._overlaid = False

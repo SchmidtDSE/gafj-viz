@@ -47,6 +47,16 @@ class SelectionMovement(abstract.VizMovement):
             ))
             self._placements.append({})
 
+        self._locked = False
+
+    def lock(self):
+        """Have the visualization ignore inputs."""
+        self._locked = True
+
+    def unlock(self):
+        """Have the visualization respond to inputs."""
+        self._locked = False
+
     def check_state(self, mouse_x: float, mouse_y: float):
         """Update the states of all components in this movement.
 
@@ -54,6 +64,9 @@ class SelectionMovement(abstract.VizMovement):
             mouse_x: The x coordinate of the cursor or last touchscreen interaction.
             mouse_y: The y coordinate of the cursor or last touchscreen interaction.
         """
+        if self._locked:
+            return
+
         group_number = math.floor(mouse_x / (const.COLUMN_WIDTH + 10) - 5)
         if group_number >= len(self._tables):
             return

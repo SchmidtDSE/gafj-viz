@@ -30,3 +30,11 @@ class VizMovement:
     def on_change_to(self):
         """Method to call when the visualization is about to swtich to this movement."""
         pass
+
+    def lock(self):
+        """Have the visualization ignore inputs."""
+        raise RuntimeError('Use implementor.')
+
+    def unlock(self):
+        """Have the visualization respond to inputs."""
+        raise RuntimeError('Use implementor.')

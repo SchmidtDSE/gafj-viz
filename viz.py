@@ -97,6 +97,7 @@ class NewsVisualization:
             )
 
         self._table_counter = 0
+        self._overlaid = False
 
         table_util.create_dotted_line(self._sketch)
 
@@ -125,7 +126,7 @@ class NewsVisualization:
 
         self._check_mouse_pos()
 
-        if self._changed or self._movement == 'download':
+        if self._changed or self._movement == 'download' or self._overlaid:
             self._sketch.clear(const.BG_COLOR)
 
             target_viz.draw()
@@ -263,10 +264,12 @@ class NewsVisualization:
         elif self._button_hover == 'download':
             if self._movement == 'download':
                 self._download_articles()
+            elif self._movement in self._selectors:
+                self._ask_manual()
             else:
                 self._movement = 'download'
                 self._article_preview.on_change_to()
-        elif self._movement not in ['grid', 'overview', 'download']:
+        elif self._movement not in ['grid', 'overview', 'download'] and not self._overlaid:
             self._movement = self._last_major_movement
 
         self._grid.refresh_data()
@@ -382,7 +385,7 @@ class NewsVisualization:
         self._sketch.draw_text(
             const.DOWNLOAD_X + const.BUTTON_WIDTH / 2 - 1,
             text_y,
-            self._get_download_text()
+            self._get_secondary_text()
         )
 
         self._sketch.pop_style()
@@ -394,14 +397,60 @@ class NewsVisualization:
             'grid': 'Go to Overview >'
         }.get(self._movement, 'Done >')
 
-    def _get_download_text(self) -> str:
+    def _get_secondary_text(self) -> str:
         if self._movement == 'download':
             return 'Download All >'
+        elif self._movement in self._selectors:
+            return 'Enter Manually >'
         else:
             return 'Get Articles >'
 
     def _download_articles(self):
         self._article_preview.download_articles()
+
+    def _ask_manual(self):
+        self._overlaid = True
+        movement = {
+            'overview': self._overview,
+            'grid': self._grid,
+            'download': self._article_preview,
+            'country': self._selectors['country'],
+            'category': self._selectors['category'],
+            'tag': self._selectors['tag'],
+            'keyword': self._selectors['keyword']
+        }[self._movement]
+        movement.lock()
+
+        def callback(value_cased):
+            value = value_cased.lower()
+            
+            if value.strip() == '':
+                value = None
+
+            if self._movement == 'country':
+                self._state.set_country_selected(value)
+            elif self._movement == 'category':
+                self._state.set_category_selected(value)
+            elif self._movement == 'tag':
+                self._state.set_tag_selected(value)
+            elif self._movement == 'keyword':
+                self._state.set_keyword_selected(value)
+
+            self._grid.refresh_data()
+            self._overview.refresh_data()
+
+            for selector in self._selectors.values():
+                selector.refresh_data()
+
+            self._changed = True
+            self._drawn = False
+            
+            self._movement = self._last_major_movement
+
+            self._overlaid = False
+            movement.unlock()
+
+        self._sketch.get_dialog_layer().show_prompt('Enter term:', callback)
 
 
 def main():

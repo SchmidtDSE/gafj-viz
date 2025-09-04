@@ -117,9 +117,9 @@ class BarTable:
             color = const.get_color(is_selected, is_hovering)
 
             if self._checkbox:
-                self._sketch.draw_buffer('dotted-line', self._start_x, y + 15)
+                self._sketch.draw_buffer(self._start_x, y + 15, 'dotted-line')
             else:
-                self._sketch.draw_buffer('dotted-line-long', self._start_x, y + 15)
+                self._sketch.draw_buffer(self._start_x, y + 15, 'dotted-line-long')
 
             self._sketch.clear_stroke()
             self._sketch.set_rect_mode('corner')

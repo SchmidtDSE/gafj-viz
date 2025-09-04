@@ -1,4 +1,10 @@
-[ ! -e third_party_web/IBMPlexMono-Regular.ttf ] && wget --directory-prefix=third_party_web https://github.com/IBM/plex/raw/master/IBM-Plex-Mono/fonts/complete/ttf/IBMPlexMono-Regular.ttf
+[ ! -e third_party_web/IBMPlexMono-Regular.ttf ] && {
+    wget -O /tmp/plex.zip https://github.com/IBM/plex/releases/download/v6.4.0/TrueType.zip
+    cd /tmp && unzip -q plex.zip
+    cp TrueType/IBM-Plex-Mono/IBMPlexMono-Regular.ttf "$OLDPWD/third_party_web/"
+    cd "$OLDPWD"
+    rm -rf /tmp/plex.zip /tmp/TrueType
+}
 [ ! -e third_party_web/tabby-ui.min.css ] && wget --directory-prefix=third_party_web https://cdn.jsdelivr.net/gh/cferdinandi/tabby/dist/css/tabby-ui.min.css
 [ ! -e third_party_web/tabby.polyfills.min.js ] && wget --directory-prefix=third_party_web https://cdn.jsdelivr.net/gh/cferdinandi/tabby/dist/js/tabby.polyfills.min.js
 [ ! -e third_party_web/d3.min.js ] && wget --directory-prefix=third_party_web https://cdn.jsdelivr.net/npm/d3@7

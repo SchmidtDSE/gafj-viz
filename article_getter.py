@@ -18,10 +18,9 @@ except:
 
 COLS = (
     'url',
-    'titleOriginal',
-    'titleEnglish',
     'published',
-    'country'
+    'country',
+    'tags'
 )
 OBJ_BUCKET = 'gafj-topic-explorer'
 OBJ_PATH = 'articles.csv'
@@ -126,10 +125,9 @@ class Article:
         """
         return {
             'url': self.get_url(),
-            'titleOriginal': self.get_title_original(),
-            'titleEnglish': self.get_title_english(),
             'published': self.get_published(),
             'country': self.get_country(),
+            'tags': ' '.join(sorted(self.get_tags())),
             'keywordList': ';'.join(self.get_keywords()),
             'tagList': ';'.join(self.get_tags()),
             'categoryList': ';'.join(self.get_categories())

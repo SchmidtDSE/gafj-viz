@@ -116,8 +116,6 @@ class ArticlePreviewViz(abstract.VizMovement):
                 article_dicts,
                 [
                     'url',
-                    'titleOriginal',
-                    'titleEnglish',
                     'published',
                     'country',
                     'keywordList',
@@ -149,7 +147,10 @@ class ArticlePreviewViz(abstract.VizMovement):
         for article in self._articles[:20]:
             self._sketch.set_text_font(const.FONT, 16)
             self._sketch.set_text_align('left', 'baseline')
-            self._sketch.draw_text(5, y, article.get_title_english())
+            # Display comma-separated, alphabetically sorted tags instead of title
+            sorted_tags = sorted(article.get_tags())
+            tags_display = ', '.join(sorted_tags)
+            self._sketch.draw_text(5, y, tags_display)
 
             text = ' | '.join([
                 article.get_country(),

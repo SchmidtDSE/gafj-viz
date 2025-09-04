@@ -131,7 +131,7 @@ class MapViz(abstract.VizMovement):
         self._sketch.push_transform()
         self._sketch.push_style()
 
-        self._sketch.draw_buffer('basemap', 0, 0)
+        self._sketch.draw_buffer(0, 0, 'basemap')
 
         self._sketch.set_ellipse_mode('radius')
 

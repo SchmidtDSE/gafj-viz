@@ -130,7 +130,7 @@ class ArticlePreviewViz(abstract.VizMovement):
         self._sketch.get_dialog_layer().get_file_save_location(callback)
 
     def _draw_articles_buffer(self):
-        self._sketch.draw_buffer('articles', 0, 0)
+        self._sketch.draw_buffer(0, 0, 'articles')
 
     def _draw_articles(self):
         self._sketch.push_transform()

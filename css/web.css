@@ -99,8 +99,7 @@ nav .subtitle {
 [role="tab"][aria-selected="true"] {
     font-family: 'IBMPlexMono', 'Courier New', monospace;
     background-color: rgb(243, 219, 212);
-    border: 1px solid #141414;
-    border-bottom: 1px solid rgb(243, 219, 212);
+    border: none;
     color: #141414;
 }
 
@@ -117,7 +116,7 @@ nav .subtitle {
 
 [role="tab"] {
     font-family: 'IBMPlexMono', 'Courier New', monospace;
-    background-color: rgb(240, 255, 195);
+    background-color: #F0F0F0;
     color: #141414;
     border: 1px solid #E0E0E0;
     padding: 10px 15px;

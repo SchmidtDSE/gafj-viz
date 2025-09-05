@@ -1,2 +1,2 @@
-sketchingpy[desktopall]~=0.1.5
-sketchingpy[static]~=0.1.5
+sketchingpy[desktopall]
+sketchingpy[static]

@@ -18,7 +18,7 @@
     <body>
         <py-config>
         {
-            "packages": ["/third_party/sketchingpy-0.1.5-py3-none-any.whl"],
+            "packages": ["/third_party/sketchingpy-0.3.2-py3-none-any.whl"],
             "files": {
                 "/article_preview_viz.pyscript?v=0.1.4": "article_preview_viz.py",
                 "/abstract.pyscript?v=0.1.4": "abstract.py",
@@ -84,7 +84,11 @@
                     You can also <a class="internal-link" href="#app">skip to app</a> or <a class="internal-link" href="#insights">skip to insights</a>.
                 </div>
 
-                <iframe src="https://player.vimeo.com/video/906555824?h=9c82f7d79d&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" width="1200" height="675" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="Food News Viz Tutorial"></iframe>
+                <iframe src="https://player.vimeo.com/video/906555824?h=9c82f7d79d&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" width="1600" height="900" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="Food News Viz Tutorial"></iframe>
+
+                <div class="padded-start">
+                    <em>Note: Some example articles are listed with URLs. These are provided as examples solely for the purpose of academic research. Rights retained by their authors.</em>
+                </div>
 
                 <div class="cta" id="tutorial-continue">
                     <a class="button internal-link" href="#app">Go to App</a>
@@ -301,6 +305,7 @@
                 <section class="subsection">
                     <h3>Results</h3>
                     <div id="express-status-container"><span id="express-status">Execute a query above.</span></div>
+                    <div id="express-loading">Please wait...</div>
                     <div id="express-report"></div>
                 </section>
             </section>

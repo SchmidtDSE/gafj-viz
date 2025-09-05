@@ -115,7 +115,7 @@ class MapViz(abstract.VizMovement):
         self._sketch.enter_buffer('basemap')
 
         self._sketch.clear_fill()
-        self._sketch.set_stroke(const.DEEP_BG_COLOR)
+        self._sketch.set_stroke('#333333')
         self._sketch.set_stroke_weight(2)
 
         for shape in self._geo_shapes:

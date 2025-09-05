@@ -95,7 +95,7 @@ function updateReport(rows) {
         return numPixels + "px";
     });
 
-    document.getElementById("express-status").innerHTML = "Loaded.";
+    // Status updates removed - using loading indicator instead
     document.getElementById("execute-express-button").style.display = "inline-block";
     document.getElementById("express-loading").style.display = "none";
 }
@@ -121,7 +121,7 @@ function convertRow(rawRow) {
 function executeStats() {
     const targetUrl = STATS_URL + "?" + getQueryParamsStr();
     
-    document.getElementById("express-status").innerHTML = "Please wait...";
+    // Show loading indicator
     document.getElementById("express-report").innerHTML = "";
     document.getElementById("execute-express-button").style.display = "none";
     document.getElementById("express-loading").style.display = "inline-block";

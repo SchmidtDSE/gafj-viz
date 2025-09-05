@@ -62,7 +62,8 @@ Code is released under the BSD license while data are released under CC-BY-NC bu
 ## Open source
 This project uses the following open source packages:
 
- - [IBM Plex](https://github.com/IBM/plex) under the [OFL 1.0 License](https://github.com/IBM/plex/blob/master/LICENSE.txt).
+ - [IBM Plex](https://github.com/IBM/plex) (Mono and Sans families) under the [OFL 1.0 License](https://github.com/IBM/plex/blob/master/LICENSE.txt).
+ - [Cormorant](https://github.com/CatharsisFonts/Cormorant) under the [SIL Open Font License](https://github.com/CatharsisFonts/Cormorant/blob/master/OFL.txt).
  - [Sketchingpy](https://sketchingpy.org/) under the [BSD License](https://codeberg.org/sketchingpy/Sketchingpy/src/branch/main/LICENSE.md) including the packages included in its stand alone hosting archive.
  - [Tabby.js](https://github.com/cferdinandi/tabby) under the [MIT License](https://github.com/cferdinandi/tabby/blob/master/LICENSE.md).
 

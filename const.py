@@ -8,21 +8,21 @@ import os
 WIDTH = 1225
 HEIGHT = 750
 
-BG_COLOR = '#FFFFFF'
-BG_COLOR_LAYER = '#F9F9F9A0'
-DEEP_BG_COLOR = '#F5F5F5'
-DARK_BG_COLOR = '#2A2A2A'
+BG_COLOR = '#F8ECD4'  # rgb(248, 236, 212) - warm beige background
+BG_COLOR_LAYER = '#F8ECD4A0'  # Semi-transparent version
+DEEP_BG_COLOR = '#EAEDFC'  # rgb(234, 237, 252) - highlight/header background
+DARK_BG_COLOR = '#141414'  # Dark color for contrast elements
 
 COLUMN_WIDTH = 200
 COLUMN_PADDING = 50
 
 INACTIVE_COLOR = '#666666'
-ACTIVE_COLOR = '#0B977E'
-HOVER_COLOR = '#0A8570'
+ACTIVE_COLOR = '#141414'  # Changed to match button styling
+HOVER_COLOR = '#333333'  # Darker hover state
 
 INACTIVE_COLOR_MAP = '#66666690'
-ACTIVE_COLOR_MAP = '#0B977E90'
-HOVER_COLOR_MAP = '#0A857090'
+ACTIVE_COLOR_MAP = '#14141490'  # Updated to match new active color
+HOVER_COLOR_MAP = '#33333390'  # Updated to match new hover color
 
 FOOTER_HEIGHT = 50
 

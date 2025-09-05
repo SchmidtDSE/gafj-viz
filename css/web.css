@@ -1,12 +1,42 @@
 @font-face {
-    font-family: 'IBMPlexMono-Regular';
+    font-family: 'IBMPlexMono';
     src: url('/third_party_web/IBMPlexMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('/third_party_web/IBMPlexSans-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'IBMPlexSans';
+    src: url('/third_party_web/IBMPlexSans-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cormorant';
+    src: url('/third_party_web/Cormorant-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Cormorant';
+    src: url('/third_party_web/Cormorant-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
 }
 
 /* Base Typography and Colors */
 html {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #FFFFFF;
+    font-family: 'IBMPlexSans', 'Helvetica Neue', Arial, sans-serif;
+    background-color: rgb(248, 236, 212);
     color: #141414;
     font-size: 16px;
     line-height: 1.5;
@@ -14,20 +44,23 @@ html {
 
 /* Typography Hierarchy */
 h1 {
-    font-size: 24px;
-    font-weight: 600;
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
     color: #141414;
 }
 
 h2 {
-    font-size: 20px;
-    font-weight: 600;
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
     color: #141414;
 }
 
 h3 {
-    font-size: 18px;
-    font-weight: 600;
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
     color: #141414;
 }
 
@@ -64,10 +97,11 @@ nav .subtitle {
 
 /* Tab Styling */
 [role="tab"][aria-selected="true"] {
-    background-color: #0B977E;
-    border: 1px solid #0B977E;
-    border-bottom: 1px solid #0B977E;
-    color: #FFFFFF;
+    font-family: 'IBMPlexMono', 'Courier New', monospace;
+    background-color: rgb(234, 237, 252);
+    border: 1px solid #141414;
+    border-bottom: 1px solid rgb(234, 237, 252);
+    color: #141414;
 }
 
 [role="tablist"] {
@@ -77,13 +111,14 @@ nav .subtitle {
 }
 
 [role="tab"]:hover:not([aria-selected="true"]) {
-    background-color: #E8E8E8;
+    background-color: rgb(240, 225, 195);
     color: #141414;
 }
 
 [role="tab"] {
-    background-color: #F5F5F5;
-    color: #666666;
+    font-family: 'IBMPlexMono', 'Courier New', monospace;
+    background-color: rgb(248, 236, 212);
+    color: #141414;
     border: 1px solid #E0E0E0;
     padding: 10px 15px;
     border-radius: 4px 4px 0 0;
@@ -96,35 +131,37 @@ nav .subtitle {
 
 /* Buttons */
 .button {
-    background-color: #0B977E;
-    color: #FFFFFF;
-    border: 1px solid #0B977E;
+    font-family: 'IBMPlexMono', 'Courier New', monospace;
+    background-color: #141414;
+    color: #FFFFFF !important;
+    border: 2px solid #141414;
     border-radius: 4px;
     padding: 10px 20px;
     margin-top: 5px;
     margin-bottom: 5px;
     display: inline-block;
-    font-weight: 600;
+    font-weight: 400;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .button:hover {
-    background-color: #0A8570;
-    border-color: #0A8570;
-    color: #FFFFFF;
+    background-color: #333333;
+    border-color: #333333;
+    color: #FFFFFF !important;
 }
 
 .button.secondary {
-    background-color: #F5F5F5;
-    color: #141414;
-    border-color: #E0E0E0;
+    background-color: rgb(248, 236, 212);
+    color: #141414 !important;
+    border-color: #141414;
 }
 
 .button.secondary:hover {
-    background-color: #E8E8E8;
-    color: #141414;
+    background-color: rgb(240, 225, 195);
+    color: #141414 !important;
+    border-color: #141414;
 }
 
 /* Layout and Spacing */
@@ -183,6 +220,7 @@ nav .subtitle {
 }
 
 select, input[type="text"] {
+    font-family: 'IBMPlexMono', 'Courier New', monospace;
     background-color: #FFFFFF;
     border: 1px solid #E0E0E0;
     color: #141414;
@@ -200,20 +238,22 @@ select:focus, input[type="text"]:focus {
 }
 
 button {
-    background-color: #0B977E;
-    color: #FFFFFF;
-    border: 1px solid #0B977E;
+    font-family: 'IBMPlexMono', 'Courier New', monospace;
+    background-color: #141414;
+    color: #FFFFFF !important;
+    border: 2px solid #141414;
     border-radius: 4px;
     padding: 10px 20px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 button:hover {
-    background-color: #0A8570;
-    border-color: #0A8570;
+    background-color: #333333;
+    border-color: #333333;
+    color: #FFFFFF !important;
 }
 
 ::placeholder {
@@ -223,8 +263,8 @@ button:hover {
 /* Utility Classes */
 .highlight {
     display: inline-block;
-    background-color: #0B977E;
-    color: #FFFFFF;
+    background-color: rgb(234, 237, 252);
+    color: #141414;
     padding: 8px 12px;
     border-radius: 4px;
     font-weight: 600;
@@ -267,7 +307,7 @@ button:hover {
 #app #sketch #sketch-canvas {
     border: 1px solid #E0E0E0;
     border-radius: 4px;
-    background-color: #FFFFFF;
+    background-color: rgb(248, 236, 212);
 }
 
 #sketch-load-message {
@@ -318,6 +358,8 @@ section {
 /* Video Container */
 iframe {
     max-width: 100%;
+    width: 100%;
+    aspect-ratio: 16 / 9;
     height: auto;
     border: 1px solid #E0E0E0;
     border-radius: 4px;

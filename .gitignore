@@ -17,3 +17,7 @@ d3.min.js
 
 deploy
 lambda_deploy
+
+venv
+third_party
+third_party_web

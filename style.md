@@ -9,7 +9,7 @@ This style guide defines the visual design standards for the GAFJ visualization 
   - May darken slightly on hover or active states for interactive elements (suggest `rgb(240, 225, 195)` for hover)
   
 ### Highlight Colors  
-- **Highlight Background**: `rgb(234, 237, 252)` - A soft, light blue
+- **Highlight Background**: `rgb(243, 219, 212)` - A soft, warm pink tone
   - Used for elements with `.highlight` class
   - Also used for header backgrounds where appropriate
 
@@ -75,14 +75,14 @@ This style guide defines the visual design standards for the GAFJ visualization 
 /* Cormorant */
 @font-face {
     font-family: 'Cormorant';
-    src: url('/third_party_web/Cormorant-Regular.otf') format('opentype');
+    src: url('/third_party_web/Cormorant-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Cormorant';
-    src: url('/third_party_web/Cormorant-Bold.otf') format('opentype');
+    src: url('/third_party_web/Cormorant-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
@@ -106,7 +106,7 @@ button, .button, input, select, [role="tab"] {
 }
 
 .highlight {
-    background-color: rgb(234, 237, 252);
+    background-color: rgb(243, 219, 212);
 }
 
 button, .button {
@@ -117,7 +117,7 @@ button, .button {
 ### Desktop (Python/Sketchingpy)
 - Update const.py with new color definitions (note: Sketchingpy uses hex colors):
   - `BACKGROUND_COLOR = '#F8ECD4'` (rgb(248, 236, 212) converted to hex)
-  - `HIGHLIGHT_COLOR = '#EAEDFC'` (rgb(234, 237, 252) converted to hex)
+  - `HIGHLIGHT_COLOR = '#F3DBD4'` (rgb(243, 219, 212) converted to hex)
   - `BACKGROUND_HOVER = '#F0E1C3'` (rgb(240, 225, 195) converted to hex for hover state)
 - Configure font loading for desktop rendering using the downloaded font files
 - Apply consistent styling across all visualization components

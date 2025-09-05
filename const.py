@@ -10,7 +10,7 @@ HEIGHT = 750
 
 BG_COLOR = '#F8ECD4'  # rgb(248, 236, 212) - warm beige background
 BG_COLOR_LAYER = '#F8ECD4A0'  # Semi-transparent version
-DEEP_BG_COLOR = '#EAEDFC'  # rgb(234, 237, 252) - highlight/header background
+DEEP_BG_COLOR = '#F3DBD4'  # rgb(243, 219, 212) - highlight/header background
 DARK_BG_COLOR = '#141414'  # Dark color for contrast elements
 
 COLUMN_WIDTH = 200

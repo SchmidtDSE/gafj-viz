@@ -16,12 +16,12 @@
 }
 
 [ ! -e third_party_web/Cormorant-Regular.ttf ] && {
-    wget -O /tmp/cormorant.zip https://github.com/CatharsisFonts/Cormorant/releases/download/v3.609/Cormorant-3.609.zip
+    wget -O /tmp/cormorant.zip https://github.com/CatharsisFonts/Cormorant/releases/download/v3.609/Cormorant_Install_v3.609.zip
     cd /tmp && unzip -q cormorant.zip
-    cp "Cormorant-3.609/2. OpenType Files/Cormorant-Regular.otf" "$OLDPWD/third_party_web/Cormorant-Regular.otf"
-    cp "Cormorant-3.609/2. OpenType Files/Cormorant-Bold.otf" "$OLDPWD/third_party_web/Cormorant-Bold.otf"
+    cp "Cormorant_Install_v3.609/1. TrueType Font Files/Cormorant-Regular.ttf" "$OLDPWD/third_party_web/Cormorant-Regular.ttf"
+    cp "Cormorant_Install_v3.609/1. TrueType Font Files/Cormorant-Bold.ttf" "$OLDPWD/third_party_web/Cormorant-Bold.ttf"
     cd "$OLDPWD"
-    rm -rf /tmp/cormorant.zip /tmp/Cormorant-3.609
+    rm -rf /tmp/cormorant.zip /tmp/Cormorant_Install_v3.609
 }
 [ ! -e third_party_web/tabby-ui.min.css ] && wget --directory-prefix=third_party_web https://cdn.jsdelivr.net/gh/cferdinandi/tabby/dist/css/tabby-ui.min.css
 [ ! -e third_party_web/tabby.polyfills.min.js ] && wget --directory-prefix=third_party_web https://cdn.jsdelivr.net/gh/cferdinandi/tabby/dist/js/tabby.polyfills.min.js

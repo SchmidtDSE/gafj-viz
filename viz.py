@@ -357,7 +357,7 @@ class NewsVisualization:
         )
 
         self._sketch.clear_stroke()
-        self._sketch.set_fill(const.HOVER_COLOR if button_hover else const.INACTIVE_COLOR)
+        self._sketch.set_fill('#FFFFFF' if button_hover else const.INACTIVE_COLOR)
         self._sketch.set_text_align('center', 'baseline')
         self._sketch.set_text_font(const.FONT, 14)
         self._sketch.draw_text(
@@ -379,7 +379,7 @@ class NewsVisualization:
         )
 
         self._sketch.clear_stroke()
-        self._sketch.set_fill(const.HOVER_COLOR if download_hover else const.INACTIVE_COLOR)
+        self._sketch.set_fill('#FFFFFF' if download_hover else const.INACTIVE_COLOR)
         self._sketch.set_text_align('center', 'baseline')
         self._sketch.set_text_font(const.FONT, 14)
         self._sketch.draw_text(
